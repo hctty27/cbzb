@@ -15,7 +15,7 @@ import { BattleSim } from '../sim/BattleSim';
 import { countAliveUnits, getSquadTotalHp } from '../sim/CombatMath';
 import { AudioManager } from './AudioManager';
 import { HudSelection } from './HudView';
-import { createUiNode, getStaticSpriteFrame, getStripFrames, getStripFramesSync } from './SpriteLoader';
+import { createUiNode, getStaticSpriteFrame, getStripFrames, getStripFramesSync, releaseTextureByKey } from './SpriteLoader';
 
 interface StrongholdVisual {
   id: string;
@@ -114,6 +114,8 @@ export class BattleView {
   private activeSpell: SpellId | null = null;
   private hoverFlash: { x: number; y: number } | null = null;
   private unsubSim: (() => void) | null = null;
+  private currentBgKey: string | null = null;
+  private bgLoadSeq = 0;
 
   constructor(
     parent: Node,
@@ -376,15 +378,38 @@ export class BattleView {
     this.onSelectionChange(this.selection);
   }
 
+  releaseBattleAssets(): void {
+    this.bgLoadSeq++;
+    if (this.mapNode?.isValid && this.mapSprite) {
+      this.mapSprite.spriteFrame = null;
+    }
+    if (this.currentBgKey) {
+      releaseTextureByKey(this.currentBgKey);
+      this.currentBgKey = null;
+    }
+  }
+
   rebuildWorldEntities(): void {
+    const prevBgKey = this.currentBgKey;
     const bgKey = this.sim.levelDef.bgKey;
+    if (prevBgKey && prevBgKey !== bgKey) {
+      if (this.mapNode?.isValid && this.mapSprite) {
+        this.mapSprite.spriteFrame = null;
+      }
+      releaseTextureByKey(prevBgKey);
+    }
+    this.currentBgKey = bgKey;
+
     const mapEntry = SPRITE_MANIFEST[bgKey] ?? SPRITE_MANIFEST['map/level1_bg'];
     const mapTr = this.mapNode.getComponent(UITransform)!;
     mapTr.setContentSize(mapEntry.width, mapEntry.height);
     mapTr.setAnchorPoint(mapEntry.anchorX, mapEntry.anchorY);
     this.mapSprite.spriteFrame = null;
+    const seq = ++this.bgLoadSeq;
     getStaticSpriteFrame(bgKey).then((sf) => {
-      if (this.mapNode.isValid) this.mapSprite.spriteFrame = sf;
+      if (this.mapNode.isValid && seq === this.bgLoadSeq) {
+        this.mapSprite.spriteFrame = sf;
+      }
     });
 
     this.drawBaseRoads();

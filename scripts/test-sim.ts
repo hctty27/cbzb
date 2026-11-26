@@ -1,15 +1,44 @@
 import assert from 'node:assert/strict';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { cocosToFlash, dist, flashToCocos } from '../game/assets/scripts/core/CoordTransform.ts';
-import { ALL_LEVELS, getCampaignLevels, getLevelById } from '../game/assets/scripts/data/AllLevelsData.ts';
+import { SPRITE_MANIFEST } from '../game/assets/scripts/data/AssetManifest.ts';
 import { BADGES } from '../game/assets/scripts/data/BadgesData.ts';
-import { CampaignProgressStore } from '../game/assets/scripts/data/CampaignProgress.ts';
+import { CampaignProgressStore, createMemoryStorageAdapter } from '../game/assets/scripts/data/CampaignProgress.ts';
 import { CAMPAIGN_EDICTS } from '../game/assets/scripts/data/EdictsData.ts';
-import { GOLD_MEDAL_SEC, LEVEL1_NODES, PLAYER_START_GOLD, PLAYER_START_MANA } from '../game/assets/scripts/data/Level1Data.ts';
+import { GOLD_MEDAL_SEC, PLAYER_START_GOLD, PLAYER_START_MANA } from '../game/assets/scripts/data/Level1Data.ts';
+import {
+  getCampaignBundleName,
+  getCampaignLevelMetas,
+  getLevelMetaById,
+  LEVEL_CATALOG,
+} from '../game/assets/scripts/data/LevelCatalog.ts';
+import { LevelDef, PlayableCampaignId } from '../game/assets/scripts/data/Types.ts';
 import { getRecruitIdsForFaction, getWestariaRecruitIds } from '../game/assets/scripts/data/UnitsData.ts';
-import { getWestariaLevel, WESTARIA_LEVELS } from '../game/assets/scripts/data/WestariaLevelsData.ts';
 import { BattleSim } from '../game/assets/scripts/sim/BattleSim.ts';
 import { countAliveUnits, getSquadTotalHp } from '../game/assets/scripts/sim/CombatMath.ts';
 import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, '..');
+const ASSETS_DIR = path.join(ROOT, 'game', 'assets');
+
+const ALL_LEVELS: LevelDef[] = LEVEL_CATALOG.map((meta) => {
+  const bundle = getCampaignBundleName(meta.campaign);
+  const jsonPath = path.join(ASSETS_DIR, 'bundles', bundle, 'levels', `level_${meta.id}.json`);
+  const parsed = JSON.parse(fs.readFileSync(jsonPath, 'utf8')) as LevelDef;
+  assert.equal(parsed.id, meta.id);
+  assert.equal(parsed.bgKey, meta.bgKey);
+  return parsed;
+});
+
+const LEVELS_BY_ID = new Map<number, LevelDef>(ALL_LEVELS.map((l) => [l.id, l]));
+const getCampaignLevels = (campaign: PlayableCampaignId): LevelDef[] => ALL_LEVELS.filter((l) => l.campaign === campaign);
+const getLevelById = (id: number): LevelDef => LEVELS_BY_ID.get(id) ?? ALL_LEVELS[0];
+const WESTARIA_LEVELS = getCampaignLevels('Westaria');
+const getWestariaLevel = (id: number): LevelDef => getLevelById(id);
 
 // 1. CoordTransform round-trip & 16:9 mapping
 {
@@ -22,7 +51,8 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
 
 // 2. GraphNav shortest path & waypoints from Westaria Castle (057) -> Empire Town (077) -> Empire Castle (007)
 {
-  const sim = new BattleSim(() => 0.5);
+  const lv1 = getLevelById(1);
+  const sim = new BattleSim(() => 0.5, lv1);
   const pathToTown = sim.nav.findNodePath('057', '077');
   assert.deepEqual(pathToTown, ['057', '040', '060', '070', '077']);
 
@@ -33,7 +63,7 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
   assert.ok(poly.length >= 6, `Expected intermediate edge waypoints, got ${poly.length}`);
   const last = poly[poly.length - 1];
   assert.ok(Math.abs(last.x - 150.75) < 1 && Math.abs(last.y - 231.35) < 1);
-  assert.equal(LEVEL1_NODES.length, 10);
+  assert.equal(lv1.nodes.length, 10);
 }
 
 // 3. EconomySim starting state, tax decay, supply building, stronghold upgrade
@@ -43,7 +73,7 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
   assert.equal(computeNetGoldSpeed(10, 2), 7);
   assert.equal(computeNetGoldSpeed(10, 10), 3);
 
-  const sim = new BattleSim(() => 0.5);
+  const sim = new BattleSim(() => 0.5, getLevelById(1));
   const p = sim.getCombatant('Westaria');
   assert.equal(p.gold, PLAYER_START_GOLD);
   assert.equal(p.mana, PLAYER_START_MANA);
@@ -60,7 +90,7 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
 
 // 4. Tutorial 1 progression + Victory with Gold medal
 {
-  const sim = new BattleSim(() => 0.5);
+  const sim = new BattleSim(() => 0.5, getLevelById(1));
   assert.equal(sim.isUnitUnlockedForPlayer('w_guards'), true);
   assert.equal(sim.isUnitUnlockedForPlayer('w_archers'), false);
   assert.equal(sim.recruitUnit('Westaria', '057', 'w_archers'), null);
@@ -124,7 +154,7 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
 
 // 5. Defeat condition when player owns 0 strongholds
 {
-  const sim = new BattleSim(() => 0.5);
+  const sim = new BattleSim(() => 0.5, getLevelById(1));
   const playerCastle = sim.strongholds.find((s) => s.id === '057')!;
   playerCastle.hp = 5;
   const enemy = sim.squads.find((s) => s.owner === 'TheEmpire')!;
@@ -150,15 +180,15 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
     const eForts = sim.strongholds.filter((s) => s.owner !== 'Westaria' && s.owner !== 'Bandits');
     assert.ok(pForts.length >= 1, `Level ${lvl.id} should have at least 1 Westaria fort`);
     assert.ok(eForts.length >= 1, `Level ${lvl.id} should have at least 1 enemy fort`);
-    const path = sim.nav.findNodePath(pForts[0].id, eForts[0].id);
-    assert.equal(path[0], pForts[0].id);
-    assert.equal(path[path.length - 1], eForts[0].id);
+    const p = sim.nav.findNodePath(pForts[0].id, eForts[0].id);
+    assert.equal(p[0], pForts[0].id);
+    assert.equal(p[p.length - 1], eForts[0].id);
   }
 }
 
 // 7. Phase 2: CampaignProgressStore XP -> Rank -> SkillPoints -> Edicts & Unit Upgrades
 {
-  const prog = new CampaignProgressStore(false);
+  const prog = new CampaignProgressStore(false, createMemoryStorageAdapter());
   assert.equal(prog.getRank(), 1);
   assert.equal(prog.getMaxUnlockedLevelId(), 1);
   assert.equal(prog.getAvailableSkillPoints(), 0); // 2 pts at Rank 1 spent on ducal_sovereignty Lv1 + lords_church Lv1
@@ -186,7 +216,7 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
 
 // 8. Phase 2: Spells, Banners & Ultimate (Consecration, Heroism, Lord's Judgement, MagicTower + Sign of Advent)
 {
-  const prog = new CampaignProgressStore(false);
+  const prog = new CampaignProgressStore(false, createMemoryStorageAdapter());
   prog.recordVictory(1, 'Gold', 120); // +2 pts -> Rank 2
   prog.upgradeEdict('call_crusade');
   prog.upgradeEdict('heroic_epos');
@@ -197,7 +227,6 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
   const player = sim.getCombatant('Westaria');
   const camp = sim.strongholds.find((s) => s.owner === 'Westaria')!;
 
-  // Give Westaria extra supply & mana so we test Banners + Judgement cleanly
   player.mana = 400;
   camp.bonusSupply = 2;
   sim.recalcAll();
@@ -206,24 +235,20 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
   g.members[1].alive = false;
   g.members[1].hp = 0;
 
-  // Cast Banner of Consecration -> heals wounded & resurrects dead soldier!
   assert.equal(sim.castSpell('Westaria', 'banner_consecration', g.flashX, g.flashY), true);
   sim.step(0.1);
   assert.ok(g.members[0].hp > 5, 'Consecration should heal wounded guard');
   assert.equal(g.members[1].alive, true, 'Consecration should resurrect fallen guard');
 
-  // Cast Banner of Heroism -> sets heroicTimer > 0
   assert.equal(sim.castSpell('Westaria', 'banner_heroism', g.flashX, g.flashY), true);
   sim.step(0.1);
   assert.ok(g.heroicTimer > 0, 'Heroism banner should make squad heroic');
 
-  // Cast Lord's Judgement near Ogre / Khaganate squad
   const ogre = sim.squads.find((s) => s.owner === 'Bandits')!;
   const ogreBefore = getSquadTotalHp(ogre).hp;
   assert.equal(sim.castSpell('Westaria', 'lords_judgement', ogre.flashX, ogre.flashY), true);
   assert.ok(getSquadTotalHp(ogre).hp < ogreBefore, "Lord's Judgement should damage Ogre");
 
-  // Capture MagicTower (clear nearby enemy defenders) -> charges Ultimate per second -> summon Avatar
   const mageTower = sim.strongholds.find((s) => s.kind === 'MagicTower')!;
   mageTower.owner = 'Westaria';
   sim.squads = sim.squads.filter(
@@ -258,7 +283,6 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
   assert.equal(ch.collected, true);
   assert.equal(p.gold, startGold - 150 - 100 + 500);
 
-  // Level 4 has both TheEmpire and TheCult AI active
   sim.loadLevel(getWestariaLevel(4));
   const empCastle = sim.strongholds.find((s) => s.owner === 'TheEmpire')!;
   const cultCastle = sim.strongholds.find((s) => s.owner === 'TheCult')!;
@@ -285,20 +309,19 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
     const eForts = sim.strongholds.filter((s) => s.owner !== lvl.playerFaction && s.owner !== 'Bandits');
     assert.ok(pForts.length >= 1, `Level ${lvl.id} should have player fort`);
     assert.ok(eForts.length >= 1, `Level ${lvl.id} should have enemy fort`);
-    const path = sim.nav.findNodePath(pForts[0].id, eForts[0].id);
-    assert.equal(path[0], pForts[0].id);
-    assert.equal(path[path.length - 1], eForts[0].id);
+    const p = sim.nav.findNodePath(pForts[0].id, eForts[0].id);
+    assert.equal(p[0], pForts[0].id);
+    assert.equal(p[p.length - 1], eForts[0].id);
   }
 }
 
 // 11. Phase 3: Khaganate Edicts, T3 Ancient Raiders, Stoneworms, Disentomb, Banner of Bloodlust, Cataclysm
 {
-  const prog = new CampaignProgressStore(false);
+  const prog = new CampaignProgressStore(false, createMemoryStorageAdapter());
   prog.setActiveCampaign('TheKhaganate');
   assert.equal(prog.getRivadisMapFrame('TheKhaganate'), 10);
   assert.equal(CAMPAIGN_EDICTS.TheKhaganate.length, 9);
 
-  // Give Khaganate enough XP to upgrade edicts
   prog.recordVictory(11, 'Gold', 120);
   prog.recordVictory(12, 'Gold', 120);
   prog.recordVictory(13, 'Gold', 120);
@@ -323,22 +346,18 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
   const raiders = sim.recruitUnit('TheKhaganate', kFort.id, 'k_ancient_raiders')!;
   assert.ok(raiders);
 
-  // Banner of Bloodlust -> bloodlustTimer > 0
   assert.equal(sim.castSpell('TheKhaganate', 'banner_bloodlust', raiders.flashX, raiders.flashY), true);
   sim.step(0.1);
   assert.ok(raiders.bloodlustTimer > 0);
 
-  // Disentomb -> summons Immortals squad
   assert.equal(sim.castSpell('TheKhaganate', 'disentomb', kFort.flashX, kFort.flashY), true);
   assert.ok(sim.squads.some((s) => s.owner === 'TheKhaganate' && s.defId === 'k_immortals'));
 
-  // Stoneworms -> damages nearby enemy
   const enemy = sim.squads.find((s) => s.owner === 'Westaria')!;
   const eBefore = getSquadTotalHp(enemy).hp;
   assert.equal(sim.castSpell('TheKhaganate', 'summon_stoneworms', enemy.flashX, enemy.flashY), true);
   assert.ok(getSquadTotalHp(enemy).hp < eBefore);
 
-  // Cataclysm -> damages enemy stronghold across the map
   const wFort = sim.strongholds.find((s) => s.owner === 'Westaria')!;
   const fortBefore = wFort.hp;
   assert.equal(sim.castSpell('TheKhaganate', 'cataclysm', kFort.flashX, kFort.flashY), true);
@@ -347,7 +366,7 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
 
 // 12. Phase 3: Cult Edicts, T3 Giantbots, Ice Blast, Frost Enchantment, Liberation, Grand Transformation
 {
-  const prog = new CampaignProgressStore(false);
+  const prog = new CampaignProgressStore(false, createMemoryStorageAdapter());
   prog.setActiveCampaign('TheCult');
   assert.equal(prog.getRivadisMapFrame('TheCult'), 19);
   assert.equal(CAMPAIGN_EDICTS.TheCult.length, 9);
@@ -356,11 +375,11 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
   prog.recordVictory(22, 'Gold', 120);
   prog.recordVictory(23, 'Gold', 120);
   assert.equal(prog.upgradeEdict('giant_construction', 'TheCult'), true);
-  assert.equal(prog.upgradeEdict('giant_construction', 'TheCult'), true); // Lv2 regen 2%/s
+  assert.equal(prog.upgradeEdict('giant_construction', 'TheCult'), true);
   assert.equal(prog.upgradeEdict('magic_library', 'TheCult'), true);
   assert.equal(prog.upgradeEdict('liberation_army', 'TheCult'), true);
   assert.equal(prog.upgradeEdict('magic_academy', 'TheCult'), true);
-  assert.equal(prog.upgradeEdict('magic_academy', 'TheCult'), true); // Lv2 -> +1 gold/sup/mana per tower
+  assert.equal(prog.upgradeEdict('magic_academy', 'TheCult'), true);
 
   const bonuses = prog.getBonuses('TheCult');
   assert.equal(bonuses.archersTier, 3);
@@ -381,12 +400,10 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
   for (let i = 0; i < 5; i++) sim.step(0.25);
   assert.ok(gbot.members[0].hp > 100, 'Giantbots Lv2 should regenerate HP per second');
 
-  // Ice Blast freezes enemy
   const enemy = sim.squads.find((s) => s.owner === 'TheEmpire')!;
   assert.equal(sim.castSpell('TheCult', 'ice_blast', enemy.flashX, enemy.flashY), true);
   assert.ok(enemy.frozenTimer > 0, 'Ice Blast should freeze target squad');
 
-  // Frost Enchantment + Banner of Liberation
   assert.equal(sim.castSpell('TheCult', 'frost_enchantment', gbot.flashX, gbot.flashY), true);
   assert.ok(gbot.frostEnchantTimer > 0);
   gbot.poisonTimer = 3;
@@ -394,7 +411,6 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
   sim.step(0.1);
   assert.equal(gbot.poisonTimer, 0, 'Banner of Liberation should cleanse poison');
 
-  // Grand Transformation grants gold & mana
   const goldBefore = bComb.gold;
   assert.equal(sim.castSpell('TheCult', 'grand_transformation', bFort.flashX, bFort.flashY), true);
   assert.ok(bComb.gold > goldBefore, 'Grand Transformation should grant gold for transformed enemies');
@@ -403,7 +419,7 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
 // 13. Phase 3: Empire AI Spellcasting (Terror, Banner of Desecration) & Badges Unlocking
 {
   assert.equal(BADGES.length, 22);
-  const prog = new CampaignProgressStore(false);
+  const prog = new CampaignProgressStore(false, createMemoryStorageAdapter());
   const summary = prog.recordVictory(1, 'Gold', 150, {
     maxVillagesOwned: 7,
     maxMinesOwned: 7,
@@ -423,7 +439,6 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
   assert.equal(prog.isBadgeUnlocked('BADGE_GOLD_COLLECTED'), true);
   assert.ok(summary.newlyUnlockedBadges.length >= 12);
 
-  // Empire AI spells
   const sim = new BattleSim(() => 0.5);
   sim.loadLevel(getLevelById(21));
   const empComb = sim.getCombatant('TheEmpire');
@@ -433,6 +448,69 @@ import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
   assert.equal(sim.castSpell('TheEmpire', 'terror', cSq.flashX, cSq.flashY), true);
   assert.equal(cSq.heroicTimer, 0, 'Empire Terror should dispel Heroic');
   assert.ok(cSq.fearTimer > 0, 'Empire Terror should inflict Fear');
+}
+
+// 14. Cross-Platform Storage Adapter (Save/Reload/v2 Migration) & Asset Bundle Integrity
+{
+  const mem = createMemoryStorageAdapter();
+  const store1 = new CampaignProgressStore(true, mem);
+  store1.recordVictory(1, 'Gold', 140);
+  store1.setActiveCampaign('TheCult');
+  assert.ok(mem.getItem('takeover_save_v3'));
+
+  const store2 = new CampaignProgressStore(true, mem);
+  assert.equal(store2.getActiveCampaign(), 'TheCult');
+  assert.equal(store2.getCompletedCount('Westaria'), 1);
+  assert.equal(store2.getLevelRecord(1).bestMedal, 'Gold');
+
+  store2.resetAll();
+  const store3 = new CampaignProgressStore(true, mem);
+  assert.equal(store3.getActiveCampaign(), 'Westaria');
+  assert.equal(store3.getCompletedCount('Westaria'), 0);
+
+  // Verify Phase 2 v2 -> v3 migration through injected adapter
+  const v2Payload = JSON.stringify({
+    xp: 2500,
+    edictRanks: { ducal_sovereignty: 2, call_crusade: 1 },
+    levels: { 1: { completed: true, bestMedal: 'Silver', bestTimeSec: 390 } },
+    selectedLevelId: 2,
+  });
+  const memV2 = createMemoryStorageAdapter({ takeover_westaria_save_v2: v2Payload });
+  const migrated = new CampaignProgressStore(true, memV2);
+  assert.equal(migrated.getLevelRecord(1).bestMedal, 'Silver');
+  assert.equal(migrated.getEdictRank('call_crusade', 'Westaria'), 1);
+  assert.ok(memV2.getItem('takeover_save_v3'), 'v2 migration should persist v3 into adapter');
+
+  // Verify all 24 LEVEL_CATALOG entries match JSON files on disk
+  assert.equal(LEVEL_CATALOG.length, 24);
+  assert.equal(getCampaignLevelMetas('Westaria').length, 8);
+  assert.equal(getCampaignLevelMetas('TheKhaganate').length, 8);
+  assert.equal(getCampaignLevelMetas('TheCult').length, 8);
+  assert.equal(getLevelMetaById(28).campaign, 'TheCult');
+
+  // Verify every SPRITE_MANIFEST entry resolves to an actual PNG in its bundle & no duplicate battle maps exist
+  const bgHashes = new Map<string, string>();
+  for (const [key, entry] of Object.entries(SPRITE_MANIFEST)) {
+    const bundle = entry.bundle ?? 'resources';
+    const rootDir = bundle === 'resources' ? path.join(ASSETS_DIR, 'resources') : path.join(ASSETS_DIR, 'bundles', bundle);
+    const pngPath = path.join(rootDir, `${entry.path}.png`);
+    assert.ok(fs.existsSync(pngPath), `Missing PNG for manifest key "${key}" at ${pngPath}`);
+
+    if (key.startsWith('map/level')) {
+      const h = crypto.createHash('md5').update(fs.readFileSync(pngPath)).digest('hex');
+      const seenPath = bgHashes.get(h);
+      if (seenPath) {
+        assert.equal(seenPath, pngPath, `Duplicate battle map file found on disk: ${pngPath} == ${seenPath}`);
+      } else {
+        bgHashes.set(h, pngPath);
+      }
+    }
+  }
+  // Verify Rivadis base + 26 diff overlays exist in manifest
+  assert.ok(SPRITE_MANIFEST['map/campaign_map_base']);
+  for (let f = 2; f <= 27; f++) {
+    assert.ok(SPRITE_MANIFEST[`map/campaign_map_diff_${f}`], `Missing manifest entry map/campaign_map_diff_${f}`);
+  }
 }
 
 console.log('ALL_SIM_TESTS_PASSED');

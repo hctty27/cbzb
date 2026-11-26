@@ -30,7 +30,6 @@ import {
   UnitDefinition,
 } from '../data/Types';
 import { CLASS_LOCK_INDEX, getUnitDefForClass, UNIT_DEFS } from '../data/UnitsData';
-import { WESTARIA_LEVELS } from '../data/WestariaLevelsData';
 import { AiController } from './AiController';
 import {
   applyDamageToSquad,
@@ -60,6 +59,28 @@ const BASE_ULTIMATE_MAX = 200;
 const XP_LEVEL_THRESHOLDS = [100, 250, 450];
 
 const ALL_FACTIONS: FactionId[] = ['Westaria', 'TheEmpire', 'TheKhaganate', 'TheCult', 'Bandits'];
+
+const EMPTY_LEVEL_DEF: LevelDef = {
+  id: 0,
+  missionIndex: 1,
+  campaign: 'Westaria',
+  playerFaction: 'Westaria',
+  name: 'Empty',
+  briefing: '',
+  bgKey: 'map/level1_bg',
+  xpReward: 0,
+  goldMedalSec: 330,
+  silverMedalSec: 570,
+  mapPin: { x: 0, y: 0 },
+  enemies: [],
+  enemyTechTier: 1,
+  playerStartGold: 0,
+  playerStartMana: 0,
+  enemyStartGold: 0,
+  tutorialMode: 'none',
+  nodes: [],
+  edges: [],
+};
 
 function createMemberOffsets(count: number): Array<{ x: number; y: number }> {
   if (count === 1) return [{ x: 0, y: 0 }];
@@ -122,7 +143,7 @@ export class BattleSim {
   readonly events = new EventBus<SimEvents>();
   readonly ai = new AiController();
 
-  levelDef: LevelDef = WESTARIA_LEVELS[0];
+  levelDef: LevelDef = EMPTY_LEVEL_DEF;
   bonuses: CampaignBonuses = DEFAULT_WESTARIA_BONUSES;
   nav!: GraphNav;
 
@@ -146,9 +167,9 @@ export class BattleSim {
   private secondAccum = 0;
   private rng: () => number;
 
-  constructor(rng: () => number = Math.random) {
+  constructor(rng: () => number = Math.random, initialLevel?: LevelDef, bonuses: CampaignBonuses = DEFAULT_WESTARIA_BONUSES) {
     this.rng = rng;
-    this.loadLevel(WESTARIA_LEVELS[0], DEFAULT_WESTARIA_BONUSES);
+    this.loadLevel(initialLevel ?? EMPTY_LEVEL_DEF, bonuses);
   }
 
   get playerFaction(): PlayableCampaignId {
@@ -178,7 +199,7 @@ export class BattleSim {
     this.loadLevel(this.levelDef, this.bonuses);
   }
 
-  loadLevel(levelDef: LevelDef = WESTARIA_LEVELS[0], bonuses: CampaignBonuses = DEFAULT_WESTARIA_BONUSES): void {
+  loadLevel(levelDef: LevelDef = this.levelDef ?? EMPTY_LEVEL_DEF, bonuses: CampaignBonuses = DEFAULT_WESTARIA_BONUSES): void {
     // Preserve external event listeners (e.g. BattleView) across replays / level changes!
     this.levelDef = levelDef;
     this.bonuses = bonuses;

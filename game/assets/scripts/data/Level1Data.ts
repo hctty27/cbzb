@@ -1,20 +1,12 @@
-import { MapEdgeDef, MapNodeDef } from './Types';
-import { WESTARIA_LEVELS } from './WestariaLevelsData';
-
-const LV1 = WESTARIA_LEVELS[0];
-
-export const LEVEL1_ID = LV1.id;
-export const LEVEL1_NAME = LV1.name;
-export const PLAYER_START_GOLD = LV1.playerStartGold;
-export const PLAYER_START_MANA = LV1.playerStartMana;
-export const ENEMY_START_GOLD = LV1.enemyStartGold;
+export const LEVEL1_ID = 1;
+export const LEVEL1_NAME = "The World's Edge";
+export const PLAYER_START_GOLD = 550;
+export const PLAYER_START_MANA = 100;
+export const ENEMY_START_GOLD = 200;
 export const ENEMY_START_MANA = 0;
 
-export const GOLD_MEDAL_SEC = LV1.goldMedalSec;
-export const SILVER_MEDAL_SEC = LV1.silverMedalSec;
-
-export const LEVEL1_NODES: MapNodeDef[] = LV1.nodes;
-export const LEVEL1_EDGES: MapEdgeDef[] = LV1.edges;
+export const GOLD_MEDAL_SEC = 330;
+export const SILVER_MEDAL_SEC = 570;
 
 export const TUTORIAL1_ENEMY_MARCH_TARGET = { x: 340, y: 290 };
 

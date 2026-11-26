@@ -1,0 +1,213 @@
+{
+  "id": 1,
+  "missionIndex": 1,
+  "campaign": "Westaria",
+  "playerFaction": "Westaria",
+  "name": "The World's Edge",
+  "briefing": "The Duchy of Westaria is located on the western islands. It was always safe from the troubles of the continent. But here they come.",
+  "bgKey": "map/level1_bg",
+  "xpReward": 1000,
+  "goldMedalSec": 330,
+  "silverMedalSec": 570,
+  "mapPin": {
+    "x": 139.0,
+    "y": 262.2
+  },
+  "enemies": [
+    "TheEmpire"
+  ],
+  "enemyTechTier": 1,
+  "playerStartGold": 550,
+  "playerStartMana": 100,
+  "enemyStartGold": 200,
+  "tutorialMode": "tutorial1",
+  "nodes": [
+    {
+      "id": "080",
+      "label": "Junction 080",
+      "kind": "Junction",
+      "locationNum": 1,
+      "flashX": 272.1,
+      "flashY": 125.2
+    },
+    {
+      "id": "070",
+      "label": "Junction 070",
+      "kind": "Junction",
+      "locationNum": 1,
+      "flashX": 200.3,
+      "flashY": 212.0
+    },
+    {
+      "id": "010",
+      "label": "Junction 010",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 525.3,
+      "flashY": 170.2
+    },
+    {
+      "id": "060",
+      "label": "Junction 060",
+      "kind": "Junction",
+      "locationNum": 2,
+      "flashX": 339.95,
+      "flashY": 286.8
+    },
+    {
+      "id": "057",
+      "label": "Westaria Castle",
+      "kind": "Stronghold",
+      "locationNum": 2,
+      "flashX": 450.95,
+      "flashY": 384.7,
+      "strongholdKind": "Castle",
+      "initialOwner": "Westaria"
+    },
+    {
+      "id": "077",
+      "label": "Empire Town",
+      "kind": "Stronghold",
+      "locationNum": 1,
+      "flashX": 150.75,
+      "flashY": 231.35,
+      "strongholdKind": "Town",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_00_0",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 609.95,
+      "flashY": 240.9,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_00_1",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 671.0,
+      "flashY": 200.9,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "040",
+      "label": "Junction 040",
+      "kind": "Junction",
+      "locationNum": 2,
+      "flashX": 408.9,
+      "flashY": 374.85
+    },
+    {
+      "id": "007",
+      "label": "Empire Castle",
+      "kind": "Stronghold",
+      "locationNum": 0,
+      "flashX": 573.5,
+      "flashY": 178.1,
+      "strongholdKind": "Castle",
+      "initialOwner": "TheEmpire"
+    }
+  ],
+  "edges": [
+    {
+      "id": "ed_010_007",
+      "from": "010",
+      "to": "007",
+      "waypoints": []
+    },
+    {
+      "id": "ed_040_060",
+      "from": "040",
+      "to": "060",
+      "waypoints": [
+        {
+          "x": 393.7,
+          "y": 366.6
+        },
+        {
+          "x": 377.7,
+          "y": 351.0
+        },
+        {
+          "x": 366.7,
+          "y": 331.1
+        },
+        {
+          "x": 351.7,
+          "y": 304.05
+        }
+      ]
+    },
+    {
+      "id": "ed_040_057",
+      "from": "040",
+      "to": "057",
+      "waypoints": []
+    },
+    {
+      "id": "ed_060_070",
+      "from": "060",
+      "to": "070",
+      "waypoints": []
+    },
+    {
+      "id": "ed_070_080",
+      "from": "070",
+      "to": "080",
+      "waypoints": [
+        {
+          "x": 207.96,
+          "y": 190.86
+        },
+        {
+          "x": 214.87,
+          "y": 162.79
+        },
+        {
+          "x": 228.39,
+          "y": 141.45
+        },
+        {
+          "x": 246.46,
+          "y": 127.31
+        }
+      ]
+    },
+    {
+      "id": "ed_070_077",
+      "from": "070",
+      "to": "077",
+      "waypoints": []
+    },
+    {
+      "id": "ed_080_010",
+      "from": "080",
+      "to": "010",
+      "waypoints": [
+        {
+          "x": 307.03,
+          "y": 123.62
+        },
+        {
+          "x": 350.0,
+          "y": 118.76
+        },
+        {
+          "x": 397.73,
+          "y": 121.11
+        },
+        {
+          "x": 442.76,
+          "y": 145.48
+        },
+        {
+          "x": 489.23,
+          "y": 164.31
+        }
+      ]
+    }
+  ]
+}

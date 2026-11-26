@@ -1,0 +1,390 @@
+{
+  "id": 11,
+  "missionIndex": 1,
+  "campaign": "TheKhaganate",
+  "playerFaction": "TheKhaganate",
+  "name": "Rise of the Khan",
+  "briefing": "The Horde was defeated and fled in disgrace. But the new khan will lead our warriors to the new victories. We shall requite and our rivals will shed their blood. If they have blood...",
+  "bgKey": "map/level11_bg",
+  "xpReward": 1000,
+  "goldMedalSec": 330,
+  "silverMedalSec": 570,
+  "mapPin": {
+    "x": 375.9,
+    "y": 431.2
+  },
+  "enemies": [
+    "TheEmpire"
+  ],
+  "enemyTechTier": 1,
+  "playerStartGold": 250,
+  "playerStartMana": 100,
+  "enemyStartGold": 200,
+  "tutorialMode": "none",
+  "nodes": [
+    {
+      "id": "027",
+      "label": "Empire Castle",
+      "kind": "Stronghold",
+      "locationNum": 2,
+      "flashX": 271.6,
+      "flashY": 130.85,
+      "strongholdKind": "Castle",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "017",
+      "label": "Empire Town",
+      "kind": "Stronghold",
+      "locationNum": 1,
+      "flashX": 618.8,
+      "flashY": 320.65,
+      "strongholdKind": "Town",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "007",
+      "label": "Khaganate Town",
+      "kind": "Stronghold",
+      "locationNum": 0,
+      "flashX": 314.7,
+      "flashY": 439.75,
+      "strongholdKind": "Town",
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "bs_02_0",
+      "label": "Site 2",
+      "kind": "BuildSite",
+      "locationNum": 2,
+      "flashX": 221.35,
+      "flashY": 187.55,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_02_1",
+      "label": "Site 2",
+      "kind": "BuildSite",
+      "locationNum": 2,
+      "flashX": 288.9,
+      "flashY": 198.95,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "023",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 3,
+      "flashX": 452.9,
+      "flashY": 346.0,
+      "initialOwner": "Bandits"
+    },
+    {
+      "id": "026",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 3,
+      "flashX": 408.65,
+      "flashY": 322.75
+    },
+    {
+      "id": "bs_01_0",
+      "label": "Site 1",
+      "kind": "BuildSite",
+      "locationNum": 1,
+      "flashX": 653.4,
+      "flashY": 384.25,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_00_0",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 400.35,
+      "flashY": 409.9,
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "bs_00_1",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 233.45,
+      "flashY": 401.9,
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "bs_00_2",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 196.95,
+      "flashY": 484.9,
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "010",
+      "label": "Junction 010",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 314.6,
+      "flashY": 476.3
+    },
+    {
+      "id": "020",
+      "label": "Junction 020",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 444.45,
+      "flashY": 459.95
+    },
+    {
+      "id": "030",
+      "label": "Junction 030",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 599.45,
+      "flashY": 359.35
+    },
+    {
+      "id": "040",
+      "label": "Junction 040",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 192.5,
+      "flashY": 438.9
+    },
+    {
+      "id": "050",
+      "label": "Junction 050",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 133.5,
+      "flashY": 303.95
+    },
+    {
+      "id": "060",
+      "label": "Junction 060",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 268.1,
+      "flashY": 236.95
+    },
+    {
+      "id": "070",
+      "label": "Junction 070",
+      "kind": "Junction",
+      "locationNum": 2,
+      "flashX": 304.6,
+      "flashY": 158.95
+    }
+  ],
+  "edges": [
+    {
+      "id": "ed_007_010",
+      "from": "007",
+      "to": "010",
+      "waypoints": [
+        {
+          "x": 294.5,
+          "y": 461.95
+        }
+      ]
+    },
+    {
+      "id": "ed_023_026",
+      "from": "023",
+      "to": "026",
+      "waypoints": [
+        {
+          "x": 410.9,
+          "y": 330.95
+        }
+      ]
+    },
+    {
+      "id": "ed_017_030",
+      "from": "017",
+      "to": "030",
+      "waypoints": [
+        {
+          "x": 587.45,
+          "y": 345.9
+        }
+      ]
+    },
+    {
+      "id": "ed_070_027",
+      "from": "070",
+      "to": "027",
+      "waypoints": [
+        {
+          "x": 277.45,
+          "y": 148.95
+        }
+      ]
+    },
+    {
+      "id": "ed_060_070",
+      "from": "060",
+      "to": "070",
+      "waypoints": [
+        {
+          "x": 300.25,
+          "y": 240.35
+        },
+        {
+          "x": 337.0,
+          "y": 228.35
+        },
+        {
+          "x": 349.25,
+          "y": 195.35
+        },
+        {
+          "x": 320.9,
+          "y": 168.85
+        }
+      ]
+    },
+    {
+      "id": "ed_050_060",
+      "from": "050",
+      "to": "060",
+      "waypoints": [
+        {
+          "x": 144.55,
+          "y": 285.05
+        },
+        {
+          "x": 167.8,
+          "y": 256.8
+        },
+        {
+          "x": 200.8,
+          "y": 236.3
+        },
+        {
+          "x": 243.45,
+          "y": 234.55
+        }
+      ]
+    },
+    {
+      "id": "ed_040_050",
+      "from": "040",
+      "to": "050",
+      "waypoints": [
+        {
+          "x": 176.55,
+          "y": 422.0
+        },
+        {
+          "x": 153.8,
+          "y": 397.75
+        },
+        {
+          "x": 135.3,
+          "y": 366.5
+        },
+        {
+          "x": 131.45,
+          "y": 329.5
+        }
+      ]
+    },
+    {
+      "id": "ed_010_040",
+      "from": "010",
+      "to": "040",
+      "waypoints": [
+        {
+          "x": 296.6,
+          "y": 473.45
+        },
+        {
+          "x": 267.85,
+          "y": 468.45
+        },
+        {
+          "x": 239.85,
+          "y": 459.45
+        },
+        {
+          "x": 213.0,
+          "y": 446.45
+        }
+      ]
+    },
+    {
+      "id": "ed_010_020",
+      "from": "010",
+      "to": "020",
+      "waypoints": [
+        {
+          "x": 341.45,
+          "y": 473.95
+        },
+        {
+          "x": 367.65,
+          "y": 471.45
+        },
+        {
+          "x": 393.15,
+          "y": 470.45
+        },
+        {
+          "x": 419.75,
+          "y": 467.95
+        }
+      ]
+    },
+    {
+      "id": "ed_020_023",
+      "from": "020",
+      "to": "023",
+      "waypoints": [
+        {
+          "x": 449.95,
+          "y": 438.5
+        },
+        {
+          "x": 460.35,
+          "y": 413.5
+        },
+        {
+          "x": 458.85,
+          "y": 386.5
+        },
+        {
+          "x": 449.95,
+          "y": 364.5
+        }
+      ]
+    },
+    {
+      "id": "ed_020_030",
+      "from": "020",
+      "to": "030",
+      "waypoints": [
+        {
+          "x": 470.95,
+          "y": 452.0
+        },
+        {
+          "x": 510.85,
+          "y": 430.0
+        },
+        {
+          "x": 546.35,
+          "y": 406.0
+        },
+        {
+          "x": 581.95,
+          "y": 377.0
+        }
+      ]
+    }
+  ]
+}

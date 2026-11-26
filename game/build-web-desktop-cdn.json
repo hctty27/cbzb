@@ -1,0 +1,19 @@
+{
+  "name": "Takeover",
+  "platform": "web-desktop",
+  "buildPath": "project://build",
+  "outputName": "web-desktop-cdn",
+  "startScene": "020f3c29-5c47-4348-942a-bd81f4043387",
+  "debug": false,
+  "sourceMaps": false,
+  "md5Cache": true,
+  "server": "http://127.0.0.1:8088",
+  "packages": {
+    "web-desktop": {
+      "resolution": {
+        "designWidth": 1280,
+        "designHeight": 720
+      }
+    }
+  }
+}

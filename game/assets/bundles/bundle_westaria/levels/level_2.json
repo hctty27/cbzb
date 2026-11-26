@@ -1,0 +1,343 @@
+{
+  "id": 2,
+  "missionIndex": 2,
+  "campaign": "Westaria",
+  "playerFaction": "Westaria",
+  "name": "The Empire's End",
+  "briefing": "The Crimson Horde was conquered by the Empire ages ago but they never were fully bent. Havoc reigns in Rivadis. And these barbarians are trying to seize our land.",
+  "bgKey": "map/level2_bg",
+  "xpReward": 1500,
+  "goldMedalSec": 330,
+  "silverMedalSec": 570,
+  "mapPin": {
+    "x": 172.3,
+    "y": 187.2
+  },
+  "enemies": [
+    "TheKhaganate"
+  ],
+  "enemyTechTier": 1,
+  "playerStartGold": 250,
+  "playerStartMana": 100,
+  "enemyStartGold": 260,
+  "tutorialMode": "tutorial2",
+  "nodes": [
+    {
+      "id": "050",
+      "label": "Junction 050",
+      "kind": "Junction",
+      "locationNum": 2,
+      "flashX": 396.6,
+      "flashY": 157.65
+    },
+    {
+      "id": "015",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 1,
+      "flashX": 491.5,
+      "flashY": 263.6,
+      "initialOwner": "Bandits"
+    },
+    {
+      "id": "017",
+      "label": "Westaria Camp",
+      "kind": "Stronghold",
+      "locationNum": 1,
+      "flashX": 409.8,
+      "flashY": 350.8,
+      "strongholdKind": "Camp",
+      "initialOwner": "Westaria"
+    },
+    {
+      "id": "007",
+      "label": "Khaganate Castle",
+      "kind": "Stronghold",
+      "locationNum": 0,
+      "flashX": 586.95,
+      "flashY": 141.05,
+      "strongholdKind": "Castle",
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "027",
+      "label": "Khaganate MagicTower",
+      "kind": "Stronghold",
+      "locationNum": 2,
+      "flashX": 151.5,
+      "flashY": 199.4,
+      "strongholdKind": "MagicTower",
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "bs_00_0",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 519.5,
+      "flashY": 112.9,
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "bs_01_0",
+      "label": "Site 1",
+      "kind": "BuildSite",
+      "locationNum": 1,
+      "flashX": 288.85,
+      "flashY": 322.2,
+      "initialOwner": "Westaria"
+    },
+    {
+      "id": "bs_00_1",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 672.65,
+      "flashY": 160.6,
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "bs_00_2",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 609.5,
+      "flashY": 193.15,
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "bs_01_1",
+      "label": "Site 1",
+      "kind": "BuildSite",
+      "locationNum": 1,
+      "flashX": 342.0,
+      "flashY": 304.55,
+      "initialOwner": "Westaria"
+    },
+    {
+      "id": "bs_01_2",
+      "label": "Site 1",
+      "kind": "BuildSite",
+      "locationNum": 1,
+      "flashX": 494.9,
+      "flashY": 368.35,
+      "initialOwner": "Westaria"
+    },
+    {
+      "id": "016",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 1,
+      "flashX": 546.85,
+      "flashY": 260.5
+    },
+    {
+      "id": "bs_02_0",
+      "label": "Site 2",
+      "kind": "BuildSite",
+      "locationNum": 2,
+      "flashX": 118.5,
+      "flashY": 270.75,
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "030",
+      "label": "Junction 030",
+      "kind": "Junction",
+      "locationNum": 1,
+      "flashX": 475.05,
+      "flashY": 271.15
+    },
+    {
+      "id": "060",
+      "label": "Junction 060",
+      "kind": "Junction",
+      "locationNum": 2,
+      "flashX": 216.0,
+      "flashY": 197.1
+    },
+    {
+      "id": "070",
+      "label": "Junction 070",
+      "kind": "Junction",
+      "locationNum": 2,
+      "flashX": 305.0,
+      "flashY": 173.05
+    },
+    {
+      "id": "090",
+      "label": "Junction 090",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 543.0,
+      "flashY": 154.6
+    },
+    {
+      "id": "bs_01_3",
+      "label": "Site 1",
+      "kind": "BuildSite",
+      "locationNum": 1,
+      "flashX": 520.5,
+      "flashY": 328.5,
+      "initialOwner": "Westaria"
+    },
+    {
+      "id": "bs_01_4",
+      "label": "Site 1",
+      "kind": "BuildSite",
+      "locationNum": 1,
+      "flashX": 320.1,
+      "flashY": 358.05,
+      "initialOwner": "Westaria"
+    },
+    {
+      "id": "056",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 1,
+      "flashX": 312.45,
+      "flashY": 110.75
+    },
+    {
+      "id": "055",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 1,
+      "flashX": 348.75,
+      "flashY": 122.35,
+      "initialOwner": "Bandits"
+    }
+  ],
+  "edges": [
+    {
+      "id": "ed_050_055",
+      "from": "050",
+      "to": "055",
+      "waypoints": [
+        {
+          "x": 360.2,
+          "y": 138.65
+        }
+      ]
+    },
+    {
+      "id": "ed_030_050",
+      "from": "030",
+      "to": "050",
+      "waypoints": []
+    },
+    {
+      "id": "ed_030_015",
+      "from": "030",
+      "to": "015",
+      "waypoints": [
+        {
+          "x": 502.75,
+          "y": 264.25
+        }
+      ]
+    },
+    {
+      "id": "ed_016_015",
+      "from": "016",
+      "to": "015",
+      "waypoints": [
+        {
+          "x": 555.0,
+          "y": 260.1
+        }
+      ]
+    },
+    {
+      "id": "ed_060_027",
+      "from": "060",
+      "to": "027",
+      "waypoints": [
+        {
+          "x": 230.9,
+          "y": 210.55
+        }
+      ]
+    },
+    {
+      "id": "ed_060_070",
+      "from": "060",
+      "to": "070",
+      "waypoints": [
+        {
+          "x": 239.3,
+          "y": 208.4
+        }
+      ]
+    },
+    {
+      "id": "ed_050_070",
+      "from": "050",
+      "to": "070",
+      "waypoints": [
+        {
+          "x": 323.65,
+          "y": 164.35
+        }
+      ]
+    },
+    {
+      "id": "ed_050_090",
+      "from": "050",
+      "to": "090",
+      "waypoints": [
+        {
+          "x": 423.8,
+          "y": 157.91
+        },
+        {
+          "x": 455.53,
+          "y": 161.7
+        },
+        {
+          "x": 487.42,
+          "y": 160.89
+        },
+        {
+          "x": 519.51,
+          "y": 154.58
+        }
+      ]
+    },
+    {
+      "id": "ed_090_007",
+      "from": "090",
+      "to": "007",
+      "waypoints": []
+    },
+    {
+      "id": "ed_017_030",
+      "from": "017",
+      "to": "030",
+      "waypoints": [
+        {
+          "x": 438.9,
+          "y": 326.15
+        },
+        {
+          "x": 454.1,
+          "y": 315.05
+        },
+        {
+          "x": 465.5,
+          "y": 301.05
+        },
+        {
+          "x": 472.0,
+          "y": 284.55
+        }
+      ]
+    },
+    {
+      "id": "ed_055_056",
+      "from": "055",
+      "to": "056",
+      "waypoints": []
+    }
+  ]
+}

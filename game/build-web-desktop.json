@@ -4,9 +4,10 @@
   "buildPath": "project://build",
   "outputName": "web-desktop",
   "startScene": "020f3c29-5c47-4348-942a-bd81f4043387",
-  "debug": true,
-  "sourceMaps": true,
-  "md5Cache": false,
+  "debug": false,
+  "sourceMaps": false,
+  "md5Cache": true,
+  "server": "",
   "packages": {
     "web-desktop": {
       "resolution": {

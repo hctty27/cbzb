@@ -1,0 +1,465 @@
+{
+  "id": 3,
+  "missionIndex": 3,
+  "campaign": "Westaria",
+  "playerFaction": "Westaria",
+  "name": "Friend Or Foe?",
+  "briefing": "We wage a crusade against the filth in the name of The Lord. City of Westport is well fortified against a direct attack. But we can use limited forces to create a springboard for our advancement on the continent.",
+  "bgKey": "map/level3_bg",
+  "xpReward": 1750,
+  "goldMedalSec": 330,
+  "silverMedalSec": 570,
+  "mapPin": {
+    "x": 322.9,
+    "y": 138.2
+  },
+  "enemies": [
+    "TheEmpire"
+  ],
+  "enemyTechTier": 1,
+  "playerStartGold": 250,
+  "playerStartMana": 100,
+  "enemyStartGold": 320,
+  "tutorialMode": "none",
+  "nodes": [
+    {
+      "id": "010",
+      "label": "Junction 010",
+      "kind": "Junction",
+      "locationNum": 1,
+      "flashX": 186.5,
+      "flashY": 262.5
+    },
+    {
+      "id": "020",
+      "label": "Junction 020",
+      "kind": "Junction",
+      "locationNum": 1,
+      "flashX": 128.0,
+      "flashY": 340.0
+    },
+    {
+      "id": "000",
+      "label": "Junction 000",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 351.5,
+      "flashY": 179.5
+    },
+    {
+      "id": "005",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 0,
+      "flashX": 389.15,
+      "flashY": 228.75,
+      "initialOwner": "Bandits"
+    },
+    {
+      "id": "007",
+      "label": "Westaria Castle",
+      "kind": "Stronghold",
+      "locationNum": 0,
+      "flashX": 472.5,
+      "flashY": 129.5,
+      "strongholdKind": "Castle",
+      "initialOwner": "Westaria"
+    },
+    {
+      "id": "bs_00_0",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 398.0,
+      "flashY": 109.3,
+      "initialOwner": "Westaria"
+    },
+    {
+      "id": "037",
+      "label": "Empire Castle",
+      "kind": "Stronghold",
+      "locationNum": 2,
+      "flashX": 130.95,
+      "flashY": 451.3,
+      "strongholdKind": "Castle",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "017",
+      "label": "Empire Town",
+      "kind": "Stronghold",
+      "locationNum": 3,
+      "flashX": 425.4,
+      "flashY": 475.75,
+      "strongholdKind": "Town",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "006",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 0,
+      "flashX": 421.5,
+      "flashY": 250.7
+    },
+    {
+      "id": "027",
+      "label": "Empire MagicTower",
+      "kind": "Stronghold",
+      "locationNum": 1,
+      "flashX": 125.2,
+      "flashY": 210.85,
+      "strongholdKind": "MagicTower",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "057",
+      "label": "Empire Castle",
+      "kind": "Stronghold",
+      "locationNum": 4,
+      "flashX": 648.35,
+      "flashY": 209.35,
+      "strongholdKind": "Castle",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_00_1",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 543.0,
+      "flashY": 157.3,
+      "initialOwner": "Westaria"
+    },
+    {
+      "id": "bs_01_0",
+      "label": "Site 1",
+      "kind": "BuildSite",
+      "locationNum": 1,
+      "flashX": 206.0,
+      "flashY": 211.3,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_01_1",
+      "label": "Site 1",
+      "kind": "BuildSite",
+      "locationNum": 1,
+      "flashX": 112.0,
+      "flashY": 263.3,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_05_0",
+      "label": "Site 5",
+      "kind": "BuildSite",
+      "locationNum": 5,
+      "flashX": 652.5,
+      "flashY": 271.3,
+      "initialOwner": "Westaria"
+    },
+    {
+      "id": "016",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 5,
+      "flashX": 491.7,
+      "flashY": 308.75
+    },
+    {
+      "id": "015",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 5,
+      "flashX": 521.0,
+      "flashY": 337.5,
+      "initialOwner": "Bandits"
+    },
+    {
+      "id": "030",
+      "label": "Junction 030",
+      "kind": "Junction",
+      "locationNum": 2,
+      "flashX": 301.8,
+      "flashY": 448.8
+    },
+    {
+      "id": "040",
+      "label": "Junction 040",
+      "kind": "Junction",
+      "locationNum": 3,
+      "flashX": 384.6,
+      "flashY": 409.85
+    },
+    {
+      "id": "050",
+      "label": "Junction 050",
+      "kind": "Junction",
+      "locationNum": 4,
+      "flashX": 548.55,
+      "flashY": 371.0
+    },
+    {
+      "id": "060",
+      "label": "Junction 060",
+      "kind": "Junction",
+      "locationNum": 5,
+      "flashX": 708.5,
+      "flashY": 304.5
+    },
+    {
+      "id": "080",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 2,
+      "flashX": 291.1,
+      "flashY": 526.1
+    },
+    {
+      "id": "070",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 2,
+      "flashX": 322.8,
+      "flashY": 507.0,
+      "initialOwner": "Bandits"
+    },
+    {
+      "id": "025",
+      "label": "Junction 025",
+      "kind": "Junction",
+      "locationNum": 1,
+      "flashX": 173.95,
+      "flashY": 415.35
+    },
+    {
+      "id": "bs_02_0",
+      "label": "Site 2",
+      "kind": "BuildSite",
+      "locationNum": 2,
+      "flashX": 206.0,
+      "flashY": 467.55,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_02_1",
+      "label": "Site 2",
+      "kind": "BuildSite",
+      "locationNum": 2,
+      "flashX": 169.4,
+      "flashY": 508.95,
+      "initialOwner": "TheEmpire"
+    }
+  ],
+  "edges": [
+    {
+      "id": "ed_007_000",
+      "from": "007",
+      "to": "000",
+      "waypoints": []
+    },
+    {
+      "id": "ed_000_010",
+      "from": "000",
+      "to": "010",
+      "waypoints": []
+    },
+    {
+      "id": "ed_017_040",
+      "from": "017",
+      "to": "040",
+      "waypoints": [
+        {
+          "x": 416.6,
+          "y": 464.35
+        }
+      ]
+    },
+    {
+      "id": "ed_020_010",
+      "from": "020",
+      "to": "010",
+      "waypoints": []
+    },
+    {
+      "id": "ed_000_005",
+      "from": "000",
+      "to": "005",
+      "waypoints": [
+        {
+          "x": 353.35,
+          "y": 217.5
+        }
+      ]
+    },
+    {
+      "id": "ed_005_006",
+      "from": "005",
+      "to": "006",
+      "waypoints": [
+        {
+          "x": 392.05,
+          "y": 247.25
+        }
+      ]
+    },
+    {
+      "id": "ed_027_010",
+      "from": "027",
+      "to": "010",
+      "waypoints": [
+        {
+          "x": 212.95,
+          "y": 225.15
+        }
+      ]
+    },
+    {
+      "id": "ed_037_025",
+      "from": "037",
+      "to": "025",
+      "waypoints": [
+        {
+          "x": 146.15,
+          "y": 401.1
+        }
+      ]
+    },
+    {
+      "id": "ed_040_050",
+      "from": "040",
+      "to": "050",
+      "waypoints": [
+        {
+          "x": 413.05,
+          "y": 412.95
+        },
+        {
+          "x": 452.55,
+          "y": 418.95
+        },
+        {
+          "x": 488.5,
+          "y": 405.5
+        },
+        {
+          "x": 520.55,
+          "y": 387.0
+        }
+      ]
+    },
+    {
+      "id": "ed_050_060",
+      "from": "050",
+      "to": "060",
+      "waypoints": []
+    },
+    {
+      "id": "ed_050_015",
+      "from": "050",
+      "to": "015",
+      "waypoints": [
+        {
+          "x": 513.7,
+          "y": 332.95
+        }
+      ]
+    },
+    {
+      "id": "ed_015_016",
+      "from": "015",
+      "to": "016",
+      "waypoints": [
+        {
+          "x": 512.55,
+          "y": 297.7
+        }
+      ]
+    },
+    {
+      "id": "ed_060_057",
+      "from": "060",
+      "to": "057",
+      "waypoints": [
+        {
+          "x": 712.5,
+          "y": 283.5
+        },
+        {
+          "x": 703.5,
+          "y": 259.5
+        },
+        {
+          "x": 688.5,
+          "y": 239.5
+        },
+        {
+          "x": 672.5,
+          "y": 222.5
+        }
+      ]
+    },
+    {
+      "id": "ed_070_080",
+      "from": "070",
+      "to": "080",
+      "waypoints": [
+        {
+          "x": 304.6,
+          "y": 530.95
+        }
+      ]
+    },
+    {
+      "id": "ed_030_070",
+      "from": "030",
+      "to": "070",
+      "waypoints": [
+        {
+          "x": 295.1,
+          "y": 492.0
+        }
+      ]
+    },
+    {
+      "id": "ed_020_025",
+      "from": "020",
+      "to": "025",
+      "waypoints": []
+    },
+    {
+      "id": "ed_030_040",
+      "from": "030",
+      "to": "040",
+      "waypoints": [
+        {
+          "x": 315.15,
+          "y": 441.35
+        },
+        {
+          "x": 329.9,
+          "y": 430.85
+        },
+        {
+          "x": 342.15,
+          "y": 413.8
+        },
+        {
+          "x": 364.15,
+          "y": 409.85
+        }
+      ]
+    },
+    {
+      "id": "ed_025_030",
+      "from": "025",
+      "to": "030",
+      "waypoints": [
+        {
+          "x": 218.4,
+          "y": 405.7
+        }
+      ]
+    }
+  ]
+}

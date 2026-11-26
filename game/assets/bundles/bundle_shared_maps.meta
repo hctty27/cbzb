@@ -1,0 +1,14 @@
+{
+  "ver": "1.2.0",
+  "importer": "directory",
+  "imported": true,
+  "uuid": "a36c9150-ca96-403e-88dd-8f29e95b3eb5",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "isBundle": true,
+    "bundleConfigID": "cdn_remote",
+    "bundleName": "bundle_shared_maps",
+    "priority": 5
+  }
+}

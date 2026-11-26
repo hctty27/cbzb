@@ -1,0 +1,716 @@
+{
+  "id": 17,
+  "missionIndex": 7,
+  "campaign": "TheKhaganate",
+  "playerFaction": "TheKhaganate",
+  "name": "Secrets of the Grave",
+  "briefing": "Our shamans conceived the secrets of the Empire's necromancers and our forefathers are now fighting on our side. The Empire must take these secrets to the grave \u2013 these secrets now belong to us!",
+  "bgKey": "map/level17_bg",
+  "xpReward": 5000,
+  "goldMedalSec": 330,
+  "silverMedalSec": 570,
+  "mapPin": {
+    "x": 534.8,
+    "y": 171.2
+  },
+  "enemies": [
+    "TheCult",
+    "TheEmpire"
+  ],
+  "enemyTechTier": 2,
+  "playerStartGold": 250,
+  "playerStartMana": 100,
+  "enemyStartGold": 520,
+  "tutorialMode": "none",
+  "nodes": [
+    {
+      "id": "067",
+      "label": "Empire MagicTower",
+      "kind": "Stronghold",
+      "locationNum": 4,
+      "flashX": 311.85,
+      "flashY": 496.9,
+      "strongholdKind": "MagicTower",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "027",
+      "label": "Cult Castle",
+      "kind": "Stronghold",
+      "locationNum": 0,
+      "flashX": 187.0,
+      "flashY": 164.35,
+      "strongholdKind": "Castle",
+      "initialOwner": "TheCult"
+    },
+    {
+      "id": "047",
+      "label": "Khaganate Castle",
+      "kind": "Stronghold",
+      "locationNum": 2,
+      "flashX": 676.4,
+      "flashY": 358.8,
+      "strongholdKind": "Castle",
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "057",
+      "label": "Empire Town",
+      "kind": "Stronghold",
+      "locationNum": 3,
+      "flashX": 446.65,
+      "flashY": 310.7,
+      "strongholdKind": "Town",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "077",
+      "label": "Empire Castle",
+      "kind": "Stronghold",
+      "locationNum": 5,
+      "flashX": 78.85,
+      "flashY": 405.65,
+      "strongholdKind": "Castle",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "037",
+      "label": "Empire MagicTower",
+      "kind": "Stronghold",
+      "locationNum": 1,
+      "flashX": 639.85,
+      "flashY": 154.6,
+      "strongholdKind": "MagicTower",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_01_0",
+      "label": "Site 1",
+      "kind": "BuildSite",
+      "locationNum": 1,
+      "flashX": 534.3,
+      "flashY": 128.65,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_02_0",
+      "label": "Site 2",
+      "kind": "BuildSite",
+      "locationNum": 2,
+      "flashX": 623.25,
+      "flashY": 399.35,
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "bs_05_0",
+      "label": "Site 5",
+      "kind": "BuildSite",
+      "locationNum": 5,
+      "flashX": 156.4,
+      "flashY": 444.35,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "010",
+      "label": "Junction 010",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 219.35,
+      "flashY": 180.2
+    },
+    {
+      "id": "016",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 0,
+      "flashX": 274.0,
+      "flashY": 276.15,
+      "initialOwner": "Bandits"
+    },
+    {
+      "id": "017",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 0,
+      "flashX": 272.6,
+      "flashY": 314.75
+    },
+    {
+      "id": "bs_00_0",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 92.5,
+      "flashY": 88.55,
+      "initialOwner": "TheCult"
+    },
+    {
+      "id": "bs_02_1",
+      "label": "Site 2",
+      "kind": "BuildSite",
+      "locationNum": 2,
+      "flashX": 644.7,
+      "flashY": 489.2,
+      "initialOwner": "TheKhaganate"
+    },
+    {
+      "id": "bs_00_1",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 249.9,
+      "flashY": 121.95,
+      "initialOwner": "TheCult"
+    },
+    {
+      "id": "bs_00_2",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 118.95,
+      "flashY": 199.95,
+      "initialOwner": "TheCult"
+    },
+    {
+      "id": "bs_01_1",
+      "label": "Site 1",
+      "kind": "BuildSite",
+      "locationNum": 1,
+      "flashX": 591.2,
+      "flashY": 193.35,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_05_1",
+      "label": "Site 5",
+      "kind": "BuildSite",
+      "locationNum": 5,
+      "flashX": 92.05,
+      "flashY": 469.9,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "036",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 3,
+      "flashX": 455.75,
+      "flashY": 196.25
+    },
+    {
+      "id": "033",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 3,
+      "flashX": 498.65,
+      "flashY": 181.8,
+      "initialOwner": "Bandits"
+    },
+    {
+      "id": "044",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 2,
+      "flashX": 616.95,
+      "flashY": 289.15,
+      "initialOwner": "Bandits"
+    },
+    {
+      "id": "048",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 2,
+      "flashX": 568.9,
+      "flashY": 260.05
+    },
+    {
+      "id": "020",
+      "label": "Junction 020",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 413.95,
+      "flashY": 159.45
+    },
+    {
+      "id": "030",
+      "label": "Junction 030",
+      "kind": "Junction",
+      "locationNum": 1,
+      "flashX": 616.75,
+      "flashY": 96.25
+    },
+    {
+      "id": "040",
+      "label": "Junction 040",
+      "kind": "Junction",
+      "locationNum": 2,
+      "flashX": 723.95,
+      "flashY": 234.95
+    },
+    {
+      "id": "050",
+      "label": "Junction 050",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 608.95,
+      "flashY": 358.95
+    },
+    {
+      "id": "060",
+      "label": "Junction 060",
+      "kind": "Junction",
+      "locationNum": 4,
+      "flashX": 344.5,
+      "flashY": 497.1
+    },
+    {
+      "id": "070",
+      "label": "Junction 070",
+      "kind": "Junction",
+      "locationNum": 5,
+      "flashX": 137.35,
+      "flashY": 392.45
+    },
+    {
+      "id": "032",
+      "label": "Junction 032",
+      "kind": "Junction",
+      "locationNum": 3,
+      "flashX": 491.75,
+      "flashY": 264.75
+    },
+    {
+      "id": "066",
+      "label": "Junction 066",
+      "kind": "Junction",
+      "locationNum": 3,
+      "flashX": 443.95,
+      "flashY": 325.95
+    },
+    {
+      "id": "015",
+      "label": "Junction 015",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 276.95,
+      "flashY": 215.95
+    },
+    {
+      "id": "bs_05_2",
+      "label": "Site 5",
+      "kind": "BuildSite",
+      "locationNum": 5,
+      "flashX": 152.75,
+      "flashY": 346.0,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "031",
+      "label": "Junction 031",
+      "kind": "Junction",
+      "locationNum": 1,
+      "flashX": 696.8,
+      "flashY": 139.6
+    },
+    {
+      "id": "034",
+      "label": "Junction 034",
+      "kind": "Junction",
+      "locationNum": 3,
+      "flashX": 547.1,
+      "flashY": 181.25
+    }
+  ],
+  "edges": [
+    {
+      "id": "ed_060_070",
+      "from": "060",
+      "to": "070",
+      "waypoints": [
+        {
+          "x": 250.45,
+          "y": 507.65
+        },
+        {
+          "x": 224.7,
+          "y": 478.15
+        },
+        {
+          "x": 228.95,
+          "y": 436.15
+        },
+        {
+          "x": 206.65,
+          "y": 403.15
+        }
+      ]
+    },
+    {
+      "id": "ed_040_050",
+      "from": "040",
+      "to": "050",
+      "waypoints": [
+        {
+          "x": 718.85,
+          "y": 267.95
+        },
+        {
+          "x": 698.1,
+          "y": 298.95
+        },
+        {
+          "x": 668.4,
+          "y": 321.45
+        },
+        {
+          "x": 633.05,
+          "y": 347.95
+        }
+      ]
+    },
+    {
+      "id": "ed_031_040",
+      "from": "031",
+      "to": "040",
+      "waypoints": [
+        {
+          "x": 707.15,
+          "y": 150.6
+        },
+        {
+          "x": 718.9,
+          "y": 171.6
+        },
+        {
+          "x": 722.7,
+          "y": 193.6
+        },
+        {
+          "x": 723.9,
+          "y": 218.1
+        }
+      ]
+    },
+    {
+      "id": "ed_010_015",
+      "from": "010",
+      "to": "015",
+      "waypoints": [
+        {
+          "x": 234.5,
+          "y": 200.95
+        }
+      ]
+    },
+    {
+      "id": "ed_015_016",
+      "from": "015",
+      "to": "016",
+      "waypoints": [
+        {
+          "x": 253.95,
+          "y": 237.95
+        }
+      ]
+    },
+    {
+      "id": "ed_016_017",
+      "from": "016",
+      "to": "017",
+      "waypoints": [
+        {
+          "x": 253.95,
+          "y": 289.95
+        }
+      ]
+    },
+    {
+      "id": "ed_015_066",
+      "from": "015",
+      "to": "066",
+      "waypoints": [
+        {
+          "x": 334.95,
+          "y": 259.95
+        }
+      ]
+    },
+    {
+      "id": "ed_033_036",
+      "from": "033",
+      "to": "036",
+      "waypoints": [
+        {
+          "x": 450.95,
+          "y": 186.1
+        }
+      ]
+    },
+    {
+      "id": "ed_057_032",
+      "from": "057",
+      "to": "032",
+      "waypoints": [
+        {
+          "x": 466.15,
+          "y": 280.5
+        }
+      ]
+    },
+    {
+      "id": "ed_060_066",
+      "from": "060",
+      "to": "066",
+      "waypoints": [
+        {
+          "x": 374.95,
+          "y": 398.95
+        }
+      ]
+    },
+    {
+      "id": "ed_044_048",
+      "from": "044",
+      "to": "048",
+      "waypoints": []
+    },
+    {
+      "id": "ed_010_027",
+      "from": "010",
+      "to": "027",
+      "waypoints": []
+    },
+    {
+      "id": "ed_066_057",
+      "from": "066",
+      "to": "057",
+      "waypoints": [
+        {
+          "x": 428.95,
+          "y": 316.9
+        }
+      ]
+    },
+    {
+      "id": "ed_070_077",
+      "from": "070",
+      "to": "077",
+      "waypoints": [
+        {
+          "x": 92.0,
+          "y": 407.8
+        }
+      ]
+    },
+    {
+      "id": "ed_060_067",
+      "from": "060",
+      "to": "067",
+      "waypoints": [
+        {
+          "x": 309.5,
+          "y": 484.4
+        }
+      ]
+    },
+    {
+      "id": "ed_037_031",
+      "from": "037",
+      "to": "031",
+      "waypoints": [
+        {
+          "x": 659.55,
+          "y": 143.1
+        }
+      ]
+    },
+    {
+      "id": "ed_050_047",
+      "from": "050",
+      "to": "047",
+      "waypoints": [
+        {
+          "x": 621.75,
+          "y": 359.7
+        }
+      ]
+    },
+    {
+      "id": "ed_010_020",
+      "from": "010",
+      "to": "020",
+      "waypoints": [
+        {
+          "x": 246.3,
+          "y": 162.95
+        },
+        {
+          "x": 299.55,
+          "y": 143.95
+        },
+        {
+          "x": 355.8,
+          "y": 156.95
+        },
+        {
+          "x": 404.45,
+          "y": 162.95
+        }
+      ]
+    },
+    {
+      "id": "ed_020_030",
+      "from": "020",
+      "to": "030",
+      "waypoints": [
+        {
+          "x": 431.55,
+          "y": 141.6
+        },
+        {
+          "x": 457.8,
+          "y": 111.35
+        },
+        {
+          "x": 514.05,
+          "y": 94.85
+        },
+        {
+          "x": 572.95,
+          "y": 92.85
+        }
+      ]
+    },
+    {
+      "id": "ed_030_031",
+      "from": "030",
+      "to": "031",
+      "waypoints": [
+        {
+          "x": 632.1,
+          "y": 99.25
+        },
+        {
+          "x": 651.1,
+          "y": 103.75
+        },
+        {
+          "x": 671.1,
+          "y": 114.05
+        },
+        {
+          "x": 685.75,
+          "y": 126.0
+        }
+      ]
+    },
+    {
+      "id": "ed_070_010",
+      "from": "070",
+      "to": "010",
+      "waypoints": [
+        {
+          "x": 67.05,
+          "y": 352.5
+        },
+        {
+          "x": 70.8,
+          "y": 314.5
+        },
+        {
+          "x": 127.55,
+          "y": 286.5
+        },
+        {
+          "x": 190.7,
+          "y": 198.5
+        }
+      ]
+    },
+    {
+      "id": "ed_050_060",
+      "from": "050",
+      "to": "060",
+      "waypoints": [
+        {
+          "x": 569.8,
+          "y": 405.95
+        },
+        {
+          "x": 528.55,
+          "y": 450.95
+        },
+        {
+          "x": 461.85,
+          "y": 481.45
+        },
+        {
+          "x": 383.5,
+          "y": 504.95
+        }
+      ]
+    },
+    {
+      "id": "ed_030_034",
+      "from": "030",
+      "to": "034",
+      "waypoints": [
+        {
+          "x": 551.6,
+          "y": 146.1
+        }
+      ]
+    },
+    {
+      "id": "ed_050_044",
+      "from": "050",
+      "to": "044",
+      "waypoints": [
+        {
+          "x": 609.25,
+          "y": 344.4
+        },
+        {
+          "x": 614.0,
+          "y": 331.4
+        },
+        {
+          "x": 615.25,
+          "y": 316.9
+        },
+        {
+          "x": 615.0,
+          "y": 303.4
+        }
+      ]
+    },
+    {
+      "id": "ed_050_066",
+      "from": "050",
+      "to": "066",
+      "waypoints": [
+        {
+          "x": 515.9,
+          "y": 345.4
+        }
+      ]
+    },
+    {
+      "id": "ed_032_034",
+      "from": "032",
+      "to": "034",
+      "waypoints": [
+        {
+          "x": 493.65,
+          "y": 225.25
+        }
+      ]
+    },
+    {
+      "id": "ed_034_033",
+      "from": "034",
+      "to": "033",
+      "waypoints": []
+    }
+  ]
+}

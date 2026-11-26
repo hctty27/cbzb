@@ -1,7 +1,9 @@
-import { Color, Graphics, Node, Rect, resources, Size, SpriteFrame, Texture2D, UITransform } from 'cc';
+import { assetManager, Color, Graphics, Node, Rect, Size, SpriteFrame, Texture2D, UITransform } from 'cc';
 import { SPRITE_MANIFEST, SpriteAssetEntry } from '../data/AssetManifest';
+import { ensureBundle } from './AssetBundleManager';
 
 const textureCache = new Map<string, Texture2D>();
+const inFlightTextures = new Map<string, Promise<Texture2D>>();
 const staticFrameCache = new Map<string, SpriteFrame>();
 const stripCache = new Map<string, SpriteFrame[]>();
 
@@ -41,28 +43,72 @@ export function drawPanel(
 
 export function loadTextureByKey(key: string): Promise<Texture2D> {
   const cached = textureCache.get(key);
-  if (cached) return Promise.resolve(cached);
+  if (cached && cached.isValid) return Promise.resolve(cached);
+  if (cached) textureCache.delete(key);
+
+  const pending = inFlightTextures.get(key);
+  if (pending) return pending;
 
   const entry: SpriteAssetEntry | undefined = SPRITE_MANIFEST[key];
   if (!entry) {
     return Promise.reject(new Error(`Unknown SpriteAsset key: ${key}`));
   }
 
-  return new Promise((resolve, reject) => {
-    resources.load(`${entry.path}/texture`, Texture2D, (err, tex) => {
-      if (err || !tex) {
-        reject(err ?? new Error(`Failed to load texture ${entry.path}/texture`));
-        return;
-      }
-      textureCache.set(key, tex);
-      resolve(tex);
+  const p = ensureBundle(entry.bundle ?? 'resources')
+    .then(
+      (bundle) =>
+        new Promise<Texture2D>((resolve, reject) => {
+          bundle.load(`${entry.path}/texture`, Texture2D, (err, tex) => {
+            if (err || !tex) {
+              reject(err ?? new Error(`Failed to load texture ${entry.path}/texture from ${entry.bundle ?? 'resources'}`));
+              return;
+            }
+            textureCache.set(key, tex);
+            resolve(tex);
+          });
+        }),
+    )
+    .finally(() => {
+      inFlightTextures.delete(key);
     });
-  });
+
+  inFlightTextures.set(key, p);
+  return p;
+}
+
+export function preloadTextureByKey(key: string): Promise<void> {
+  return loadTextureByKey(key).then(
+    () => undefined,
+    () => undefined,
+  );
+}
+
+export function releaseTextureByKey(key: string): void {
+  stripLoading.delete(key);
+  const sf = staticFrameCache.get(key);
+  if (sf) {
+    staticFrameCache.delete(key);
+    if (sf.isValid) sf.destroy();
+  }
+  const strip = stripCache.get(key);
+  if (strip) {
+    stripCache.delete(key);
+    for (const f of strip) {
+      if (f.isValid) f.destroy();
+    }
+  }
+  const tex = textureCache.get(key);
+  if (tex) {
+    textureCache.delete(key);
+    if (tex.isValid) {
+      assetManager.releaseAsset(tex);
+    }
+  }
 }
 
 export async function getStaticSpriteFrame(key: string): Promise<SpriteFrame> {
   const cached = staticFrameCache.get(key);
-  if (cached) return cached;
+  if (cached && cached.isValid) return cached;
 
   const tex = await loadTextureByKey(key);
   const sf = new SpriteFrame();
@@ -77,7 +123,8 @@ const stripLoading = new Set<string>();
 
 export function getStripFramesSync(key: string): SpriteFrame[] | null {
   const cached = stripCache.get(key);
-  if (cached) return cached;
+  if (cached && cached.length > 0 && cached[0].isValid) return cached;
+  if (cached) stripCache.delete(key);
   if (!stripLoading.has(key)) {
     stripLoading.add(key);
     getStripFrames(key).catch(() => {});
@@ -87,7 +134,8 @@ export function getStripFramesSync(key: string): SpriteFrame[] | null {
 
 export async function getStripFrames(key: string): Promise<SpriteFrame[]> {
   const cached = stripCache.get(key);
-  if (cached) return cached;
+  if (cached && cached.length > 0 && cached[0].isValid) return cached;
+  if (cached) stripCache.delete(key);
 
   const entry = SPRITE_MANIFEST[key];
   if (!entry) throw new Error(`Unknown strip key: ${key}`);

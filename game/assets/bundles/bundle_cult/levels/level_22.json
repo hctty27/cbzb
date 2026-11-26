@@ -1,0 +1,450 @@
+{
+  "id": 22,
+  "missionIndex": 2,
+  "campaign": "TheCult",
+  "playerFaction": "TheCult",
+  "name": "Remnants of the Empire",
+  "briefing": "Alarming reports came from our spies in the Capital: Khan and his shamans are corrupted by necromancy. They sacrifice their enemies and resurrect them. We have to get rid of the Imperial forces' remnants in our homelands.",
+  "bgKey": "map/level22_bg",
+  "xpReward": 1500,
+  "goldMedalSec": 330,
+  "silverMedalSec": 570,
+  "mapPin": {
+    "x": 493.8,
+    "y": 146.7
+  },
+  "enemies": [
+    "TheEmpire"
+  ],
+  "enemyTechTier": 1,
+  "playerStartGold": 250,
+  "playerStartMana": 100,
+  "enemyStartGold": 260,
+  "tutorialMode": "none",
+  "nodes": [
+    {
+      "id": "017",
+      "label": "Empire MagicTower",
+      "kind": "Stronghold",
+      "locationNum": 1,
+      "flashX": 315.05,
+      "flashY": 488.05,
+      "strongholdKind": "MagicTower",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "037",
+      "label": "Empire MagicTower",
+      "kind": "Stronghold",
+      "locationNum": 3,
+      "flashX": 478.2,
+      "flashY": 185.2,
+      "strongholdKind": "MagicTower",
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "007",
+      "label": "Cult Castle",
+      "kind": "Stronghold",
+      "locationNum": 0,
+      "flashX": 696.95,
+      "flashY": 359.55,
+      "strongholdKind": "Castle",
+      "initialOwner": "TheCult"
+    },
+    {
+      "id": "bs_02_0",
+      "label": "Site 2",
+      "kind": "BuildSite",
+      "locationNum": 2,
+      "flashX": 146.9,
+      "flashY": 245.05,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "bs_00_0",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 595.85,
+      "flashY": 342.9,
+      "initialOwner": "TheCult"
+    },
+    {
+      "id": "043",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 2,
+      "flashX": 148.25,
+      "flashY": 359.05,
+      "initialOwner": "Bandits"
+    },
+    {
+      "id": "046",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 2,
+      "flashX": 191.7,
+      "flashY": 392.65
+    },
+    {
+      "id": "bs_02_1",
+      "label": "Site 2",
+      "kind": "BuildSite",
+      "locationNum": 2,
+      "flashX": 333.4,
+      "flashY": 241.5,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "053",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 0,
+      "flashX": 622.4,
+      "flashY": 83.25,
+      "initialOwner": "Bandits"
+    },
+    {
+      "id": "056",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 0,
+      "flashX": 679.65,
+      "flashY": 77.9
+    },
+    {
+      "id": "bs_00_1",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 586.4,
+      "flashY": 434.9,
+      "initialOwner": "TheCult"
+    },
+    {
+      "id": "010",
+      "label": "Junction 010",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 635.45,
+      "flashY": 373.4
+    },
+    {
+      "id": "bs_00_2",
+      "label": "Site 0",
+      "kind": "BuildSite",
+      "locationNum": 0,
+      "flashX": 668.85,
+      "flashY": 425.35,
+      "initialOwner": "TheCult"
+    },
+    {
+      "id": "bs_02_2",
+      "label": "Site 2",
+      "kind": "BuildSite",
+      "locationNum": 2,
+      "flashX": 241.45,
+      "flashY": 298.55,
+      "initialOwner": "TheEmpire"
+    },
+    {
+      "id": "020",
+      "label": "Junction 020",
+      "kind": "Junction",
+      "locationNum": 0,
+      "flashX": 523.45,
+      "flashY": 401.45
+    },
+    {
+      "id": "030",
+      "label": "Junction 030",
+      "kind": "Junction",
+      "locationNum": 1,
+      "flashX": 368.15,
+      "flashY": 486.9
+    },
+    {
+      "id": "040",
+      "label": "Junction 040",
+      "kind": "Junction",
+      "locationNum": 2,
+      "flashX": 293.45,
+      "flashY": 267.95
+    },
+    {
+      "id": "050",
+      "label": "Junction 050",
+      "kind": "Junction",
+      "locationNum": 3,
+      "flashX": 535.45,
+      "flashY": 176.95
+    },
+    {
+      "id": "013",
+      "label": "Ogre Guard",
+      "kind": "OgreGuard",
+      "locationNum": 0,
+      "flashX": 691.4,
+      "flashY": 477.55,
+      "initialOwner": "Bandits"
+    },
+    {
+      "id": "015",
+      "label": "Gold Chest",
+      "kind": "Chest",
+      "locationNum": 0,
+      "flashX": 635.75,
+      "flashY": 476.2
+    },
+    {
+      "id": "027",
+      "label": "Empire Castle",
+      "kind": "Stronghold",
+      "locationNum": 2,
+      "flashX": 237.0,
+      "flashY": 236.4,
+      "strongholdKind": "Castle",
+      "initialOwner": "TheEmpire"
+    }
+  ],
+  "edges": [
+    {
+      "id": "ed_020_040",
+      "from": "020",
+      "to": "040",
+      "waypoints": [
+        {
+          "x": 502.95,
+          "y": 390.9
+        },
+        {
+          "x": 459.15,
+          "y": 386.4
+        },
+        {
+          "x": 414.05,
+          "y": 371.35
+        },
+        {
+          "x": 369.95,
+          "y": 348.2
+        },
+        {
+          "x": 350.65,
+          "y": 308.8
+        },
+        {
+          "x": 316.2,
+          "y": 277.8
+        }
+      ]
+    },
+    {
+      "id": "ed_007_010",
+      "from": "007",
+      "to": "010",
+      "waypoints": []
+    },
+    {
+      "id": "ed_010_020",
+      "from": "010",
+      "to": "020",
+      "waypoints": [
+        {
+          "x": 559.45,
+          "y": 390.9
+        }
+      ]
+    },
+    {
+      "id": "ed_043_046",
+      "from": "043",
+      "to": "046",
+      "waypoints": [
+        {
+          "x": 140.5,
+          "y": 379.9
+        }
+      ]
+    },
+    {
+      "id": "ed_053_056",
+      "from": "053",
+      "to": "056",
+      "waypoints": [
+        {
+          "x": 630.45,
+          "y": 76.95
+        }
+      ]
+    },
+    {
+      "id": "ed_017_030",
+      "from": "017",
+      "to": "030",
+      "waypoints": [
+        {
+          "x": 325.45,
+          "y": 487.4
+        }
+      ]
+    },
+    {
+      "id": "ed_027_040",
+      "from": "027",
+      "to": "040",
+      "waypoints": [
+        {
+          "x": 252.0,
+          "y": 256.95
+        }
+      ]
+    },
+    {
+      "id": "ed_037_050",
+      "from": "037",
+      "to": "050",
+      "waypoints": [
+        {
+          "x": 490.45,
+          "y": 177.45
+        }
+      ]
+    },
+    {
+      "id": "ed_040_043",
+      "from": "040",
+      "to": "043",
+      "waypoints": [
+        {
+          "x": 263.05,
+          "y": 263.1
+        },
+        {
+          "x": 212.55,
+          "y": 263.1
+        },
+        {
+          "x": 172.3,
+          "y": 287.1
+        },
+        {
+          "x": 147.45,
+          "y": 316.45
+        }
+      ]
+    },
+    {
+      "id": "ed_050_053",
+      "from": "050",
+      "to": "053",
+      "waypoints": [
+        {
+          "x": 530.05,
+          "y": 152.45
+        },
+        {
+          "x": 538.45,
+          "y": 122.45
+        },
+        {
+          "x": 560.3,
+          "y": 101.45
+        },
+        {
+          "x": 589.95,
+          "y": 85.8
+        }
+      ]
+    },
+    {
+      "id": "ed_010_050",
+      "from": "010",
+      "to": "050",
+      "waypoints": [
+        {
+          "x": 649.95,
+          "y": 347.6
+        },
+        {
+          "x": 649.95,
+          "y": 312.1
+        },
+        {
+          "x": 635.55,
+          "y": 276.1
+        },
+        {
+          "x": 609.45,
+          "y": 245.95
+        },
+        {
+          "x": 579.65,
+          "y": 223.5
+        },
+        {
+          "x": 551.15,
+          "y": 198.5
+        }
+      ]
+    },
+    {
+      "id": "ed_013_015",
+      "from": "013",
+      "to": "015",
+      "waypoints": [
+        {
+          "x": 644.45,
+          "y": 472.4
+        }
+      ]
+    },
+    {
+      "id": "ed_020_030",
+      "from": "020",
+      "to": "030",
+      "waypoints": [
+        {
+          "x": 498.8,
+          "y": 424.4
+        },
+        {
+          "x": 470.2,
+          "y": 449.4
+        },
+        {
+          "x": 437.05,
+          "y": 469.95
+        },
+        {
+          "x": 389.2,
+          "y": 484.3
+        }
+      ]
+    },
+    {
+      "id": "ed_010_013",
+      "from": "010",
+      "to": "013",
+      "waypoints": [
+        {
+          "x": 708.0,
+          "y": 382.1
+        },
+        {
+          "x": 720.4,
+          "y": 410.6
+        },
+        {
+          "x": 722.75,
+          "y": 440.6
+        },
+        {
+          "x": 710.4,
+          "y": 463.5
+        }
+      ]
+    }
+  ]
+}

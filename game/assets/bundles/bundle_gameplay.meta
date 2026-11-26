@@ -1,0 +1,14 @@
+{
+  "ver": "1.2.0",
+  "importer": "directory",
+  "imported": true,
+  "uuid": "e37e1709-ef96-4083-b53d-6eb0076192a0",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "isBundle": true,
+    "bundleConfigID": "cdn_remote",
+    "bundleName": "bundle_gameplay",
+    "priority": 6
+  }
+}

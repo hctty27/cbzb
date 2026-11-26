@@ -1,11 +1,12 @@
 import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
 import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
-import { getCampaignLevels } from '../data/AllLevelsData';
 import { SPRITE_MANIFEST } from '../data/AssetManifest';
 import { CampaignProgressStore } from '../data/CampaignProgress';
-import { LevelDef, PlayableCampaignId } from '../data/Types';
+import { getCampaignLevelMetas, LevelMeta } from '../data/LevelCatalog';
+import { PlayableCampaignId } from '../data/Types';
+import { preloadCampaign } from './AssetBundleManager';
 import { AudioManager } from './AudioManager';
-import { createUiNode, drawPanel, getStaticSpriteFrame } from './SpriteLoader';
+import { createUiNode, drawPanel, getStaticSpriteFrame, preloadTextureByKey } from './SpriteLoader';
 
 interface PinVisual {
   levelId: number;
@@ -38,8 +39,12 @@ export class CampaignMapView {
   private xpBarG!: Graphics;
   private mapSprite!: Sprite;
   private mapNode!: Node;
+  private mapDiffSprite!: Sprite;
+  private mapDiffNode!: Node;
   private pinContainer!: Node;
-  private loadedMapKey = '';
+  private baseMapLoaded = false;
+  private loadedDiffKey = '';
+  private diffLoadSeq = 0;
 
   private infoTitle!: Label;
   private infoMeta!: Label;
@@ -73,13 +78,20 @@ export class CampaignMapView {
     bgG.rect(-640, -360, 1280, 720);
     bgG.fill();
 
-    const mapEntry = SPRITE_MANIFEST['map/campaign_map_1'] ?? SPRITE_MANIFEST['map/campaign_map'];
+    const mapEntry = SPRITE_MANIFEST['map/campaign_map_base'];
     this.mapNode = createUiNode('CampaignMapBg', this.root, mapEntry.width, mapEntry.height);
     this.mapNode.setPosition(-120, -24);
     this.mapSprite = this.mapNode.addComponent(Sprite);
     this.mapSprite.sizeMode = Sprite.SizeMode.RAW;
     const mapScale = (COCOS_DESIGN_HEIGHT - 64) / mapEntry.height;
     this.mapNode.setScale(mapScale, mapScale, 1);
+
+    this.mapDiffNode = createUiNode('CampaignMapDiffOverlay', this.root, mapEntry.width, mapEntry.height);
+    this.mapDiffNode.setPosition(-120, -24);
+    this.mapDiffSprite = this.mapDiffNode.addComponent(Sprite);
+    this.mapDiffSprite.sizeMode = Sprite.SizeMode.RAW;
+    this.mapDiffNode.setScale(mapScale, mapScale, 1);
+    this.mapDiffNode.active = false;
 
     const frameG = createUiNode('MapFrame', this.root, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT).addComponent(Graphics);
     frameG.strokeColor = new Color(175, 138, 68, 200);
@@ -260,7 +272,7 @@ export class CampaignMapView {
     this.pins = [];
     this.builtCampaign = campaign;
 
-    const lvls = getCampaignLevels(campaign);
+    const lvls = getCampaignLevelMetas(campaign);
     for (const lvl of lvls) {
       const p = createUiNode(`LevelPin_${lvl.id}`, this.pinContainer, 44, 44);
       p.setPosition(lvl.mapPin.x - 400, 300 - lvl.mapPin.y);
@@ -288,6 +300,8 @@ export class CampaignMapView {
         if (!this.progress.isLevelUnlocked(lvl.id)) return;
         this.audio.playSfx('ui_click');
         this.progress.setSelectedLevelId(lvl.id);
+        preloadCampaign(campaign, lvl.id);
+        preloadTextureByKey(lvl.bgKey);
         this.refresh();
       });
 
@@ -311,14 +325,37 @@ export class CampaignMapView {
       this.rebuildPins(campaign);
     }
 
-    const mapFrame = this.progress.getRivadisMapFrame(campaign);
-    const mapKey = `map/campaign_map_${mapFrame}`;
-    if (this.loadedMapKey !== mapKey) {
-      this.loadedMapKey = mapKey;
-      getStaticSpriteFrame(mapKey).then((sf) => {
+    if (!this.baseMapLoaded) {
+      this.baseMapLoaded = true;
+      getStaticSpriteFrame('map/campaign_map_base').then((sf) => {
         if (this.mapNode.isValid) this.mapSprite.spriteFrame = sf;
       });
     }
+
+    const mapFrame = this.progress.getRivadisMapFrame(campaign);
+    if (mapFrame <= 1) {
+      this.diffLoadSeq++;
+      this.loadedDiffKey = '';
+      this.mapDiffNode.active = false;
+      this.mapDiffSprite.spriteFrame = null;
+    } else {
+      const diffKey = `map/campaign_map_diff_${mapFrame}`;
+      if (this.loadedDiffKey !== diffKey) {
+        this.loadedDiffKey = diffKey;
+        const seq = ++this.diffLoadSeq;
+        this.mapDiffNode.active = false;
+        getStaticSpriteFrame(diffKey).then((sf) => {
+          if (this.mapDiffNode.isValid && seq === this.diffLoadSeq && this.loadedDiffKey === diffKey) {
+            this.mapDiffSprite.spriteFrame = sf;
+            this.mapDiffNode.active = true;
+          }
+        });
+      } else if (this.mapDiffSprite.spriteFrame) {
+        this.mapDiffNode.active = true;
+      }
+    }
+
+    preloadCampaign(campaign, this.progress.selectedLevelId);
 
     this.titleLabel.string = CAMPAIGN_TITLES[campaign];
     const rank = this.progress.getRank(campaign);
@@ -386,8 +423,9 @@ export class CampaignMapView {
       }
     }
 
-    const lvls = getCampaignLevels(campaign);
-    const lvl: LevelDef = lvls.find((l) => l.id === selId) ?? lvls[0];
+    const lvls = getCampaignLevelMetas(campaign);
+    const lvl: LevelMeta = lvls.find((l) => l.id === selId) ?? lvls[0];
+    preloadTextureByKey(lvl.bgKey);
     const rec = this.progress.getLevelRecord(lvl.id);
     const enemyNames = lvl.enemies.map((e) => FACTION_LABELS[e] ?? e).join('\n  ');
 

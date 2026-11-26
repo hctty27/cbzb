@@ -15,8 +15,13 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SWF_PATH = ROOT / "flash" / "3986.swf"
-OUT_ALL_TS = ROOT / "game" / "assets" / "scripts" / "data" / "AllLevelsData.ts"
-OUT_WEST_TS = ROOT / "game" / "assets" / "scripts" / "data" / "WestariaLevelsData.ts"
+OUT_CATALOG_TS = ROOT / "game" / "assets" / "scripts" / "data" / "LevelCatalog.ts"
+BUNDLES_ROOT = ROOT / "game" / "assets" / "bundles"
+CAMPAIGN_BUNDLE_MAP = {
+    "Westaria": "bundle_westaria",
+    "TheKhaganate": "bundle_khaganate",
+    "TheCult": "bundle_cult",
+}
 
 
 class BitReader:
@@ -404,40 +409,50 @@ def main():
         })
         print(f"Level {lv_id:2d} [{campaign}] M{mission_idx} ({title}): {len(nodes)} nodes, {len(edges)} edges, enemies={sorted(enemies_set)}")
 
-    OUT_ALL_TS.parent.mkdir(parents=True, exist_ok=True)
-    all_ts = (
+    BUNDLES_ROOT.mkdir(parents=True, exist_ok=True)
+    catalog_entries = []
+    for lvl in levels:
+        bundle_name = CAMPAIGN_BUNDLE_MAP[lvl["campaign"]]
+        lvl_dir = BUNDLES_ROOT / bundle_name / "levels"
+        lvl_dir.mkdir(parents=True, exist_ok=True)
+        lvl_json_path = lvl_dir / f"level_{lvl['id']}.json"
+        lvl_json_path.write_text(json.dumps(lvl, indent=2) + "\n", encoding="utf-8")
+
+        meta = {k: v for k, v in lvl.items() if k not in ("nodes", "edges")}
+        catalog_entries.append(meta)
+
+    OUT_CATALOG_TS.parent.mkdir(parents=True, exist_ok=True)
+    catalog_ts = (
         "// Auto-generated from flash/3986.swf by scripts/extract-all-levels.py\n"
         "import { LevelDef, PlayableCampaignId } from './Types';\n\n"
-        f"export const ALL_LEVELS: LevelDef[] = {json.dumps(levels, indent=2)};\n\n"
-        "export const ALL_LEVELS_BY_ID: Record<number, LevelDef> = Object.fromEntries(\n"
-        "  ALL_LEVELS.map((lvl) => [lvl.id, lvl]),\n"
-        ");\n\n"
-        "export const CAMPAIGN_LEVELS: Record<PlayableCampaignId, LevelDef[]> = {\n"
-        "  Westaria: ALL_LEVELS.filter((l) => l.campaign === 'Westaria'),\n"
-        "  TheKhaganate: ALL_LEVELS.filter((l) => l.campaign === 'TheKhaganate'),\n"
-        "  TheCult: ALL_LEVELS.filter((l) => l.campaign === 'TheCult'),\n"
+        "export type LevelMeta = Omit<LevelDef, 'nodes' | 'edges'>;\n\n"
+        "export type CampaignBundleName = 'bundle_westaria' | 'bundle_khaganate' | 'bundle_cult';\n\n"
+        "export const CAMPAIGN_BUNDLE_NAMES: Record<PlayableCampaignId, CampaignBundleName> = {\n"
+        "  Westaria: 'bundle_westaria',\n"
+        "  TheKhaganate: 'bundle_khaganate',\n"
+        "  TheCult: 'bundle_cult',\n"
         "};\n\n"
-        "export function getCampaignLevels(campaign: PlayableCampaignId): LevelDef[] {\n"
-        "  return CAMPAIGN_LEVELS[campaign];\n"
+        f"export const LEVEL_CATALOG: LevelMeta[] = {json.dumps(catalog_entries, indent=2)};\n\n"
+        "export const LEVEL_CATALOG_BY_ID: Record<number, LevelMeta> = Object.fromEntries(\n"
+        "  LEVEL_CATALOG.map((lvl) => [lvl.id, lvl]),\n"
+        ");\n\n"
+        "export const CAMPAIGN_LEVEL_METAS: Record<PlayableCampaignId, LevelMeta[]> = {\n"
+        "  Westaria: LEVEL_CATALOG.filter((l) => l.campaign === 'Westaria'),\n"
+        "  TheKhaganate: LEVEL_CATALOG.filter((l) => l.campaign === 'TheKhaganate'),\n"
+        "  TheCult: LEVEL_CATALOG.filter((l) => l.campaign === 'TheCult'),\n"
+        "};\n\n"
+        "export function getCampaignLevelMetas(campaign: PlayableCampaignId): LevelMeta[] {\n"
+        "  return CAMPAIGN_LEVEL_METAS[campaign];\n"
         "}\n\n"
-        "export function getLevelById(id: number): LevelDef {\n"
-        "  return ALL_LEVELS_BY_ID[id] ?? ALL_LEVELS[0];\n"
+        "export function getLevelMetaById(id: number): LevelMeta {\n"
+        "  return LEVEL_CATALOG_BY_ID[id] ?? LEVEL_CATALOG[0];\n"
+        "}\n\n"
+        "export function getCampaignBundleName(campaign: PlayableCampaignId): CampaignBundleName {\n"
+        "  return CAMPAIGN_BUNDLE_NAMES[campaign];\n"
         "}\n"
     )
-    OUT_ALL_TS.write_text(all_ts, encoding="utf-8")
-
-    west_compat = (
-        "// Re-exported from AllLevelsData for backward compatibility\n"
-        "import { ALL_LEVELS_BY_ID, CAMPAIGN_LEVELS, getLevelById } from './AllLevelsData';\n"
-        "import { LevelDef } from './Types';\n\n"
-        "export const WESTARIA_LEVELS: LevelDef[] = CAMPAIGN_LEVELS.Westaria;\n"
-        "export const WESTARIA_LEVELS_BY_ID: Record<number, LevelDef> = ALL_LEVELS_BY_ID;\n\n"
-        "export function getWestariaLevel(id: number): LevelDef {\n"
-        "  return getLevelById(id);\n"
-        "}\n"
-    )
-    OUT_WEST_TS.write_text(west_compat, encoding="utf-8")
-    print(f"Wrote {OUT_ALL_TS} and {OUT_WEST_TS}")
+    OUT_CATALOG_TS.write_text(catalog_ts, encoding="utf-8")
+    print(f"Wrote 24 level JSONs under {BUNDLES_ROOT} and {OUT_CATALOG_TS}")
 
 
 if __name__ == "__main__":

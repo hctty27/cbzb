@@ -1,4 +1,3 @@
-import { getCampaignLevels, getLevelById } from './AllLevelsData';
 import { BADGES, BADGES_BY_ID } from './BadgesData';
 import {
   CAMPAIGN_EDICTS,
@@ -9,6 +8,7 @@ import {
   STARTER_EDICTS,
   XP_RANK_TABLE,
 } from './EdictsData';
+import { getCampaignLevelMetas, getLevelMetaById } from './LevelCatalog';
 import {
   BadgeDef,
   BadgeId,
@@ -24,6 +24,42 @@ import {
 
 const STORAGE_KEY_V3 = 'takeover_save_v3';
 const STORAGE_KEY_V2 = 'takeover_westaria_save_v2';
+
+export interface IStorageAdapter {
+  getItem(key: string): string | null;
+  setItem(key: string, value: string): void;
+  removeItem?(key: string): void;
+}
+
+export function createBrowserStorageAdapter(): IStorageAdapter {
+  return {
+    getItem(key: string): string | null {
+      if (typeof localStorage === 'undefined') return null;
+      return localStorage.getItem(key);
+    },
+    setItem(key: string, value: string): void {
+      if (typeof localStorage === 'undefined') return;
+      localStorage.setItem(key, value);
+    },
+    removeItem(key: string): void {
+      if (typeof localStorage === 'undefined') return;
+      localStorage.removeItem(key);
+    },
+  };
+}
+
+export function createMemoryStorageAdapter(initial: Record<string, string> = {}): IStorageAdapter {
+  const map = new Map<string, string>(Object.entries(initial));
+  return {
+    getItem: (key: string) => map.get(key) ?? null,
+    setItem: (key: string, value: string) => {
+      map.set(key, value);
+    },
+    removeItem: (key: string) => {
+      map.delete(key);
+    },
+  };
+}
 
 const CAMPAIGN_ORDER: PlayableCampaignId[] = ['Westaria', 'TheKhaganate', 'TheCult'];
 
@@ -51,14 +87,16 @@ export interface VictoryRewardSummary {
 export class CampaignProgressStore {
   private state: MultiCampaignSaveState;
   private freePlayAll = false;
+  private storage: IStorageAdapter;
 
-  constructor(autoLoad = true) {
+  constructor(autoLoad = true, storage: IStorageAdapter = createBrowserStorageAdapter()) {
+    this.storage = storage;
     this.state = this.createFreshMultiState();
     if (autoLoad) this.load();
   }
 
   private createFreshCampaignState(campaign: PlayableCampaignId): CampaignSaveState {
-    const lvls = getCampaignLevels(campaign);
+    const lvls = getCampaignLevelMetas(campaign);
     const levels: Record<number, LevelCompletionRecord> = {};
     for (const lv of lvls) {
       levels[lv.id] = { completed: false, bestMedal: null, bestTimeSec: null };
@@ -91,7 +129,7 @@ export class CampaignProgressStore {
     const fresh = this.createFreshCampaignState(campaign);
     if (!raw) return fresh;
     if (typeof raw.xp === 'number' && raw.xp >= 0) fresh.xp = Math.floor(raw.xp);
-    const validIds = getCampaignLevels(campaign).map((l) => l.id);
+    const validIds = getCampaignLevelMetas(campaign).map((l) => l.id);
     if (typeof raw.selectedLevelId === 'number' && validIds.includes(raw.selectedLevelId)) {
       fresh.selectedLevelId = raw.selectedLevelId;
     }
@@ -122,9 +160,8 @@ export class CampaignProgressStore {
   }
 
   load(): void {
-    if (typeof localStorage === 'undefined') return;
     try {
-      const rawV3 = localStorage.getItem(STORAGE_KEY_V3);
+      const rawV3 = this.storage.getItem(STORAGE_KEY_V3);
       if (rawV3) {
         const parsed = JSON.parse(rawV3) as Partial<MultiCampaignSaveState>;
         const fresh = this.createFreshMultiState();
@@ -146,7 +183,7 @@ export class CampaignProgressStore {
       }
 
       // Migrate Phase 2 v2 Westaria save automatically
-      const rawV2 = localStorage.getItem(STORAGE_KEY_V2);
+      const rawV2 = this.storage.getItem(STORAGE_KEY_V2);
       if (rawV2) {
         const parsedV2 = JSON.parse(rawV2) as Partial<CampaignSaveState>;
         const fresh = this.createFreshMultiState();
@@ -161,9 +198,8 @@ export class CampaignProgressStore {
   }
 
   save(): void {
-    if (typeof localStorage === 'undefined') return;
     try {
-      localStorage.setItem(STORAGE_KEY_V3, JSON.stringify(this.state));
+      this.storage.setItem(STORAGE_KEY_V3, JSON.stringify(this.state));
     } catch {
       // Ignore storage quota errors
     }
@@ -196,7 +232,7 @@ export class CampaignProgressStore {
   }
 
   setSelectedLevelId(id: number): void {
-    const campaign = getLevelById(id).campaign;
+    const campaign = getLevelMetaById(id).campaign;
     if (this.isLevelUnlocked(id)) {
       this.cState(campaign).selectedLevelId = id;
       this.save();
@@ -275,22 +311,22 @@ export class CampaignProgressStore {
   }
 
   getLevelRecord(id: number): LevelCompletionRecord {
-    const campaign = getLevelById(id).campaign;
+    const campaign = getLevelMetaById(id).campaign;
     return this.cState(campaign).levels[id] ?? { completed: false, bestMedal: null, bestTimeSec: null };
   }
 
   getCompletedCount(campaign: PlayableCampaignId = this.state.activeCampaign): number {
     const cs = this.cState(campaign);
-    return getCampaignLevels(campaign).filter((l) => cs.levels[l.id]?.completed).length;
+    return getCampaignLevelMetas(campaign).filter((l) => cs.levels[l.id]?.completed).length;
   }
 
   getGoldCount(campaign: PlayableCampaignId = this.state.activeCampaign): number {
     const cs = this.cState(campaign);
-    return getCampaignLevels(campaign).filter((l) => cs.levels[l.id]?.bestMedal === 'Gold').length;
+    return getCampaignLevelMetas(campaign).filter((l) => cs.levels[l.id]?.bestMedal === 'Gold').length;
   }
 
   getMaxUnlockedLevelId(campaign: PlayableCampaignId = this.state.activeCampaign): number {
-    const lvls = getCampaignLevels(campaign);
+    const lvls = getCampaignLevelMetas(campaign);
     const cs = this.cState(campaign);
     let highestMissionCompleted = 0;
     for (const lv of lvls) {
@@ -301,7 +337,7 @@ export class CampaignProgressStore {
   }
 
   isLevelUnlocked(id: number): boolean {
-    const lvl = getLevelById(id);
+    const lvl = getLevelMetaById(id);
     if (this.freePlayAll) return true;
     const cs = this.cState(lvl.campaign);
     if (cs.levels[id]?.completed) return true;
@@ -353,7 +389,7 @@ export class CampaignProgressStore {
     elapsedSec: number,
     battleStats?: BattleBadgeStats,
   ): VictoryRewardSummary {
-    const lvl = getLevelById(levelId);
+    const lvl = getLevelMetaById(levelId);
     const campaign = lvl.campaign;
     const cs = this.cState(campaign);
 

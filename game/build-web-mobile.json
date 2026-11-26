@@ -1,0 +1,17 @@
+{
+  "name": "Takeover",
+  "platform": "web-mobile",
+  "buildPath": "project://build",
+  "outputName": "web-mobile",
+  "startScene": "020f3c29-5c47-4348-942a-bd81f4043387",
+  "debug": false,
+  "sourceMaps": false,
+  "md5Cache": true,
+  "server": "",
+  "packages": {
+    "web-mobile": {
+      "orientation": "landscape",
+      "embedWebDebugger": false
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "ver": "1.2.0",
+  "importer": "directory",
+  "imported": true,
+  "uuid": "f42a1b75-94cc-4c19-bade-2ee229e3e839",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "isBundle": true,
+    "bundleConfigID": "cdn_remote",
+    "bundleName": "bundle_cult",
+    "priority": 5
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "ver": "1.2.0",
+  "importer": "directory",
+  "imported": true,
+  "uuid": "895fd0d5-5e8d-4257-a616-f426b2c2d3c5",
+  "files": [],
+  "subMetas": {},
+  "userData": {
+    "isBundle": true,
+    "bundleConfigID": "cdn_remote",
+    "bundleName": "bundle_westaria",
+    "priority": 5
+  }
+}

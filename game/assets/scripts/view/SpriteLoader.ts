@@ -1,4 +1,5 @@
 import { assetManager, Color, Graphics, Node, Rect, Size, SpriteFrame, Texture2D, UITransform } from 'cc';
+import { retryAsync } from '../core/AsyncRetry';
 import { SPRITE_MANIFEST, SpriteAssetEntry } from '../data/AssetManifest';
 import { ensureBundle } from './AssetBundleManager';
 
@@ -41,7 +42,10 @@ export function drawPanel(
   }
 }
 
-export function loadTextureByKey(key: string): Promise<Texture2D> {
+export function loadTextureByKey(
+  key: string,
+  onRetry?: (nextAttempt: number, maxAttempts: number, err: unknown) => void,
+): Promise<Texture2D> {
   const cached = textureCache.get(key);
   if (cached && cached.isValid) return Promise.resolve(cached);
   if (cached) textureCache.delete(key);
@@ -54,23 +58,31 @@ export function loadTextureByKey(key: string): Promise<Texture2D> {
     return Promise.reject(new Error(`Unknown SpriteAsset key: ${key}`));
   }
 
-  const p = ensureBundle(entry.bundle ?? 'resources')
-    .then(
-      (bundle) =>
-        new Promise<Texture2D>((resolve, reject) => {
-          bundle.load(`${entry.path}/texture`, Texture2D, (err, tex) => {
-            if (err || !tex) {
-              reject(err ?? new Error(`Failed to load texture ${entry.path}/texture from ${entry.bundle ?? 'resources'}`));
-              return;
-            }
-            textureCache.set(key, tex);
-            resolve(tex);
-          });
-        }),
-    )
-    .finally(() => {
-      inFlightTextures.delete(key);
-    });
+  const bundleName = entry.bundle ?? 'resources';
+  const p = retryAsync(
+    async () => {
+      const bundle = await ensureBundle(bundleName, onRetry);
+      return await new Promise<Texture2D>((resolve, reject) => {
+        bundle.load(`${entry.path}/texture`, Texture2D, (err, tex) => {
+          if (err || !tex) {
+            reject(err ?? new Error(`Failed to load texture ${entry.path}/texture from ${bundleName}`));
+            return;
+          }
+          textureCache.set(key, tex);
+          resolve(tex);
+        });
+      });
+    },
+    {
+      maxAttempts: 3,
+      timeoutMs: 12000,
+      baseDelayMs: 400,
+      label: `texture:${key}`,
+      onRetry,
+    },
+  ).finally(() => {
+    inFlightTextures.delete(key);
+  });
 
   inFlightTextures.set(key, p);
   return p;

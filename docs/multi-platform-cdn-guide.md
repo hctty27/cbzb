@@ -55,3 +55,16 @@ node tools\cocos-cli\dist\cli.js build --project game --platform android --build
 - The open-source Cocos 4 CLI `0.2.0-beta.3` does not currently ship `wechatgame` / `bytedance-mini-game` builder plugins.
 - All game simulation (`core/`, `data/`, `sim/`) has zero DOM/`cc` coupling, `CampaignProgressStore` uses an injected `sys.localStorage` adapter, and `resources/` is already under the **4 MB** main-package limit (`3.24 MB` source).
 - When opening/migrating in **Cocos Creator 3.8 LTS** (or a future Cocos 4 release with mini-game builder plugins), upload `remote/` to the mini-game CDN domain and configure the request/download legal domains in the mini-game console.
+
+## 6. Phase A Multi-Platform Hardening & UX Features
+
+1. **Lifecycle & Background Protection ([GameApp.ts](../game/assets/scripts/GameApp.ts), [AudioManager.ts](../game/assets/scripts/view/AudioManager.ts))**:
+   - Subscribes to `Game.EVENT_HIDE` / `Game.EVENT_SHOW` to automatically pause active battles and suspend/resume BGM audio.
+   - Handles `KeyCode.ESCAPE` and Android `KeyCode.MOBILE_BACK` across every screen state, plus desktop shortcuts (`Space` pause, `F` speed, `M` mute, `1`–`4` spells).
+2. **CDN Resilience & Staged Loading ([AsyncRetry.ts](../game/assets/scripts/core/AsyncRetry.ts), [AssetBundleManager.ts](../game/assets/scripts/view/AssetBundleManager.ts), [SpriteLoader.ts](../game/assets/scripts/view/SpriteLoader.ts))**:
+   - Bundle, JSON, and texture requests use `retryAsync` (3 attempts, exponential backoff, per-attempt timeout) and report monotonic progress (`0–100%`) to the modal `LoadingOverlay`, surfacing `RETRY` and `BACK` actions on failure.
+3. **Custom Web Templates ([game/build-templates/](../game/build-templates/))**:
+   - `web-desktop`: frameless 16:9 responsive viewport, branded `#boot-splash`, and global `contextmenu` suppression so right-click orders/cancel work cleanly.
+   - `web-mobile`: `viewport-fit=cover`, `touch-action: none`, `#boot-splash`, and a portrait-mode `#rotate-overlay` prompt.
+4. **Safe Area, Touch Ergonomics & Persisted Settings ([SafeAreaHelper.ts](../game/assets/scripts/view/SafeAreaHelper.ts), [UserSettings.ts](../game/assets/scripts/data/UserSettings.ts), [HudView.ts](../game/assets/scripts/view/HudView.ts), [BattleView.ts](../game/assets/scripts/view/BattleView.ts))**:
+   - Applies `sys.getSafeAreaRect()` insets to HUD edge panels, enlarges touch hitboxes on mobile, adds expanding tap/command feedback ripples, adds a touch-accessible `CANCEL [ESC]` button during spell targeting, and persists `muted`, `bgmVolume`, `sfxVolume`, and `preferredSpeed` under `takeover_settings_v1`.

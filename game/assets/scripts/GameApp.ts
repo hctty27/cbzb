@@ -1,11 +1,31 @@
-import { _decorator, Color, Component, Graphics, Label, Node, profiler, ResolutionPolicy, sys, view } from 'cc';
+import {
+  _decorator,
+  BlockInputEvents,
+  Button,
+  Color,
+  Component,
+  EventKeyboard,
+  Game,
+  game,
+  Graphics,
+  Input,
+  input,
+  KeyCode,
+  Label,
+  Node,
+  profiler,
+  ResolutionPolicy,
+  sys,
+  view,
+} from 'cc';
 import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from './core/CoordTransform';
 import { CampaignProgressStore, IStorageAdapter } from './data/CampaignProgress';
 import { getCampaignLevelMetas, getLevelMetaById } from './data/LevelCatalog';
 import { CAMPAIGN_SPELL_ORDER } from './data/SpellsData';
-import { PlayableCampaignId, SpellId } from './data/Types';
+import { LevelDef, PlayableCampaignId, SpellId } from './data/Types';
+import { UserSettingsStore } from './data/UserSettings';
 import { BattleSim } from './sim/BattleSim';
-import { ensureBundle, loadLevelDef } from './view/AssetBundleManager';
+import { ensureBundle, loadMissionAssets } from './view/AssetBundleManager';
 import { AudioManager } from './view/AudioManager';
 import { BadgesRoomView } from './view/BadgesRoomView';
 import { BattleView } from './view/BattleView';
@@ -13,13 +33,16 @@ import { CampaignMapView } from './view/CampaignMapView';
 import { CampaignSelectView } from './view/CampaignSelectView';
 import { HudSelection, HudView } from './view/HudView';
 import { ResultOverlay } from './view/ResultOverlay';
-import { createUiNode, drawPanel, preloadTextureByKey } from './view/SpriteLoader';
+import { createUiNode, drawPanel } from './view/SpriteLoader';
 import { ThroneRoomView } from './view/ThroneRoomView';
 import { TitleView } from './view/TitleView';
 
 const { ccclass } = _decorator;
 
 type ScreenMode = 'title' | 'campaign_select' | 'campaign' | 'throne' | 'badges' | 'battle';
+
+const PROGRESS_BAR_WIDTH = 420;
+const PROGRESS_BAR_HEIGHT = 16;
 
 function createCocosStorageAdapter(): IStorageAdapter {
   return {
@@ -49,6 +72,7 @@ function createCocosStorageAdapter(): IStorageAdapter {
 
 @ccclass('GameApp')
 export class GameApp extends Component {
+  private settings!: UserSettingsStore;
   private audio!: AudioManager;
   private progress!: CampaignProgressStore;
   private sim!: BattleSim;
@@ -63,7 +87,12 @@ export class GameApp extends Component {
   private resultOverlay: ResultOverlay | null = null;
 
   private loadingOverlay: Node | null = null;
-  private loadingLabel: Label | null = null;
+  private loadingTitleLabel: Label | null = null;
+  private loadingStatusLabel: Label | null = null;
+  private loadingBarFillG: Graphics | null = null;
+  private loadingErrorRow: Node | null = null;
+  private loadingErrorMode = false;
+  private pendingLevelId: number | null = null;
 
   private mode: ScreenMode = 'title';
   private returnFromBadges: ScreenMode = 'campaign_select';
@@ -73,9 +102,12 @@ export class GameApp extends Component {
   onLoad(): void {
     view.setDesignResolutionSize(COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT, ResolutionPolicy.SHOW_ALL);
     profiler?.hideStats?.();
+    this.dismissHtmlSplash();
 
-    this.audio = new AudioManager(this.node);
-    this.progress = new CampaignProgressStore(true, createCocosStorageAdapter());
+    const storage = createCocosStorageAdapter();
+    this.settings = new UserSettingsStore(true, storage);
+    this.audio = new AudioManager(this.node, this.settings);
+    this.progress = new CampaignProgressStore(true, storage);
     this.sim = new BattleSim();
 
     this.buildLoadingOverlay();
@@ -88,38 +120,236 @@ export class GameApp extends Component {
       },
     });
 
+    game.on(Game.EVENT_HIDE, this.onAppHide, this);
+    game.on(Game.EVENT_SHOW, this.onAppShow, this);
+    input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
+
     this.showTitle();
+  }
+
+  onDestroy(): void {
+    game.off(Game.EVENT_HIDE, this.onAppHide, this);
+    game.off(Game.EVENT_SHOW, this.onAppShow, this);
+    input.off(Input.EventType.KEY_DOWN, this.onKeyDown, this);
+    this.battleView?.destroy();
+  }
+
+  private dismissHtmlSplash(): void {
+    if (typeof document === 'undefined') return;
+    const splash = document.getElementById('boot-splash');
+    if (!splash) return;
+    splash.classList.add('hidden');
+    setTimeout(() => {
+      if (splash.parentNode) {
+        splash.parentNode.removeChild(splash);
+      }
+    }, 420);
+  }
+
+  private onAppHide(): void {
+    this.audio.suspend();
+    if (this.mode === 'battle' && !this.sim.isMatchOver && this.hudView && !this.hudView.isPauseModalOpen()) {
+      this.hudView.setPaused(true);
+    }
+  }
+
+  private onAppShow(): void {
+    this.audio.resume();
+  }
+
+  private onKeyDown(ev: EventKeyboard): void {
+    const code = ev.keyCode;
+    if (code === KeyCode.ESCAPE || code === KeyCode.MOBILE_BACK) {
+      if (this.loadingOverlay?.active) {
+        if (this.loadingErrorMode) this.onLoadingBack();
+        return;
+      }
+      if (this.mode === 'battle') {
+        if (this.shownResult) {
+          this.showCampaign();
+        } else if (this.battleView?.getActiveSpell()) {
+          this.battleView.setActiveSpell(null);
+        } else if (this.battleView?.hasSelection()) {
+          this.battleView.clearSelection();
+        } else {
+          this.hudView?.togglePause();
+        }
+      } else if (this.mode === 'throne') {
+        this.showCampaign();
+      } else if (this.mode === 'badges') {
+        if (this.returnFromBadges === 'campaign') this.showCampaign();
+        else this.showCampaignSelect();
+      } else if (this.mode === 'campaign') {
+        this.showCampaignSelect();
+      } else if (this.mode === 'campaign_select') {
+        this.showTitle();
+      }
+      return;
+    }
+
+    if (this.loadingOverlay?.active) return;
+
+    if (this.mode === 'battle' && !this.shownResult && !this.sim.isMatchOver && this.hudView) {
+      if (code === KeyCode.SPACE) {
+        this.hudView.togglePause();
+        return;
+      }
+      if (code === KeyCode.KEY_M) {
+        this.audio.toggleMute();
+        this.hudView.refresh();
+        return;
+      }
+      if (this.sim.paused) return;
+
+      if (code === KeyCode.KEY_F) {
+        this.hudView.toggleSpeed();
+      } else if (code === KeyCode.DIGIT_1 || code === KeyCode.NUM_1) {
+        this.hudView.triggerSpellSlot(0);
+      } else if (code === KeyCode.DIGIT_2 || code === KeyCode.NUM_2) {
+        this.hudView.triggerSpellSlot(1);
+      } else if (code === KeyCode.DIGIT_3 || code === KeyCode.NUM_3) {
+        this.hudView.triggerSpellSlot(2);
+      } else if (code === KeyCode.DIGIT_4 || code === KeyCode.NUM_4) {
+        this.hudView.triggerSpellSlot(3);
+      }
+    }
   }
 
   private buildLoadingOverlay(): void {
     const overlay = createUiNode('LoadingOverlay', this.node, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
-    drawPanel(overlay.addComponent(Graphics), COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT, new Color(8, 10, 18, 210), undefined, 0, 0);
+    overlay.addComponent(BlockInputEvents);
+    drawPanel(overlay.addComponent(Graphics), COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT, new Color(8, 10, 18, 215), undefined, 0, 0);
 
-    const card = createUiNode('LoadingCard', overlay, 480, 120);
-    drawPanel(card.addComponent(Graphics), 480, 120, new Color(24, 22, 36, 248), new Color(214, 173, 86, 245), 2.5, 14);
+    const card = createUiNode('LoadingCard', overlay, 520, 215);
+    drawPanel(card.addComponent(Graphics), 520, 215, new Color(24, 22, 36, 250), new Color(214, 173, 86, 245), 2.5, 14);
 
-    const lblNode = createUiNode('LoadingLabel', card, 440, 64);
-    const lbl = lblNode.addComponent(Label);
-    lbl.string = 'LOADING ASSETS...';
-    lbl.fontSize = 20;
-    lbl.lineHeight = 26;
-    lbl.isBold = true;
-    lbl.enableWrapText = true;
-    lbl.color = new Color(255, 228, 140, 255);
+    const titleNode = createUiNode('LoadingTitle', card, 470, 44);
+    titleNode.setPosition(0, 62);
+    const titleLbl = titleNode.addComponent(Label);
+    titleLbl.string = 'LOADING ASSETS...';
+    titleLbl.fontSize = 20;
+    titleLbl.lineHeight = 24;
+    titleLbl.isBold = true;
+    titleLbl.overflow = Label.Overflow.SHRINK;
+    titleLbl.color = new Color(255, 228, 140, 255);
 
+    const statusNode = createUiNode('LoadingStatus', card, 470, 38);
+    statusNode.setPosition(0, 20);
+    const statusLbl = statusNode.addComponent(Label);
+    statusLbl.string = 'CONNECTING TO CDN...';
+    statusLbl.fontSize = 14;
+    statusLbl.lineHeight = 18;
+    statusLbl.overflow = Label.Overflow.SHRINK;
+    statusLbl.color = new Color(210, 224, 245, 240);
+
+    const barTrack = createUiNode('LoadingBarTrack', card, PROGRESS_BAR_WIDTH, PROGRESS_BAR_HEIGHT);
+    barTrack.setPosition(0, -14);
+    drawPanel(
+      barTrack.addComponent(Graphics),
+      PROGRESS_BAR_WIDTH,
+      PROGRESS_BAR_HEIGHT,
+      new Color(14, 14, 22, 245),
+      new Color(145, 120, 68, 215),
+      1.5,
+      6,
+    );
+
+    const barFill = createUiNode('LoadingBarFill', barTrack, PROGRESS_BAR_WIDTH, PROGRESS_BAR_HEIGHT);
+    const fillG = barFill.addComponent(Graphics);
+
+    const errorRow = createUiNode('LoadingErrorRow', card, 380, 46);
+    errorRow.setPosition(0, -64);
+
+    const makeErrBtn = (text: string, x: number, fillCol: Color, onClick: () => void) => {
+      const btn = createUiNode(`LoadingBtn_${text}`, errorRow, 150, 38);
+      btn.setPosition(x, 0);
+      drawPanel(btn.addComponent(Graphics), 150, 38, fillCol, new Color(224, 185, 96, 240), 2, 8);
+      const l = createUiNode('L', btn, 136, 26).addComponent(Label);
+      l.string = text;
+      l.fontSize = 15;
+      l.isBold = true;
+      l.color = new Color(255, 236, 185, 255);
+      const comp = btn.addComponent(Button);
+      comp.transition = Button.Transition.SCALE;
+      comp.zoomScale = 1.05;
+      btn.on(Button.EventType.CLICK, () => {
+        this.audio.playSfx('ui_click');
+        onClick();
+      });
+    };
+
+    makeErrBtn('RETRY', -90, new Color(56, 86, 48, 245), () => {
+      if (this.pendingLevelId !== null) {
+        void this.enterLevel(this.pendingLevelId);
+      }
+    });
+    makeErrBtn('BACK', 90, new Color(92, 40, 44, 245), () => {
+      this.onLoadingBack();
+    });
+
+    errorRow.active = false;
     overlay.active = false;
+
     this.loadingOverlay = overlay;
-    this.loadingLabel = lbl;
+    this.loadingTitleLabel = titleLbl;
+    this.loadingStatusLabel = statusLbl;
+    this.loadingBarFillG = fillG;
+    this.loadingErrorRow = errorRow;
   }
 
-  private showLoading(text: string): void {
-    if (!this.loadingOverlay || !this.loadingLabel) return;
-    this.loadingLabel.string = text;
+  private drawLoadingBar(ratio: number, isError = false): void {
+    if (!this.loadingBarFillG) return;
+    const g = this.loadingBarFillG;
+    g.clear();
+    const clamped = Math.max(0.02, Math.min(1, ratio));
+    const fillW = (PROGRESS_BAR_WIDTH - 4) * clamped;
+    g.fillColor = isError ? new Color(210, 80, 75, 245) : new Color(224, 178, 72, 250);
+    g.roundRect(-PROGRESS_BAR_WIDTH * 0.5 + 2, -PROGRESS_BAR_HEIGHT * 0.5 + 2, fillW, PROGRESS_BAR_HEIGHT - 4, 4);
+    g.fill();
+  }
+
+  private showLoading(titleText: string): void {
+    if (!this.loadingOverlay || !this.loadingTitleLabel || !this.loadingStatusLabel) return;
+    this.loadingErrorMode = false;
+    this.loadingTitleLabel.string = titleText;
+    this.loadingTitleLabel.color = new Color(255, 228, 140, 255);
+    this.loadingStatusLabel.string = 'CONNECTING TO ASSET BUNDLE... 0%';
+    if (this.loadingErrorRow) this.loadingErrorRow.active = false;
+    this.drawLoadingBar(0.05, false);
     this.loadingOverlay.setSiblingIndex(this.node.children.length - 1);
     this.loadingOverlay.active = true;
   }
 
+  private updateLoadingProgress(ratio: number, status: string): void {
+    if (!this.loadingOverlay?.active || this.loadingErrorMode || !this.loadingStatusLabel) return;
+    const pct = Math.max(0, Math.min(100, Math.round(ratio * 100)));
+    this.loadingStatusLabel.string = `${status} (${pct}%)`;
+    this.drawLoadingBar(ratio, false);
+  }
+
+  private showLoadingError(err: unknown): void {
+    if (!this.loadingOverlay || !this.loadingTitleLabel || !this.loadingStatusLabel) return;
+    this.loadingErrorMode = true;
+    this.loadingTitleLabel.string = 'MISSION ASSET LOAD FAILED';
+    this.loadingTitleLabel.color = new Color(255, 145, 130, 255);
+    const detail = err instanceof Error ? err.message : String(err);
+    this.loadingStatusLabel.string = `Network/CDN error: ${detail.slice(0, 76)}`;
+    this.drawLoadingBar(1, true);
+    if (this.loadingErrorRow) this.loadingErrorRow.active = true;
+    this.loadingOverlay.setSiblingIndex(this.node.children.length - 1);
+    this.loadingOverlay.active = true;
+  }
+
+  private onLoadingBack(): void {
+    this.enterSeq++;
+    this.hideLoading();
+    if (this.mode === 'battle') {
+      this.showCampaign();
+    }
+  }
+
   private hideLoading(): void {
+    this.loadingErrorMode = false;
     if (this.loadingOverlay) {
       this.loadingOverlay.active = false;
     }
@@ -230,20 +460,20 @@ export class GameApp extends Component {
 
   private async enterLevel(levelId: number): Promise<void> {
     const seq = ++this.enterSeq;
+    this.pendingLevelId = levelId;
     const meta = getLevelMetaById(levelId);
-    this.showLoading(`LOADING MISSION ${meta.missionIndex}:\n${meta.name.toUpperCase()}...`);
+    this.showLoading(`MISSION ${meta.missionIndex}: ${meta.name.toUpperCase()}`);
 
-    let lvl;
+    let lvl: LevelDef;
     try {
-      const [, loadedLvl] = await Promise.all([
-        ensureBundle('bundle_gameplay'),
-        loadLevelDef(levelId),
-        preloadTextureByKey(meta.bgKey),
-      ]);
-      lvl = loadedLvl;
+      lvl = await loadMissionAssets(levelId, (ratio, status) => {
+        if (seq === this.enterSeq && this.node.isValid) {
+          this.updateLoadingProgress(ratio, status);
+        }
+      });
     } catch (err) {
       if (seq === this.enterSeq && this.node.isValid) {
-        this.hideLoading();
+        this.showLoadingError(err);
       }
       console.error('Failed to enter level', levelId, err);
       return;
@@ -257,6 +487,7 @@ export class GameApp extends Component {
 
     this.hideAll();
     this.sim.loadLevel(lvl, bonuses);
+    this.sim.speedMultiplier = this.settings.getPreferredSpeed();
     this.shownResult = false;
     this.mode = 'battle';
 
@@ -275,7 +506,7 @@ export class GameApp extends Component {
     }
 
     if (!this.hudView) {
-      this.hudView = new HudView(this.node, this.sim, this.audio, {
+      this.hudView = new HudView(this.node, this.sim, this.audio, this.settings, {
         onClearSelection: () => this.battleView?.clearSelection(),
         onRestart: () => void this.enterLevel(this.sim.levelDef.id),
         onCampaignMap: () => this.showCampaign(),
@@ -290,6 +521,7 @@ export class GameApp extends Component {
       });
     } else {
       this.hudView.root.active = true;
+      this.hudView.setPaused(false);
       this.hudView.setSelection({ strongholdId: null, buildSiteId: null, squadId: null });
       this.hudView.setActiveSpell(null);
       this.hudView.rebuildForCampaign();

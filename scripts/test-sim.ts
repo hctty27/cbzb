@@ -3,6 +3,7 @@ import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { retryAsync, withTimeout } from '../game/assets/scripts/core/AsyncRetry.ts';
 import { cocosToFlash, dist, flashToCocos } from '../game/assets/scripts/core/CoordTransform.ts';
 import { SPRITE_MANIFEST } from '../game/assets/scripts/data/AssetManifest.ts';
 import { BADGES } from '../game/assets/scripts/data/BadgesData.ts';
@@ -17,6 +18,7 @@ import {
 } from '../game/assets/scripts/data/LevelCatalog.ts';
 import { LevelDef, PlayableCampaignId } from '../game/assets/scripts/data/Types.ts';
 import { getRecruitIdsForFaction, getWestariaRecruitIds } from '../game/assets/scripts/data/UnitsData.ts';
+import { UserSettingsStore } from '../game/assets/scripts/data/UserSettings.ts';
 import { BattleSim } from '../game/assets/scripts/sim/BattleSim.ts';
 import { countAliveUnits, getSquadTotalHp } from '../game/assets/scripts/sim/CombatMath.ts';
 import { computeNetGoldSpeed } from '../game/assets/scripts/sim/EconomySim.ts';
@@ -513,4 +515,82 @@ const getWestariaLevel = (id: number): LevelDef => getLevelById(id);
   }
 }
 
-console.log('ALL_SIM_TESTS_PASSED');
+// 15. Phase A: UserSettingsStore Persistence & AsyncRetry / Timeout Resilience
+async function runPhaseATests(): Promise<void> {
+  const mem = createMemoryStorageAdapter();
+  const s1 = new UserSettingsStore(true, mem);
+  assert.equal(s1.isMuted(), false);
+  assert.equal(s1.getBgmVolume(), 0.45);
+  assert.equal(s1.getSfxVolume(), 0.7);
+  assert.equal(s1.getPreferredSpeed(), 1);
+
+  assert.equal(s1.toggleMute(), true);
+  s1.setBgmVolume(-0.5);
+  s1.setSfxVolume(1.8);
+  s1.setPreferredSpeed(2);
+  assert.equal(s1.getBgmVolume(), 0);
+  assert.equal(s1.getSfxVolume(), 1);
+
+  const s2 = new UserSettingsStore(true, mem);
+  assert.equal(s2.isMuted(), true);
+  assert.equal(s2.getBgmVolume(), 0);
+  assert.equal(s2.getSfxVolume(), 1);
+  assert.equal(s2.getPreferredSpeed(), 2);
+
+  s2.reset();
+  const s3 = new UserSettingsStore(true, mem);
+  assert.equal(s3.isMuted(), false);
+  assert.equal(s3.getBgmVolume(), 0.45);
+  assert.equal(s3.getPreferredSpeed(), 1);
+
+  // Malformed JSON resilience
+  const corruptMem = createMemoryStorageAdapter({ takeover_settings_v1: '{broken-json' });
+  const s4 = new UserSettingsStore(true, corruptMem);
+  assert.equal(s4.getSfxVolume(), 0.7);
+
+  // retryAsync succeeds after 2 transient failures
+  let calls = 0;
+  let retryHooks = 0;
+  const val = await retryAsync(
+    async () => {
+      calls++;
+      if (calls < 3) throw new Error(`transient_${calls}`);
+      return 'ok';
+    },
+    {
+      maxAttempts: 3,
+      timeoutMs: 200,
+      baseDelayMs: 5,
+      label: 'test_retry',
+      onRetry: () => {
+        retryHooks++;
+      },
+    },
+  );
+  assert.equal(val, 'ok');
+  assert.equal(calls, 3);
+  assert.equal(retryHooks, 2);
+
+  // retryAsync exhausts and rejects
+  await assert.rejects(
+    retryAsync(async () => {
+      throw new Error('always_fail');
+    }, { maxAttempts: 2, timeoutMs: 200, baseDelayMs: 5, label: 'test_exhaust' }),
+    /always_fail/,
+  );
+
+  // withTimeout rejects on slow promise
+  await assert.rejects(
+    withTimeout(() => new Promise((resolve) => setTimeout(resolve, 120)), 15, 'slow_op'),
+    /slow_op timed out/,
+  );
+}
+
+runPhaseATests()
+  .then(() => {
+    console.log('ALL_SIM_TESTS_PASSED');
+  })
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });

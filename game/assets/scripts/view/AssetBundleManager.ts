@@ -1,14 +1,18 @@
 import { assetManager, AssetManager, JsonAsset, resources, Texture2D } from 'cc';
+import { retryAsync } from '../core/AsyncRetry';
 import { AssetBundleName, SPRITE_MANIFEST } from '../data/AssetManifest';
 import { getCampaignBundleName, getLevelMetaById } from '../data/LevelCatalog';
 import { LevelDef, PlayableCampaignId } from '../data/Types';
+import { loadTextureByKey } from './SpriteLoader';
 
 const bundleCache = new Map<AssetBundleName, AssetManager.Bundle>();
 const bundleInFlight = new Map<AssetBundleName, Promise<AssetManager.Bundle>>();
 const levelCache = new Map<number, LevelDef>();
 const levelInFlight = new Map<number, Promise<LevelDef>>();
 
-export function ensureBundle(name: AssetBundleName): Promise<AssetManager.Bundle> {
+export type RetryProgressHook = (nextAttempt: number, maxAttempts: number, err: unknown) => void;
+
+export function ensureBundle(name: AssetBundleName, onRetry?: RetryProgressHook): Promise<AssetManager.Bundle> {
   if (name === 'resources') {
     bundleCache.set('resources', resources);
     return Promise.resolve(resources);
@@ -21,49 +25,99 @@ export function ensureBundle(name: AssetBundleName): Promise<AssetManager.Bundle
   const pending = bundleInFlight.get(name);
   if (pending) return pending;
 
-  const p = new Promise<AssetManager.Bundle>((resolve, reject) => {
-    assetManager.loadBundle(name, (err, bundle) => {
-      bundleInFlight.delete(name);
-      if (err || !bundle) {
-        reject(err ?? new Error(`Failed to load AssetBundle: ${name}`));
-        return;
-      }
-      bundleCache.set(name, bundle);
-      resolve(bundle);
-    });
+  const p = retryAsync(
+    () =>
+      new Promise<AssetManager.Bundle>((resolve, reject) => {
+        assetManager.loadBundle(name, (err, bundle) => {
+          if (err || !bundle) {
+            reject(err ?? new Error(`Failed to load AssetBundle: ${name}`));
+            return;
+          }
+          bundleCache.set(name, bundle);
+          resolve(bundle);
+        });
+      }),
+    {
+      maxAttempts: 3,
+      timeoutMs: 12000,
+      baseDelayMs: 400,
+      label: `bundle:${name}`,
+      onRetry,
+    },
+  ).finally(() => {
+    bundleInFlight.delete(name);
   });
+
   bundleInFlight.set(name, p);
   return p;
 }
 
-export async function loadLevelDef(levelId: number): Promise<LevelDef> {
+export async function loadLevelDef(levelId: number, onRetry?: RetryProgressHook): Promise<LevelDef> {
   const cached = levelCache.get(levelId);
   if (cached) return cached;
 
   const pending = levelInFlight.get(levelId);
   if (pending) return pending;
 
-  const p = (async () => {
-    const meta = getLevelMetaById(levelId);
-    const bundleName = getCampaignBundleName(meta.campaign);
-    const bundle = await ensureBundle(bundleName);
-    const levelDef = await new Promise<LevelDef>((resolve, reject) => {
-      bundle.load(`levels/level_${meta.id}`, JsonAsset, (err, asset) => {
-        if (err || !asset?.json) {
-          reject(err ?? new Error(`Failed to load level JSON levels/level_${meta.id} from ${bundleName}`));
-          return;
-        }
-        resolve(asset.json as LevelDef);
+  const p = retryAsync(
+    async () => {
+      const meta = getLevelMetaById(levelId);
+      const bundleName = getCampaignBundleName(meta.campaign);
+      const bundle = await ensureBundle(bundleName, onRetry);
+      const levelDef = await new Promise<LevelDef>((resolve, reject) => {
+        bundle.load(`levels/level_${meta.id}`, JsonAsset, (err, asset) => {
+          if (err || !asset?.json) {
+            reject(err ?? new Error(`Failed to load level JSON levels/level_${meta.id} from ${bundleName}`));
+            return;
+          }
+          resolve(asset.json as LevelDef);
+        });
       });
-    });
-    levelCache.set(levelId, levelDef);
-    return levelDef;
-  })().finally(() => {
+      levelCache.set(levelId, levelDef);
+      return levelDef;
+    },
+    {
+      maxAttempts: 3,
+      timeoutMs: 10000,
+      baseDelayMs: 400,
+      label: `level:${levelId}`,
+      onRetry,
+    },
+  ).finally(() => {
     levelInFlight.delete(levelId);
   });
 
   levelInFlight.set(levelId, p);
   return p;
+}
+
+/**
+ * Sequential staged mission loader with smooth monotonic progress & retry notifications.
+ * Rejects on unrecoverable CDN/network failure so UI can present a Retry modal.
+ */
+export async function loadMissionAssets(
+  levelId: number,
+  onProgress?: (ratio: number, status: string) => void,
+): Promise<LevelDef> {
+  const meta = getLevelMetaById(levelId);
+
+  onProgress?.(0.08, 'LOADING GAMEPLAY BUNDLE...');
+  await ensureBundle('bundle_gameplay', (next, max) => {
+    onProgress?.(0.18, `GAMEPLAY BUNDLE RETRYING (${next}/${max})...`);
+  });
+
+  onProgress?.(0.4, 'LOADING MISSION DATA...');
+  const levelDef = await loadLevelDef(levelId, (next, max) => {
+    onProgress?.(0.5, `MISSION DATA RETRYING (${next}/${max})...`);
+  });
+
+  onProgress?.(0.72, 'LOADING BATTLEFIELD MAP...');
+  await loadTextureByKey(meta.bgKey, (next, max) => {
+    onProgress?.(0.8, `BATTLEFIELD MAP RETRYING (${next}/${max})...`);
+  });
+
+  onProgress?.(1, 'READY!');
+  return levelDef;
 }
 
 /**

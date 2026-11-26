@@ -1,4 +1,4 @@
-import { Color, EventMouse, EventTouch, Graphics, Label, Node, Sprite, SpriteFrame, UITransform } from 'cc';
+import { Color, EventMouse, EventTouch, Graphics, Label, Node, Sprite, SpriteFrame, sys, UITransform, view } from 'cc';
 import {
   COCOS_DESIGN_HEIGHT,
   COCOS_DESIGN_WIDTH,
@@ -109,6 +109,7 @@ export class BattleView {
   private bannerVisuals = new Map<number, BannerVisual>();
   private stripVfx: StripVfx[] = [];
   private floatingTexts: FloatingText[] = [];
+  private tapRipples: Array<{ x: number; y: number; elapsed: number; duration: number; color: Color }> = [];
 
   private selection: HudSelection = { strongholdId: null, buildSiteId: null, squadId: null };
   private activeSpell: SpellId | null = null;
@@ -208,13 +209,23 @@ export class BattleView {
     return this.activeSpell;
   }
 
+  hasSelection(): boolean {
+    return Boolean(this.selection.strongholdId || this.selection.buildSiteId || this.selection.squadId);
+  }
+
+  private spawnTapRipple(flashX: number, flashY: number, color: Color): void {
+    this.tapRipples.push({ x: flashX, y: flashY, elapsed: 0, duration: 0.32, color });
+  }
+
   private bindInput(): void {
     const handleMapClick = (uiX: number, uiY: number, isRightClick: boolean) => {
       this.audio.retryMusicOnGesture();
-      const localX = uiX - COCOS_DESIGN_WIDTH * 0.5;
-      const localY = uiY - COCOS_DESIGN_HEIGHT * 0.5;
+      const vis = view.getVisibleSize();
+      const localX = uiX - vis.width * 0.5;
+      const localY = uiY - vis.height * 0.5;
       if (localY > COCOS_DESIGN_HEIGHT * 0.5 - 52) return;
       const fl = cocosToFlash(localX, localY);
+      const pad = sys.isMobile ? 8 : 0;
 
       if (this.activeSpell) {
         if (isRightClick) {
@@ -223,6 +234,7 @@ export class BattleView {
         }
         const spell = this.activeSpell;
         this.setActiveSpell(null);
+        this.spawnTapRipple(fl.x, fl.y, new Color(255, 224, 95, 240));
         this.sim.castSpell(this.sim.playerFaction, spell, fl.x, fl.y);
         return;
       }
@@ -236,15 +248,16 @@ export class BattleView {
 
       // 1. Prioritize player squad when closer than stronghold hitbox
       const hitPlayerSquad = this.sim.squads.find(
-        (sq) => sq.owner === pFaction && sq.state !== 'Dead' && dist(sq.flashX, sq.flashY, fl.x, fl.y) <= 28,
+        (sq) => sq.owner === pFaction && sq.state !== 'Dead' && dist(sq.flashX, sq.flashY, fl.x, fl.y) <= 28 + pad,
       );
-      const hitFort = this.sim.strongholds.find((sh) => dist(sh.flashX, sh.flashY, fl.x, fl.y) <= 42);
+      const hitFort = this.sim.strongholds.find((sh) => dist(sh.flashX, sh.flashY, fl.x, fl.y) <= 42 + pad);
 
       if (
         hitPlayerSquad &&
         (!hitFort || dist(hitPlayerSquad.flashX, hitPlayerSquad.flashY, fl.x, fl.y) <= dist(hitFort.flashX, hitFort.flashY, fl.x, fl.y) + 6)
       ) {
         this.selection = { strongholdId: null, buildSiteId: null, squadId: hitPlayerSquad.id };
+        this.spawnTapRipple(hitPlayerSquad.flashX, hitPlayerSquad.flashY, new Color(240, 250, 255, 220));
         this.audio.playSfx('ui_click');
         this.onSelectionChange(this.selection);
         return;
@@ -254,6 +267,7 @@ export class BattleView {
       if (hitFort) {
         if (hitFort.owner === pFaction) {
           this.selection = { strongholdId: hitFort.id, buildSiteId: null, squadId: null };
+          this.spawnTapRipple(hitFort.flashX, hitFort.flashY, new Color(255, 232, 130, 225));
           this.audio.playSfx('ui_click');
           this.onSelectionChange(this.selection);
           return;
@@ -266,10 +280,11 @@ export class BattleView {
 
       // 3. Click on owned empty BuildSite
       const hitSite = this.sim.buildSites.find(
-        (bs) => bs.owner === pFaction && bs.supplyKind === 'Empty' && dist(bs.flashX, bs.flashY, fl.x, fl.y) <= 34,
+        (bs) => bs.owner === pFaction && bs.supplyKind === 'Empty' && dist(bs.flashX, bs.flashY, fl.x, fl.y) <= 34 + pad,
       );
       if (hitSite) {
         this.selection = { strongholdId: null, buildSiteId: hitSite.id, squadId: null };
+        this.spawnTapRipple(hitSite.flashX, hitSite.flashY, new Color(255, 232, 130, 225));
         this.audio.playSfx('ui_click');
         this.onSelectionChange(this.selection);
         return;
@@ -278,9 +293,10 @@ export class BattleView {
       // 4. Click on Hostile/Bandit squad while player squad selected -> intercept!
       if (this.selection.squadId) {
         const hitEnemy = this.sim.squads.find(
-          (sq) => sq.owner !== pFaction && sq.state !== 'Dead' && dist(sq.flashX, sq.flashY, fl.x, fl.y) <= 36,
+          (sq) => sq.owner !== pFaction && sq.state !== 'Dead' && dist(sq.flashX, sq.flashY, fl.x, fl.y) <= 36 + pad,
         );
         if (hitEnemy) {
+          this.spawnTapRipple(hitEnemy.flashX, hitEnemy.flashY, new Color(255, 110, 80, 235));
           this.sim.orderSquadToAttackSquad(this.selection.squadId, hitEnemy.id);
           this.playSendSound(this.selection.squadId);
           return;
@@ -289,10 +305,11 @@ export class BattleView {
 
       // 5. Fallback player squad wider radius
       const hitPlayerWide = this.sim.squads.find(
-        (sq) => sq.owner === pFaction && sq.state !== 'Dead' && dist(sq.flashX, sq.flashY, fl.x, fl.y) <= 36,
+        (sq) => sq.owner === pFaction && sq.state !== 'Dead' && dist(sq.flashX, sq.flashY, fl.x, fl.y) <= 36 + pad,
       );
       if (hitPlayerWide) {
         this.selection = { strongholdId: null, buildSiteId: null, squadId: hitPlayerWide.id };
+        this.spawnTapRipple(hitPlayerWide.flashX, hitPlayerWide.flashY, new Color(240, 250, 255, 220));
         this.audio.playSfx('ui_click');
         this.onSelectionChange(this.selection);
         return;
@@ -325,8 +342,9 @@ export class BattleView {
         this.hoverFlash = null;
         return;
       }
+      const vis = view.getVisibleSize();
       const loc = ev.getUILocation();
-      this.hoverFlash = cocosToFlash(loc.x - COCOS_DESIGN_WIDTH * 0.5, loc.y - COCOS_DESIGN_HEIGHT * 0.5);
+      this.hoverFlash = cocosToFlash(loc.x - vis.width * 0.5, loc.y - vis.height * 0.5);
     });
   }
 
@@ -351,7 +369,10 @@ export class BattleView {
     const ok = targetNodeId
       ? this.sim.orderSquadToNode(this.selection.squadId, targetNodeId)
       : this.sim.orderSquadToPoint(this.selection.squadId, fx, fy);
-    if (ok) this.playSendSound(this.selection.squadId);
+    if (ok) {
+      this.spawnTapRipple(fx, fy, new Color(120, 245, 145, 230));
+      this.playSendSound(this.selection.squadId);
+    }
   }
 
   sendSelectedSquadToNearestEnemy(): void {
@@ -380,6 +401,7 @@ export class BattleView {
 
   releaseBattleAssets(): void {
     this.bgLoadSeq++;
+    this.tapRipples = [];
     if (this.mapNode?.isValid && this.mapSprite) {
       this.mapSprite.spriteFrame = null;
     }
@@ -425,6 +447,7 @@ export class BattleView {
     this.bannerVisuals.clear();
     this.stripVfx = [];
     this.floatingTexts = [];
+    this.tapRipples = [];
     this.activeSpell = null;
 
     for (const sh of this.sim.strongholds) {
@@ -889,6 +912,23 @@ export class BattleView {
             this.selectG.stroke();
           }
         }
+      }
+    }
+
+    // 5b. Tap/Click Ripple Feedback
+    for (let i = this.tapRipples.length - 1; i >= 0; i--) {
+      const r = this.tapRipples[i];
+      r.elapsed += dt;
+      const t = Math.min(1, r.elapsed / r.duration);
+      const cp = flashToCocos(r.x, r.y);
+      const radius = 8 + 26 * t;
+      const alpha = Math.max(0, Math.round(r.color.a * (1 - t)));
+      this.selectG.strokeColor = new Color(r.color.r, r.color.g, r.color.b, alpha);
+      this.selectG.lineWidth = 2.5 * (1 - 0.5 * t);
+      this.selectG.circle(cp.x, cp.y, radius);
+      this.selectG.stroke();
+      if (r.elapsed >= r.duration) {
+        this.tapRipples.splice(i, 1);
       }
     }
 

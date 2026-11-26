@@ -1,13 +1,15 @@
-import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
+import { BlockInputEvents, Button, Color, Graphics, Label, Node, Sprite } from 'cc';
 import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { MAX_STRONGHOLD_LEVEL, STRONGHOLD_STATS, STRONGHOLD_UPGRADE_COSTS } from '../data/BuildingsData';
 import { TUTORIAL1_HINTS, TUTORIAL2_HINTS } from '../data/Level1Data';
 import { ALL_SPELLS, CAMPAIGN_SPELL_ORDER } from '../data/SpellsData';
 import { PlayableCampaignId, SpellId } from '../data/Types';
 import { getRecruitIdsForFaction, UNIT_DEFS } from '../data/UnitsData';
+import { UserSettingsStore } from '../data/UserSettings';
 import { BattleSim } from '../sim/BattleSim';
 import { countAliveUnits, getSquadTotalHp } from '../sim/CombatMath';
 import { AudioManager } from './AudioManager';
+import { getDesignSafeAreaInsets, SafeAreaInsets } from './SafeAreaHelper';
 import { createUiNode, drawPanel, getStaticSpriteFrame } from './SpriteLoader';
 
 export interface HudSelection {
@@ -77,6 +79,10 @@ export class HudView {
   private squadInfoLabel!: Label;
 
   private pauseModal!: Node;
+  private bgmVolLabel!: Label;
+  private sfxVolLabel!: Label;
+  private cancelSpellBtn!: Node;
+  private safeInsets: SafeAreaInsets = { left: 0, right: 0, top: 0, bottom: 0 };
   private selection: HudSelection = { strongholdId: null, buildSiteId: null, squadId: null };
   private activeSpell: SpellId | null = null;
 
@@ -84,6 +90,7 @@ export class HudView {
     parent: Node,
     private sim: BattleSim,
     private audio: AudioManager,
+    private settings: UserSettingsStore,
     private callbacks: {
       onClearSelection: () => void;
       onRestart: () => void;
@@ -94,6 +101,7 @@ export class HudView {
       onQuickCastUltimate: () => void;
     },
   ) {
+    this.safeInsets = getDesignSafeAreaInsets();
     this.root = createUiNode('HudView', parent, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
     this.buildTopBar();
     this.buildTutorialBanner();
@@ -107,7 +115,7 @@ export class HudView {
 
   private buildTopBar(): void {
     const bar = createUiNode('TopBar', this.root, COCOS_DESIGN_WIDTH, 50);
-    bar.setPosition(0, COCOS_DESIGN_HEIGHT * 0.5 - 25);
+    bar.setPosition(0, COCOS_DESIGN_HEIGHT * 0.5 - 25 - this.safeInsets.top);
     drawPanel(
       bar.addComponent(Graphics),
       COCOS_DESIGN_WIDTH,
@@ -155,48 +163,75 @@ export class HudView {
       return l;
     };
 
-    this.speedLabel = makeTopBtn('1X SPEED', 270, 96, () => {
-      this.sim.speedMultiplier = this.sim.speedMultiplier === 1 ? 2 : 1;
-      this.refresh();
+    this.speedLabel = makeTopBtn('1X [F]', 270, 96, () => {
+      this.toggleSpeed();
     });
 
-    makeTopBtn('PAUSE', 382, 92, () => {
-      this.sim.paused = !this.sim.paused;
-      this.pauseModal.active = this.sim.paused;
+    makeTopBtn('PAUSE [SPC]', 382, 102, () => {
+      this.togglePause();
     });
 
-    this.muteLabel = makeTopBtn('SOUND: ON', 494, 108, () => {
+    this.muteLabel = makeTopBtn('SFX ON [M]', 498, 112, () => {
       this.audio.toggleMute();
       this.refresh();
     });
 
-    makeTopBtn('MAP', 596, 76, () => {
+    makeTopBtn('MAP', 598, 72, () => {
       this.callbacks.onCampaignMap();
     });
   }
 
   private buildTutorialBanner(): void {
-    const tutNode = createUiNode('TutorialBanner', this.root, 780, 32);
-    tutNode.setPosition(0, COCOS_DESIGN_HEIGHT * 0.5 - 70);
+    const bannerY = COCOS_DESIGN_HEIGHT * 0.5 - 70 - this.safeInsets.top;
+    const tutNode = createUiNode('TutorialBanner', this.root, 760, 32);
+    tutNode.setPosition(-20, bannerY);
     drawPanel(
       tutNode.addComponent(Graphics),
-      780,
+      760,
       32,
       new Color(22, 26, 38, 212),
       new Color(140, 165, 200, 180),
       1.5,
       8,
     );
-    this.tutLabel = createUiNode('TutLbl', tutNode, 760, 26).addComponent(Label);
+    this.tutLabel = createUiNode('TutLbl', tutNode, 740, 26).addComponent(Label);
     this.tutLabel.fontSize = 14;
     this.tutLabel.lineHeight = 18;
     this.tutLabel.overflow = Label.Overflow.SHRINK;
     this.tutLabel.color = new Color(242, 236, 205, 255);
+
+    this.cancelSpellBtn = createUiNode('CancelSpellBtn', this.root, 148, 32);
+    this.cancelSpellBtn.setPosition(456, bannerY);
+    drawPanel(
+      this.cancelSpellBtn.addComponent(Graphics),
+      148,
+      32,
+      new Color(120, 36, 36, 240),
+      new Color(240, 175, 120, 235),
+      2,
+      8,
+    );
+    const cLbl = createUiNode('CancelLbl', this.cancelSpellBtn, 138, 24).addComponent(Label);
+    cLbl.string = 'CANCEL [ESC]';
+    cLbl.fontSize = 13;
+    cLbl.isBold = true;
+    cLbl.color = new Color(255, 234, 195, 255);
+    const cBtn = this.cancelSpellBtn.addComponent(Button);
+    cBtn.transition = Button.Transition.SCALE;
+    cBtn.zoomScale = 1.05;
+    this.cancelSpellBtn.on(Button.EventType.CLICK, () => {
+      this.audio.playSfx('ui_click');
+      this.callbacks.onSelectSpell(null);
+    });
+    this.cancelSpellBtn.active = false;
   }
 
   private buildSpellDock(): void {
     this.spellDockNode = createUiNode('SpellDock', this.root, 234, 120);
-    this.spellDockNode.setPosition(-COCOS_DESIGN_WIDTH * 0.5 + 126, -COCOS_DESIGN_HEIGHT * 0.5 + 65);
+    this.spellDockNode.setPosition(
+      -COCOS_DESIGN_WIDTH * 0.5 + 126 + this.safeInsets.left,
+      -COCOS_DESIGN_HEIGHT * 0.5 + 65 + this.safeInsets.bottom,
+    );
     drawPanel(
       this.spellDockNode.addComponent(Graphics),
       234,
@@ -237,22 +272,19 @@ export class HudView {
       costLbl.fontSize = 11;
       costLbl.isBold = true;
 
+      const keyBadge = createUiNode('Key', b, 18, 12).addComponent(Label);
+      keyBadge.node.setPosition(42, 16);
+      keyBadge.string = `${idx + 1}`;
+      keyBadge.fontSize = 9;
+      keyBadge.lineHeight = 11;
+      keyBadge.isBold = true;
+      keyBadge.color = new Color(210, 196, 150, 190);
+
       const comp = b.addComponent(Button);
       comp.transition = Button.Transition.SCALE;
       comp.zoomScale = 1.05;
       b.on(Button.EventType.CLICK, () => {
-        const order = CAMPAIGN_SPELL_ORDER[this.sim.playerFaction];
-        const spellId = order[idx];
-        if (!spellId || !this.sim.canCastSpell(this.sim.playerFaction, spellId)) return;
-        this.audio.playSfx('ui_click');
-        const def = ALL_SPELLS[spellId];
-        if (def.kind === 'ultimate' && this.activeSpell === spellId) {
-          this.callbacks.onSelectSpell(null);
-          this.callbacks.onQuickCastUltimate();
-          return;
-        }
-        const next = this.activeSpell === spellId ? null : spellId;
-        this.callbacks.onSelectSpell(next);
+        this.triggerSpellSlot(idx);
       });
 
       this.spellButtons.push({
@@ -271,7 +303,7 @@ export class HudView {
 
   private buildStrongholdPanel(): void {
     this.actionPanel = createUiNode('StrongholdActionPanel', this.root, 760, 118);
-    this.actionPanel.setPosition(85, -COCOS_DESIGN_HEIGHT * 0.5 + 64);
+    this.actionPanel.setPosition(85, -COCOS_DESIGN_HEIGHT * 0.5 + 64 + this.safeInsets.bottom);
     drawPanel(
       this.actionPanel.addComponent(Graphics),
       760,
@@ -385,7 +417,7 @@ export class HudView {
 
   private buildSitePanel(): void {
     this.buildPanel = createUiNode('BuildSitePanel', this.root, 460, 108);
-    this.buildPanel.setPosition(85, -COCOS_DESIGN_HEIGHT * 0.5 + 60);
+    this.buildPanel.setPosition(85, -COCOS_DESIGN_HEIGHT * 0.5 + 60 + this.safeInsets.bottom);
     drawPanel(
       this.buildPanel.addComponent(Graphics),
       460,
@@ -452,7 +484,7 @@ export class HudView {
 
   private buildSquadBar(): void {
     this.squadBar = createUiNode('SelectedSquadBar', this.root, 620, 62);
-    this.squadBar.setPosition(85, -COCOS_DESIGN_HEIGHT * 0.5 + 38);
+    this.squadBar.setPosition(85, -COCOS_DESIGN_HEIGHT * 0.5 + 38 + this.safeInsets.bottom);
     drawPanel(
       this.squadBar.addComponent(Graphics),
       620,
@@ -487,6 +519,7 @@ export class HudView {
 
   private buildPauseModal(): void {
     this.pauseModal = createUiNode('PauseModal', this.root, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
+    this.pauseModal.addComponent(BlockInputEvents);
     drawPanel(
       this.pauseModal.addComponent(Graphics),
       COCOS_DESIGN_WIDTH,
@@ -497,20 +530,56 @@ export class HudView {
       0,
     );
 
-    const card = createUiNode('PauseCard', this.pauseModal, 360, 320);
-    drawPanel(card.addComponent(Graphics), 360, 320, new Color(28, 24, 38, 245), new Color(214, 173, 86, 255), 3, 14);
-    const tl = createUiNode('PauseTitle', card, 300, 40).addComponent(Label);
-    tl.node.setPosition(0, 118);
+    const card = createUiNode('PauseCard', this.pauseModal, 380, 410);
+    drawPanel(card.addComponent(Graphics), 380, 410, new Color(28, 24, 38, 248), new Color(214, 173, 86, 255), 3, 14);
+    const tl = createUiNode('PauseTitle', card, 320, 40).addComponent(Label);
+    tl.node.setPosition(0, 166);
     tl.string = 'GAME PAUSED';
     tl.fontSize = 26;
     tl.isBold = true;
     tl.color = new Color(255, 224, 130, 255);
 
+    const makeVolRow = (title: string, y: number, onDelta: (delta: number) => void): Label => {
+      const lbl = createUiNode(`VolLbl_${title}`, card, 150, 28).addComponent(Label);
+      lbl.node.setPosition(-72, y);
+      lbl.fontSize = 15;
+      lbl.isBold = true;
+      lbl.color = new Color(235, 232, 220, 255);
+
+      const makeStep = (txt: string, x: number, delta: number) => {
+        const b = createUiNode(`VolBtn_${title}_${txt}`, card, 42, 30);
+        b.setPosition(x, y);
+        drawPanel(b.addComponent(Graphics), 42, 30, new Color(54, 46, 76, 240), new Color(205, 168, 86, 220), 1.5, 6);
+        const bl = createUiNode('L', b, 34, 24).addComponent(Label);
+        bl.string = txt;
+        bl.fontSize = 16;
+        bl.isBold = true;
+        bl.color = new Color(255, 232, 165, 255);
+        b.addComponent(Button).node.on(Button.EventType.CLICK, () => {
+          onDelta(delta);
+          this.audio.playSfx('ui_click');
+          this.refreshVolumeLabels();
+        });
+      };
+
+      makeStep('-', 68, -0.15);
+      makeStep('+', 120, 0.15);
+      return lbl;
+    };
+
+    this.bgmVolLabel = makeVolRow('BGM', 110, (d) => {
+      this.audio.setBgmVolume(this.audio.getBgmVolume() + d);
+    });
+    this.sfxVolLabel = makeVolRow('SFX', 68, (d) => {
+      this.audio.setSfxVolume(this.audio.getSfxVolume() + d);
+    });
+    this.refreshVolumeLabels();
+
     const makeBtn = (txt: string, y: number, fn: () => void) => {
-      const b = createUiNode(`PauseBtn_${txt}`, card, 230, 42);
+      const b = createUiNode(`PauseBtn_${txt}`, card, 240, 42);
       b.setPosition(0, y);
-      drawPanel(b.addComponent(Graphics), 230, 42, new Color(68, 42, 92, 240), new Color(214, 173, 86, 230), 2, 8);
-      const l = createUiNode('L', b, 210, 28).addComponent(Label);
+      drawPanel(b.addComponent(Graphics), 240, 42, new Color(68, 42, 92, 240), new Color(214, 173, 86, 230), 2, 8);
+      const l = createUiNode('L', b, 220, 28).addComponent(Label);
       l.string = txt;
       l.fontSize = 15;
       l.isBold = true;
@@ -520,27 +589,69 @@ export class HudView {
       });
     };
 
-    makeBtn('RESUME', 56, () => {
-      this.sim.paused = false;
-      this.pauseModal.active = false;
+    makeBtn('RESUME', 12, () => {
+      this.setPaused(false);
     });
-    makeBtn('RESTART MISSION', 2, () => {
-      this.sim.paused = false;
-      this.pauseModal.active = false;
+    makeBtn('RESTART MISSION', -40, () => {
+      this.setPaused(false);
       this.callbacks.onRestart();
     });
-    makeBtn('CAMPAIGN MAP', -52, () => {
-      this.sim.paused = false;
-      this.pauseModal.active = false;
+    makeBtn('CAMPAIGN MAP', -92, () => {
+      this.setPaused(false);
       this.callbacks.onCampaignMap();
     });
-    makeBtn('MAIN MENU', -106, () => {
-      this.sim.paused = false;
-      this.pauseModal.active = false;
+    makeBtn('MAIN MENU', -144, () => {
+      this.setPaused(false);
       this.callbacks.onMenu();
     });
 
     this.pauseModal.active = false;
+  }
+
+  private refreshVolumeLabels(): void {
+    if (!this.bgmVolLabel || !this.sfxVolLabel) return;
+    const bgmPct = Math.round(this.audio.getBgmVolume() * 100);
+    const sfxPct = Math.round(this.audio.getSfxVolume() * 100);
+    this.bgmVolLabel.string = `BGM: ${bgmPct}%`;
+    this.sfxVolLabel.string = `SFX: ${sfxPct}%`;
+  }
+
+  isPauseModalOpen(): boolean {
+    return Boolean(this.pauseModal?.active);
+  }
+
+  setPaused(paused: boolean): void {
+    this.sim.paused = paused;
+    this.pauseModal.active = paused;
+    if (paused) {
+      this.refreshVolumeLabels();
+    }
+  }
+
+  togglePause(): void {
+    this.setPaused(!this.sim.paused);
+  }
+
+  toggleSpeed(): void {
+    const next: 1 | 2 = this.sim.speedMultiplier === 1 ? 2 : 1;
+    this.sim.speedMultiplier = next;
+    this.settings.setPreferredSpeed(next);
+    this.refresh();
+  }
+
+  triggerSpellSlot(slotIdx: number): void {
+    const order = CAMPAIGN_SPELL_ORDER[this.sim.playerFaction];
+    const spellId = order[slotIdx];
+    if (!spellId || !this.sim.canCastSpell(this.sim.playerFaction, spellId)) return;
+    this.audio.playSfx('ui_click');
+    const def = ALL_SPELLS[spellId];
+    if (def.kind === 'ultimate' && this.activeSpell === spellId) {
+      this.callbacks.onSelectSpell(null);
+      this.callbacks.onQuickCastUltimate();
+      return;
+    }
+    const next = this.activeSpell === spellId ? null : spellId;
+    this.callbacks.onSelectSpell(next);
   }
 
   rebuildForCampaign(): void {
@@ -593,11 +704,12 @@ export class HudView {
     const mm = String(Math.floor(secs / 60)).padStart(2, '0');
     const ss = String(secs % 60).padStart(2, '0');
     this.timerLabel.string = `TIME: ${mm}:${ss}  (GOLD <05:30)`;
-    this.speedLabel.string = this.sim.speedMultiplier === 2 ? '2X SPEED' : '1X SPEED';
-    this.muteLabel.string = this.audio.isMuted() ? 'SOUND: OFF' : 'SOUND: ON';
+    this.speedLabel.string = this.sim.speedMultiplier === 2 ? '2X [F]' : '1X [F]';
+    this.muteLabel.string = this.audio.isMuted() ? 'MUTED [M]' : 'SFX ON [M]';
+    this.cancelSpellBtn.active = Boolean(this.activeSpell);
 
     if (this.activeSpell) {
-      this.tutLabel.string = `TARGETING: ${ALL_SPELLS[this.activeSpell].name} — Click map to cast (Right-click to cancel)`;
+      this.tutLabel.string = `TARGETING: ${ALL_SPELLS[this.activeSpell].name} — Tap/Click map to cast`;
     } else if (this.sim.levelDef.tutorialMode === 'tutorial1') {
       this.tutLabel.string = TUTORIAL1_HINTS[Math.min(this.sim.ai.tutorialStep, TUTORIAL1_HINTS.length - 1)];
     } else if (this.sim.levelDef.tutorialMode === 'tutorial2') {

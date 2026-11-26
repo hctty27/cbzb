@@ -1,0 +1,10 @@
+{
+    "name": "game",
+    "type": "2d",
+    "version": "4.0.0",
+    "uuid": "0fac2445-8d2d-49f6-9f1e-c8b741475642",
+    "creator": {
+        "version": "4.0.0",
+        "dependencies": {}
+    }
+}

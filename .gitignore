@@ -1,0 +1,13 @@
+tools/
+decompiled/
+game/library/
+game/temp/
+game/local/
+game/build/
+game/profiles/
+node_modules/
+__pycache__/
+*.pyc
+*.log
+.DS_Store
+Thumbs.db

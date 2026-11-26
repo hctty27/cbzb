@@ -1,6 +1,7 @@
 import { BlockInputEvents, Button, Color, Graphics, Label, Node, Sprite } from 'cc';
 import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { MAX_STRONGHOLD_LEVEL, STRONGHOLD_STATS, STRONGHOLD_UPGRADE_COSTS } from '../data/BuildingsData';
+import { getLevelName, getSpellName, getTutorialHint, getUnitName, t } from '../data/I18n';
 import { TUTORIAL1_HINTS, TUTORIAL2_HINTS } from '../data/Level1Data';
 import { ALL_SPELLS, CAMPAIGN_SPELL_ORDER } from '../data/SpellsData';
 import { PlayableCampaignId, SpellId } from '../data/Types';
@@ -32,8 +33,11 @@ export class HudView {
   private manaLabel!: Label;
   private timerLabel!: Label;
   private speedLabel!: Label;
+  private pauseTopBtnLabel!: Label;
   private muteLabel!: Label;
+  private mapTopBtnLabel!: Label;
   private tutLabel!: Label;
+  private cancelSpellLabel!: Label;
 
   private spellDockNode!: Node;
   private spellButtons: Array<{
@@ -67,8 +71,7 @@ export class HudView {
   private buildTitleLabel!: Label;
   private buildKindNodes: Array<{
     kind: 'Village' | 'Mine' | 'Obelisk';
-    label: string;
-    sub: string;
+    i18nKey: 'hud_build_farm' | 'hud_build_mine' | 'hud_build_obelisk';
     node: Node;
     iconNode: Node;
     iconSp: Sprite;
@@ -77,14 +80,38 @@ export class HudView {
   }> = [];
   private squadBar!: Node;
   private squadInfoLabel!: Label;
+  private marchBtnLabel!: Label;
 
   private pauseModal!: Node;
+  private pauseTitleLabel!: Label;
   private bgmVolLabel!: Label;
   private sfxVolLabel!: Label;
+  private pauseLangLabel!: Label;
+  private pauseLangBtnLabel!: Label;
+  private pauseResumeLabel!: Label;
+  private pauseRestartLabel!: Label;
+  private pauseMapLabel!: Label;
+  private pauseMenuLabel!: Label;
   private cancelSpellBtn!: Node;
   private safeInsets: SafeAreaInsets = { left: 0, right: 0, top: 0, bottom: 0 };
   private selection: HudSelection = { strongholdId: null, buildSiteId: null, squadId: null };
   private activeSpell: SpellId | null = null;
+
+  private refreshAccum = 0;
+  private dirty = true;
+  private spellStates: string[] = ['', '', '', ''];
+  private unitBtnStates: string[] = ['', '', '', '', ''];
+  private lastGoldText = '';
+  private lastSupplyText = '';
+  private lastManaText = '';
+  private lastTimerText = '';
+  private lastSpeedText = '';
+  private lastMuteText = '';
+  private lastTutText = '';
+  private lastActionHeader = '';
+  private lastUpgradeText = '';
+  private lastBuildTitle = '';
+  private lastSquadText = '';
 
   constructor(
     parent: Node,
@@ -99,6 +126,7 @@ export class HudView {
       onSendSelectedSquadToNearest: () => void;
       onSelectSpell: (spellId: SpellId | null) => void;
       onQuickCastUltimate: () => void;
+      onToggleLanguage: () => void;
     },
   ) {
     this.safeInsets = getDesignSafeAreaInsets();
@@ -133,6 +161,8 @@ export class HudView {
       lbl.fontSize = 17;
       lbl.lineHeight = 22;
       lbl.isBold = true;
+      lbl.cacheMode = Label.CacheMode.CHAR;
+      lbl.overflow = Label.Overflow.SHRINK;
       lbl.color = color;
       return lbl;
     };
@@ -142,7 +172,7 @@ export class HudView {
     this.manaLabel = makeStat(-130, new Color(125, 200, 255, 255));
     this.timerLabel = makeStat(65, new Color(240, 236, 224, 255));
 
-    const makeTopBtn = (labelText: string, x: number, w: number, onClick: () => void): Label => {
+    const makeTopBtn = (labelText: string, x: number, w: number, onClick: () => void, charCache = false): Label => {
       const b = createUiNode(`TopBtn_${labelText}`, bar, w, 34);
       b.setPosition(x, 0);
       drawPanel(b.addComponent(Graphics), w, 34, new Color(46, 38, 62, 240), new Color(205, 168, 86, 230), 2, 7);
@@ -152,6 +182,8 @@ export class HudView {
       l.fontSize = 14;
       l.lineHeight = 18;
       l.isBold = true;
+      l.overflow = Label.Overflow.SHRINK;
+      if (charCache) l.cacheMode = Label.CacheMode.CHAR;
       l.color = new Color(255, 230, 165, 255);
       const comp = b.addComponent(Button);
       comp.transition = Button.Transition.SCALE;
@@ -163,20 +195,20 @@ export class HudView {
       return l;
     };
 
-    this.speedLabel = makeTopBtn('1X [F]', 270, 96, () => {
+    this.speedLabel = makeTopBtn(t('hud_speed_1x'), 270, 96, () => {
       this.toggleSpeed();
-    });
+    }, true);
 
-    makeTopBtn('PAUSE [SPC]', 382, 102, () => {
+    this.pauseTopBtnLabel = makeTopBtn(t('hud_pause_btn'), 382, 102, () => {
       this.togglePause();
     });
 
-    this.muteLabel = makeTopBtn('SFX ON [M]', 498, 112, () => {
+    this.muteLabel = makeTopBtn(t('hud_mute_off'), 498, 112, () => {
       this.audio.toggleMute();
       this.refresh();
     });
 
-    makeTopBtn('MAP', 598, 72, () => {
+    this.mapTopBtnLabel = makeTopBtn(t('hud_map_btn'), 598, 72, () => {
       this.callbacks.onCampaignMap();
     });
   }
@@ -212,10 +244,12 @@ export class HudView {
       8,
     );
     const cLbl = createUiNode('CancelLbl', this.cancelSpellBtn, 138, 24).addComponent(Label);
-    cLbl.string = 'CANCEL [ESC]';
+    cLbl.string = t('hud_cancel_spell');
     cLbl.fontSize = 13;
     cLbl.isBold = true;
+    cLbl.overflow = Label.Overflow.SHRINK;
     cLbl.color = new Color(255, 234, 195, 255);
+    this.cancelSpellLabel = cLbl;
     const cBtn = this.cancelSpellBtn.addComponent(Button);
     cBtn.transition = Button.Transition.SCALE;
     cBtn.zoomScale = 1.05;
@@ -435,10 +469,10 @@ export class HudView {
     this.buildTitleLabel.isBold = true;
     this.buildTitleLabel.color = new Color(255, 228, 150, 255);
 
-    const kinds: Array<{ kind: 'Village' | 'Mine' | 'Obelisk'; label: string; sub: string; x: number }> = [
-      { kind: 'Village', label: 'Farm', sub: '+1 Supply', x: -140 },
-      { kind: 'Mine', label: 'Mine', sub: '+2 Gold/s', x: 0 },
-      { kind: 'Obelisk', label: 'Obelisk', sub: '+1 Mana/s', x: 140 },
+    const kinds: Array<{ kind: 'Village' | 'Mine' | 'Obelisk'; i18nKey: 'hud_build_farm' | 'hud_build_mine' | 'hud_build_obelisk'; x: number }> = [
+      { kind: 'Village', i18nKey: 'hud_build_farm', x: -140 },
+      { kind: 'Mine', i18nKey: 'hud_build_mine', x: 0 },
+      { kind: 'Obelisk', i18nKey: 'hud_build_obelisk', x: 140 },
     ];
 
     for (const k of kinds) {
@@ -452,9 +486,10 @@ export class HudView {
 
       const lbl = createUiNode('L', b, 80, 44).addComponent(Label);
       lbl.node.setPosition(20, 0);
-      lbl.string = `${k.label}\n${k.sub}`;
+      lbl.string = t(k.i18nKey);
       lbl.fontSize = 13;
       lbl.lineHeight = 17;
+      lbl.overflow = Label.Overflow.SHRINK;
       lbl.isBold = true;
       b.addComponent(Button).node.on(Button.EventType.CLICK, () => {
         if (!this.selection.buildSiteId) return;
@@ -469,8 +504,7 @@ export class HudView {
 
       this.buildKindNodes.push({
         kind: k.kind,
-        label: k.label,
-        sub: k.sub,
+        i18nKey: k.i18nKey,
         node: b,
         iconNode: ic,
         iconSp: sp,
@@ -506,9 +540,11 @@ export class HudView {
     atkBtn.setPosition(208, 0);
     drawPanel(atkBtn.addComponent(Graphics), 176, 40, new Color(120, 44, 44, 240), new Color(235, 160, 120, 230), 2, 8);
     const atkLbl = createUiNode('L', atkBtn, 166, 26).addComponent(Label);
-    atkLbl.string = 'MARCH TO ENEMY';
+    atkLbl.string = t('hud_march_btn');
     atkLbl.fontSize = 14;
     atkLbl.isBold = true;
+    atkLbl.overflow = Label.Overflow.SHRINK;
+    this.marchBtnLabel = atkLbl;
     atkBtn.addComponent(Button).node.on(Button.EventType.CLICK, () => {
       this.audio.playSfx('ui_click');
       this.callbacks.onSendSelectedSquadToNearest();
@@ -530,20 +566,22 @@ export class HudView {
       0,
     );
 
-    const card = createUiNode('PauseCard', this.pauseModal, 380, 410);
-    drawPanel(card.addComponent(Graphics), 380, 410, new Color(28, 24, 38, 248), new Color(214, 173, 86, 255), 3, 14);
-    const tl = createUiNode('PauseTitle', card, 320, 40).addComponent(Label);
-    tl.node.setPosition(0, 166);
-    tl.string = 'GAME PAUSED';
-    tl.fontSize = 26;
-    tl.isBold = true;
-    tl.color = new Color(255, 224, 130, 255);
+    const card = createUiNode('PauseCard', this.pauseModal, 380, 456);
+    drawPanel(card.addComponent(Graphics), 380, 456, new Color(28, 24, 38, 248), new Color(214, 173, 86, 255), 3, 14);
+    this.pauseTitleLabel = createUiNode('PauseTitle', card, 320, 40).addComponent(Label);
+    this.pauseTitleLabel.node.setPosition(0, 192);
+    this.pauseTitleLabel.string = t('pause_title');
+    this.pauseTitleLabel.fontSize = 25;
+    this.pauseTitleLabel.isBold = true;
+    this.pauseTitleLabel.overflow = Label.Overflow.SHRINK;
+    this.pauseTitleLabel.color = new Color(255, 224, 130, 255);
 
     const makeVolRow = (title: string, y: number, onDelta: (delta: number) => void): Label => {
-      const lbl = createUiNode(`VolLbl_${title}`, card, 150, 28).addComponent(Label);
+      const lbl = createUiNode(`VolLbl_${title}`, card, 158, 28).addComponent(Label);
       lbl.node.setPosition(-72, y);
       lbl.fontSize = 15;
       lbl.isBold = true;
+      lbl.overflow = Label.Overflow.SHRINK;
       lbl.color = new Color(235, 232, 220, 255);
 
       const makeStep = (txt: string, x: number, delta: number) => {
@@ -567,40 +605,64 @@ export class HudView {
       return lbl;
     };
 
-    this.bgmVolLabel = makeVolRow('BGM', 110, (d) => {
+    this.bgmVolLabel = makeVolRow('BGM', 138, (d) => {
       this.audio.setBgmVolume(this.audio.getBgmVolume() + d);
     });
-    this.sfxVolLabel = makeVolRow('SFX', 68, (d) => {
+    this.sfxVolLabel = makeVolRow('SFX', 98, (d) => {
       this.audio.setSfxVolume(this.audio.getSfxVolume() + d);
     });
+
+    // Language toggle row inside Pause Modal
+    this.pauseLangLabel = createUiNode('PauseLangLbl', card, 170, 28).addComponent(Label);
+    this.pauseLangLabel.node.setPosition(-68, 58);
+    this.pauseLangLabel.fontSize = 14;
+    this.pauseLangLabel.isBold = true;
+    this.pauseLangLabel.overflow = Label.Overflow.SHRINK;
+    this.pauseLangLabel.color = new Color(235, 232, 220, 255);
+
+    const langBtn = createUiNode('PauseBtnLang', card, 94, 30);
+    langBtn.setPosition(94, 58);
+    drawPanel(langBtn.addComponent(Graphics), 94, 30, new Color(54, 46, 76, 240), new Color(205, 168, 86, 220), 1.5, 6);
+    this.pauseLangBtnLabel = createUiNode('L', langBtn, 86, 24).addComponent(Label);
+    this.pauseLangBtnLabel.fontSize = 14;
+    this.pauseLangBtnLabel.isBold = true;
+    this.pauseLangBtnLabel.overflow = Label.Overflow.SHRINK;
+    this.pauseLangBtnLabel.color = new Color(255, 232, 165, 255);
+    langBtn.addComponent(Button).node.on(Button.EventType.CLICK, () => {
+      this.audio.playSfx('ui_click');
+      this.callbacks.onToggleLanguage();
+    });
+
     this.refreshVolumeLabels();
 
-    const makeBtn = (txt: string, y: number, fn: () => void) => {
-      const b = createUiNode(`PauseBtn_${txt}`, card, 240, 42);
+    const makeBtn = (name: string, txt: string, y: number, fn: () => void): Label => {
+      const b = createUiNode(name, card, 240, 42);
       b.setPosition(0, y);
       drawPanel(b.addComponent(Graphics), 240, 42, new Color(68, 42, 92, 240), new Color(214, 173, 86, 230), 2, 8);
       const l = createUiNode('L', b, 220, 28).addComponent(Label);
       l.string = txt;
       l.fontSize = 15;
       l.isBold = true;
+      l.overflow = Label.Overflow.SHRINK;
       b.addComponent(Button).node.on(Button.EventType.CLICK, () => {
         this.audio.playSfx('ui_click');
         fn();
       });
+      return l;
     };
 
-    makeBtn('RESUME', 12, () => {
+    this.pauseResumeLabel = makeBtn('PauseBtn_RESUME', t('pause_resume'), 2, () => {
       this.setPaused(false);
     });
-    makeBtn('RESTART MISSION', -40, () => {
+    this.pauseRestartLabel = makeBtn('PauseBtn_RESTART', t('pause_restart'), -48, () => {
       this.setPaused(false);
       this.callbacks.onRestart();
     });
-    makeBtn('CAMPAIGN MAP', -92, () => {
+    this.pauseMapLabel = makeBtn('PauseBtn_MAP', t('pause_map'), -98, () => {
       this.setPaused(false);
       this.callbacks.onCampaignMap();
     });
-    makeBtn('MAIN MENU', -144, () => {
+    this.pauseMenuLabel = makeBtn('PauseBtn_MENU', t('pause_menu'), -148, () => {
       this.setPaused(false);
       this.callbacks.onMenu();
     });
@@ -612,8 +674,10 @@ export class HudView {
     if (!this.bgmVolLabel || !this.sfxVolLabel) return;
     const bgmPct = Math.round(this.audio.getBgmVolume() * 100);
     const sfxPct = Math.round(this.audio.getSfxVolume() * 100);
-    this.bgmVolLabel.string = `BGM: ${bgmPct}%`;
-    this.sfxVolLabel.string = `SFX: ${sfxPct}%`;
+    this.bgmVolLabel.string = t('pause_bgm', { pct: bgmPct });
+    this.sfxVolLabel.string = t('pause_sfx', { pct: sfxPct });
+    if (this.pauseLangLabel) this.pauseLangLabel.string = t('pause_lang_row');
+    if (this.pauseLangBtnLabel) this.pauseLangBtnLabel.string = t('pause_lang_btn');
   }
 
   isPauseModalOpen(): boolean {
@@ -661,7 +725,7 @@ export class HudView {
       const sid = order[sb.slotIdx];
       sb.spellId = sid;
       const def = ALL_SPELLS[sid];
-      sb.nameLbl.string = def.shortName;
+      sb.nameLbl.string = getSpellName(sid, true, def.name, def.shortName);
       if (sb.loadedIconKey !== def.iconKey) {
         sb.loadedIconKey = def.iconKey;
         getStaticSpriteFrame(def.iconKey).then((sf) => {
@@ -672,6 +736,7 @@ export class HudView {
 
     const colSuffix = FACTION_COLOR_SUFFIX[pFaction] ?? 'green';
     for (const bn of this.buildKindNodes) {
+      bn.lbl.string = t(bn.i18nKey);
       const base = bn.kind.toLowerCase();
       const key = `buildings/${base}_${colSuffix}`;
       if (bn.loadedIconKey !== key) {
@@ -681,41 +746,131 @@ export class HudView {
         });
       }
     }
+    this.markDirty();
+  }
+
+  refreshLocale(): void {
+    this.spellStates = ['', '', '', ''];
+    this.unitBtnStates = ['', '', '', '', ''];
+    this.lastGoldText = '';
+    this.lastSupplyText = '';
+    this.lastManaText = '';
+    this.lastTimerText = '';
+    this.lastSpeedText = '';
+    this.lastMuteText = '';
+    this.lastTutText = '';
+    this.lastActionHeader = '';
+    this.lastUpgradeText = '';
+    this.lastBuildTitle = '';
+    this.lastSquadText = '';
+
+    this.pauseTopBtnLabel.string = t('hud_pause_btn');
+    this.mapTopBtnLabel.string = t('hud_map_btn');
+    this.cancelSpellLabel.string = t('hud_cancel_spell');
+    this.marchBtnLabel.string = t('hud_march_btn');
+    this.pauseTitleLabel.string = t('pause_title');
+    this.pauseResumeLabel.string = t('pause_resume');
+    this.pauseRestartLabel.string = t('pause_restart');
+    this.pauseMapLabel.string = t('pause_map');
+    this.pauseMenuLabel.string = t('pause_menu');
+    this.refreshVolumeLabels();
+    this.rebuildForCampaign();
+    this.refresh();
+  }
+
+  markDirty(): void {
+    this.dirty = true;
+  }
+
+  tick(dt: number): void {
+    this.refreshAccum += dt;
+    if (this.dirty || this.refreshAccum >= 0.1) {
+      this.refreshAccum = 0;
+      this.dirty = false;
+      this.refresh();
+    }
   }
 
   setSelection(sel: HudSelection): void {
     this.selection = sel;
+    this.markDirty();
     this.refresh();
   }
 
   setActiveSpell(spell: SpellId | null): void {
     this.activeSpell = spell;
+    this.markDirty();
     this.refresh();
   }
 
   refresh(): void {
+    this.dirty = false;
+    this.refreshAccum = 0;
+
     const pFaction = this.sim.playerFaction;
     const p = this.sim.getCombatant(pFaction);
-    this.goldLabel.string = `GOLD: ${p.gold} (+${p.netGoldPerSec}/s)`;
-    this.supplyLabel.string = `SUPPLY: ${p.usedSupply}/${p.totalSupply}`;
-    this.manaLabel.string = `MANA: ${p.mana}/500`;
+
+    const goldTxt = t('hud_gold', { gold: p.gold, rate: p.netGoldPerSec });
+    if (goldTxt !== this.lastGoldText) {
+      this.lastGoldText = goldTxt;
+      this.goldLabel.string = goldTxt;
+    }
+
+    const supTxt = t('hud_supply', { used: p.usedSupply, total: p.totalSupply });
+    if (supTxt !== this.lastSupplyText) {
+      this.lastSupplyText = supTxt;
+      this.supplyLabel.string = supTxt;
+    }
+
+    const manaTxt = t('hud_mana', { mana: p.mana });
+    if (manaTxt !== this.lastManaText) {
+      this.lastManaText = manaTxt;
+      this.manaLabel.string = manaTxt;
+    }
 
     const secs = Math.floor(this.sim.elapsedSec);
     const mm = String(Math.floor(secs / 60)).padStart(2, '0');
     const ss = String(secs % 60).padStart(2, '0');
-    this.timerLabel.string = `TIME: ${mm}:${ss}  (GOLD <05:30)`;
-    this.speedLabel.string = this.sim.speedMultiplier === 2 ? '2X [F]' : '1X [F]';
-    this.muteLabel.string = this.audio.isMuted() ? 'MUTED [M]' : 'SFX ON [M]';
-    this.cancelSpellBtn.active = Boolean(this.activeSpell);
+    const timerTxt = t('hud_time', { time: `${mm}:${ss}` });
+    if (timerTxt !== this.lastTimerText) {
+      this.lastTimerText = timerTxt;
+      this.timerLabel.string = timerTxt;
+    }
 
+    const speedTxt = this.sim.speedMultiplier === 2 ? t('hud_speed_2x') : t('hud_speed_1x');
+    if (speedTxt !== this.lastSpeedText) {
+      this.lastSpeedText = speedTxt;
+      this.speedLabel.string = speedTxt;
+    }
+
+    const muteTxt = this.audio.isMuted() ? t('hud_mute_on') : t('hud_mute_off');
+    if (muteTxt !== this.lastMuteText) {
+      this.lastMuteText = muteTxt;
+      this.muteLabel.string = muteTxt;
+    }
+
+    const showCancel = Boolean(this.activeSpell);
+    if (this.cancelSpellBtn.active !== showCancel) {
+      this.cancelSpellBtn.active = showCancel;
+    }
+
+    let tutTxt: string;
     if (this.activeSpell) {
-      this.tutLabel.string = `TARGETING: ${ALL_SPELLS[this.activeSpell].name} — Tap/Click map to cast`;
+      const spDef = ALL_SPELLS[this.activeSpell];
+      tutTxt = t('hud_targeting', { spell: getSpellName(this.activeSpell, false, spDef.name, spDef.shortName) });
     } else if (this.sim.levelDef.tutorialMode === 'tutorial1') {
-      this.tutLabel.string = TUTORIAL1_HINTS[Math.min(this.sim.ai.tutorialStep, TUTORIAL1_HINTS.length - 1)];
+      tutTxt = getTutorialHint('tutorial1', this.sim.ai.tutorialStep, TUTORIAL1_HINTS);
     } else if (this.sim.levelDef.tutorialMode === 'tutorial2') {
-      this.tutLabel.string = TUTORIAL2_HINTS[Math.min(this.sim.ai.tutorialStep, TUTORIAL2_HINTS.length - 1)];
+      tutTxt = getTutorialHint('tutorial2', this.sim.ai.tutorialStep, TUTORIAL2_HINTS);
     } else {
-      this.tutLabel.string = `Mission ${this.sim.levelDef.missionIndex}: ${this.sim.levelDef.name} — Capture all hostile strongholds!`;
+      tutTxt = t('hud_mission_obj', {
+        num: this.sim.levelDef.missionIndex,
+        name: getLevelName(this.sim.levelDef.id, this.sim.levelDef.name),
+      });
+    }
+    if (tutTxt !== this.lastTutText) {
+      this.lastTutText = tutTxt;
+      this.tutLabel.string = tutTxt;
     }
 
     // Update Spell Dock
@@ -725,28 +880,32 @@ export class HudView {
       const ready = this.sim.canCastSpell(pFaction, sb.spellId);
       const selected = this.activeSpell === sb.spellId;
 
-      const fill = selected
-        ? new Color(86, 70, 26, 245)
-        : ready
-          ? new Color(36, 52, 68, 245)
-          : new Color(28, 28, 36, 225);
-      const stroke = selected
-        ? new Color(255, 230, 95, 255)
-        : ready
-          ? new Color(115, 195, 245, 240)
-          : new Color(90, 90, 105, 180);
-      drawPanel(sb.bg, 104, 48, fill, stroke, selected ? 2.5 : 1.5, 8);
+      const panelKey = `${unlocked}|${ready}|${selected}`;
+      if (this.spellStates[sb.slotIdx] !== panelKey) {
+        this.spellStates[sb.slotIdx] = panelKey;
+        const fill = selected
+          ? new Color(86, 70, 26, 245)
+          : ready
+            ? new Color(36, 52, 68, 245)
+            : new Color(28, 28, 36, 225);
+        const stroke = selected
+          ? new Color(255, 230, 95, 255)
+          : ready
+            ? new Color(115, 195, 245, 240)
+            : new Color(90, 90, 105, 180);
+        drawPanel(sb.bg, 104, 48, fill, stroke, selected ? 2.5 : 1.5, 8);
+      }
 
       if (!unlocked) {
-        sb.costLbl.string = 'LOCKED';
+        sb.costLbl.string = t('hud_spell_locked');
         sb.costLbl.color = new Color(200, 120, 120, 220);
       } else if (def.kind === 'ultimate') {
         const pct = Math.min(100, Math.floor((p.ultimateCharge / p.ultimateMax) * 100));
-        sb.costLbl.string = ready ? 'READY!' : `${pct}%`;
+        sb.costLbl.string = ready ? t('hud_spell_ready') : `${pct}%`;
         sb.costLbl.color = ready ? new Color(255, 232, 95, 255) : new Color(170, 200, 225, 230);
       } else {
         const cost = this.sim.getEffectiveSpellCost(pFaction, sb.spellId);
-        sb.costLbl.string = `${cost}m`;
+        sb.costLbl.string = t('hud_spell_mana', { cost });
         sb.costLbl.color = ready ? new Color(135, 220, 255, 255) : new Color(195, 130, 130, 220);
       }
     }
@@ -767,7 +926,11 @@ export class HudView {
     this.squadBar.active = Boolean(!sh && !bs && sq);
 
     if (sh) {
-      this.actionTitleLabel.string = `${sh.name} (Lv.${sh.level}) · HP ${sh.hp}/${sh.maxHp}`;
+      const headerTxt = t('hud_fort_header', { name: sh.name, lv: sh.level, hp: sh.hp, maxHp: sh.maxHp });
+      if (headerTxt !== this.lastActionHeader) {
+        this.lastActionHeader = headerTxt;
+        this.actionTitleLabel.string = headerTxt;
+      }
       const freeSupply = p.totalSupply - p.usedSupply;
       const recruitIds = getRecruitIdsForFaction(pFaction, this.sim.bonuses);
       for (const ub of this.unitButtons) {
@@ -775,8 +938,8 @@ export class HudView {
         const def = UNIT_DEFS[defId];
         if (!def) continue;
         const effCost = this.sim.getEffectiveUnitCost(pFaction, def);
-        ub.nameLbl.string = def.name;
-        ub.costLbl.string = `${effCost}g · ${def.upkeep}sup`;
+        ub.nameLbl.string = getUnitName(defId, def.name);
+        ub.costLbl.string = t('hud_unit_cost', { cost: effCost, upkeep: def.upkeep });
         if (ub.loadedIconKey !== def.iconKey) {
           ub.loadedIconKey = def.iconKey;
           getStaticSpriteFrame(def.iconKey).then((sf) => {
@@ -785,27 +948,37 @@ export class HudView {
         }
         const unlocked = this.sim.isUnitUnlockedForPlayer(defId);
         const affordable = unlocked && p.gold >= effCost && freeSupply >= def.upkeep;
-        drawPanel(
-          ub.bg,
-          106,
-          76,
-          affordable ? new Color(40, 56, 48, 245) : new Color(32, 32, 42, 225),
-          affordable ? new Color(130, 225, 130, 240) : new Color(100, 100, 115, 180),
-          2,
-          8,
-        );
-        ub.lockLbl.string = !unlocked ? 'LOCKED' : freeSupply < def.upkeep ? 'NO SUPPLY' : '';
+        const stateKey = `${affordable}`;
+        if (this.unitBtnStates[ub.slotIdx] !== stateKey) {
+          this.unitBtnStates[ub.slotIdx] = stateKey;
+          drawPanel(
+            ub.bg,
+            106,
+            76,
+            affordable ? new Color(40, 56, 48, 245) : new Color(32, 32, 42, 225),
+            affordable ? new Color(130, 225, 130, 240) : new Color(100, 100, 115, 180),
+            2,
+            8,
+          );
+        }
+        ub.lockLbl.string = !unlocked ? t('hud_spell_locked') : freeSupply < def.upkeep ? t('hud_no_supply') : '';
       }
 
-      if (sh.level >= MAX_STRONGHOLD_LEVEL) {
-        this.upgradeBtnLabel.string = 'MAX\nLEVEL';
-      } else {
-        const upCost = STRONGHOLD_UPGRADE_COSTS[sh.level];
-        this.upgradeBtnLabel.string = `UPGRADE\n${upCost} Gold\n(+50% HP)`;
+      const upTxt =
+        sh.level >= MAX_STRONGHOLD_LEVEL
+          ? t('hud_upgrade_max')
+          : t('hud_upgrade_cost', { cost: STRONGHOLD_UPGRADE_COSTS[sh.level] });
+      if (upTxt !== this.lastUpgradeText) {
+        this.lastUpgradeText = upTxt;
+        this.upgradeBtnLabel.string = upTxt;
       }
     } else if (bs) {
       const supplyCost = this.sim.getEffectiveSupplyCost(pFaction, 'Village');
-      this.buildTitleLabel.string = `CONSTRUCT SUPPLY BUILDING (${supplyCost} Gold)`;
+      const buildTitle = t('hud_build_title', { cost: supplyCost });
+      if (buildTitle !== this.lastBuildTitle) {
+        this.lastBuildTitle = buildTitle;
+        this.buildTitleLabel.string = buildTitle;
+      }
       const parentFort = this.sim.strongholds.find((s) => s.locationNum === bs.locationNum && s.owner === pFaction);
       const allowed = parentFort ? STRONGHOLD_STATS[parentFort.kind].allowedSupply : ['Village'];
       for (const bn of this.buildKindNodes) {
@@ -817,15 +990,26 @@ export class HudView {
       const alive = countAliveUnits(sq);
       const tags: string[] = [];
       if (sq.vetLevel > 0) tags.push(`LV.${sq.vetLevel}`);
-      if (sq.heroicTimer > 0) tags.push('HEROIC');
-      if (sq.bloodlustTimer > 0) tags.push('BLOODLUST');
-      if (sq.frostEnchantTimer > 0) tags.push('FROST ARMOR');
-      if (sq.liberationTimer > 0) tags.push('LIBERATED');
-      if (sq.frozenTimer > 0) tags.push('FROZEN');
-      if (sq.poisonTimer > 0) tags.push('POISONED');
-      if (sq.fearTimer > 0) tags.push('FEARED');
+      if (sq.heroicTimer > 0) tags.push(t('hud_tag_heroic'));
+      if (sq.bloodlustTimer > 0) tags.push(t('hud_tag_bloodlust'));
+      if (sq.frostEnchantTimer > 0) tags.push(t('hud_tag_frost'));
+      if (sq.liberationTimer > 0) tags.push(t('hud_tag_liberation'));
+      if (sq.frozenTimer > 0) tags.push(t('hud_tag_frozen'));
+      if (sq.poisonTimer > 0) tags.push(t('hud_tag_poisoned'));
+      if (sq.fearTimer > 0) tags.push(t('hud_tag_feared'));
       const tagTxt = tags.length > 0 ? ` [${tags.join(' · ')}]` : '';
-      this.squadInfoLabel.string = `${def.name}${tagTxt} (${alive}/${sq.members.length}, HP ${hp.hp}/${hp.maxHp})\nClick map or enemy stronghold to march & attack`;
+      const sqTxt = t('hud_squad_info', {
+        name: getUnitName(sq.defId, def.name),
+        tags: tagTxt,
+        alive,
+        total: sq.members.length,
+        hp: hp.hp,
+        maxHp: hp.maxHp,
+      });
+      if (sqTxt !== this.lastSquadText) {
+        this.lastSquadText = sqTxt;
+        this.squadInfoLabel.string = sqTxt;
+      }
     }
   }
 }

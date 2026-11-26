@@ -3,15 +3,13 @@ import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform'
 import { SPRITE_MANIFEST } from '../data/AssetManifest';
 import { BADGES } from '../data/BadgesData';
 import { CampaignProgressStore } from '../data/CampaignProgress';
+import { getCampaignCardCopy, t } from '../data/I18n';
 import { PlayableCampaignId } from '../data/Types';
 import { AudioManager } from './AudioManager';
 import { createUiNode, drawPanel, getStaticSpriteFrame } from './SpriteLoader';
 
 interface CampaignCardSpec {
   id: PlayableCampaignId;
-  title: string;
-  subtitle: string;
-  lore: string;
   iconKey: string;
   accent: Color;
   fill: Color;
@@ -20,27 +18,18 @@ interface CampaignCardSpec {
 const CAMPAIGN_CARDS: CampaignCardSpec[] = [
   {
     id: 'Westaria',
-    title: 'DUCHY OF WESTARIA',
-    subtitle: 'Holy Crusaders & Chivalry',
-    lore: 'Defend the western islands and march east to purge the undead plague from the shattered Empire of Rivadis.',
     iconKey: 'icons/unit_w_infantry3',
     accent: new Color(110, 225, 130, 245),
     fill: new Color(22, 42, 30, 240),
   },
   {
     id: 'TheKhaganate',
-    title: 'THE CRIMSON HORDE',
-    subtitle: 'Steppe Riders & Dark Shamans',
-    lore: 'Unite the eastern clans under a new Great Khan, raise ancient warriors from the tombs, and claim Rivadis.',
     iconKey: 'icons/unit_k_cavalry3',
     accent: new Color(235, 105, 95, 245),
     fill: new Color(46, 22, 24, 240),
   },
   {
     id: 'TheCult',
-    title: 'THE ICEDALES CULT',
-    subtitle: 'Northern Wizards & Mechanists',
-    lore: 'Channel arcane frost and clockwork Giantbots from the northern peaks to break free from every tyrant.',
     iconKey: 'icons/unit_b_archers3',
     accent: new Color(95, 185, 245, 245),
     fill: new Color(20, 34, 52, 240),
@@ -49,8 +38,14 @@ const CAMPAIGN_CARDS: CampaignCardSpec[] = [
 
 export class CampaignSelectView {
   readonly root: Node;
+  private headerTitleLbl!: Label;
+  private saveBtnLbl!: Label;
   private badgesBtnLbl!: Label;
-  private cardStats: Map<PlayableCampaignId, Label> = new Map();
+  private backBtnLbl!: Label;
+  private cardVisuals: Map<
+    PlayableCampaignId,
+    { title: Label; sub: Label; lore: Label; stats: Label; playBtn: Label }
+  > = new Map();
 
   constructor(
     parent: Node,
@@ -59,6 +54,7 @@ export class CampaignSelectView {
     private callbacks: {
       onSelectCampaign: (campaign: PlayableCampaignId) => void;
       onOpenBadges: () => void;
+      onOpenSaveModal: () => void;
       onBackToTitle: () => void;
     },
   ) {
@@ -95,10 +91,12 @@ export class CampaignSelectView {
 
     const tLbl = createUiNode('Title', topBar, 460, 34).addComponent(Label);
     tLbl.node.setPosition(-375, 0);
-    tLbl.string = 'SELECT CAMPAIGN — RIVADIS';
+    tLbl.string = t('select_title');
     tLbl.fontSize = 24;
     tLbl.isBold = true;
+    tLbl.overflow = Label.Overflow.SHRINK;
     tLbl.color = new Color(255, 224, 130, 255);
+    this.headerTitleLbl = tLbl;
 
     const makeTopBtn = (name: string, txt: string, x: number, w: number, fill: Color, onClick: () => void): Label => {
       const b = createUiNode(name, topBar, w, 38);
@@ -108,6 +106,7 @@ export class CampaignSelectView {
       l.string = txt;
       l.fontSize = 14;
       l.isBold = true;
+      l.overflow = Label.Overflow.SHRINK;
       l.color = new Color(255, 236, 178, 255);
       const comp = b.addComponent(Button);
       comp.transition = Button.Transition.SCALE;
@@ -119,10 +118,13 @@ export class CampaignSelectView {
       return l;
     };
 
-    this.badgesBtnLbl = makeTopBtn('BtnBadges', 'BADGES (0/22)', 295, 195, new Color(68, 52, 28, 245), () => {
+    this.saveBtnLbl = makeTopBtn('BtnSaveData', t('title_btn_save'), 120, 140, new Color(46, 62, 76, 245), () => {
+      this.callbacks.onOpenSaveModal();
+    });
+    this.badgesBtnLbl = makeTopBtn('BtnBadges', t('select_badges_btn', { unlocked: 0, total: BADGES.length }), 305, 195, new Color(68, 52, 28, 245), () => {
       this.callbacks.onOpenBadges();
     });
-    makeTopBtn('BtnBackMenu', 'MAIN MENU', 515, 155, new Color(52, 38, 68, 245), () => {
+    this.backBtnLbl = makeTopBtn('BtnBackMenu', t('select_back_menu'), 515, 155, new Color(52, 38, 68, 245), () => {
       this.callbacks.onBackToTitle();
     });
 
@@ -145,21 +147,20 @@ export class CampaignSelectView {
 
       const titleL = createUiNode('Title', card, 330, 36).addComponent(Label);
       titleL.node.setPosition(0, 92);
-      titleL.string = spec.title;
       titleL.fontSize = 21;
       titleL.isBold = true;
+      titleL.overflow = Label.Overflow.SHRINK;
       titleL.color = new Color(255, 226, 138, 255);
 
       const subL = createUiNode('Sub', card, 325, 26).addComponent(Label);
       subL.node.setPosition(0, 58);
-      subL.string = spec.subtitle;
       subL.fontSize = 14;
       subL.isBold = true;
+      subL.overflow = Label.Overflow.SHRINK;
       subL.color = spec.accent;
 
       const loreL = createUiNode('Lore', card, 320, 128).addComponent(Label);
       loreL.node.setPosition(0, -18);
-      loreL.string = spec.lore;
       loreL.fontSize = 14;
       loreL.lineHeight = 22;
       loreL.enableWrapText = true;
@@ -173,7 +174,6 @@ export class CampaignSelectView {
       statsL.enableWrapText = true;
       statsL.overflow = Label.Overflow.CLAMP;
       statsL.color = new Color(255, 224, 128, 255);
-      this.cardStats.set(spec.id, statsL);
 
       const playBtn = createUiNode(`BtnSelect_${spec.id}`, card, 250, 54);
       playBtn.setPosition(0, -204);
@@ -183,9 +183,9 @@ export class CampaignSelectView {
         if (playBtn.isValid) pSp.spriteFrame = sf;
       });
       const pLbl = createUiNode('L', playBtn, 220, 34).addComponent(Label);
-      pLbl.string = 'PLAY CAMPAIGN';
       pLbl.fontSize = 18;
       pLbl.isBold = true;
+      pLbl.overflow = Label.Overflow.SHRINK;
       pLbl.color = new Color(255, 232, 148, 255);
       const bComp = playBtn.addComponent(Button);
       bComp.transition = Button.Transition.SCALE;
@@ -195,7 +195,19 @@ export class CampaignSelectView {
         this.progress.setActiveCampaign(spec.id);
         this.callbacks.onSelectCampaign(spec.id);
       });
+
+      this.cardVisuals.set(spec.id, {
+        title: titleL,
+        sub: subL,
+        lore: loreL,
+        stats: statsL,
+        playBtn: pLbl,
+      });
     });
+  }
+
+  refreshLocale(): void {
+    this.refresh();
   }
 
   show(): void {
@@ -209,14 +221,31 @@ export class CampaignSelectView {
   }
 
   refresh(): void {
-    this.badgesBtnLbl.string = `BADGES (${this.progress.getUnlockedBadgesCount()}/${BADGES.length})`;
+    this.headerTitleLbl.string = t('select_title');
+    this.saveBtnLbl.string = t('title_btn_save');
+    this.backBtnLbl.string = t('select_back_menu');
+    this.badgesBtnLbl.string = t('select_badges_btn', {
+      unlocked: this.progress.getUnlockedBadgesCount(),
+      total: BADGES.length,
+    });
     for (const spec of CAMPAIGN_CARDS) {
-      const lbl = this.cardStats.get(spec.id);
-      if (!lbl) continue;
+      const vis = this.cardVisuals.get(spec.id);
+      if (!vis) continue;
+      const copy = getCampaignCardCopy(spec.id);
+      vis.title.string = copy.title;
+      vis.sub.string = copy.subtitle;
+      vis.lore.string = copy.lore;
+      vis.playBtn.string = t('select_play_btn');
+
       const done = this.progress.getCompletedCount(spec.id);
       const golds = this.progress.getGoldCount(spec.id);
       const rank = this.progress.getRank(spec.id);
-      lbl.string = `Missions: ${done} / 8  (Gold: ${golds})\nCommander Rank: ${rank} · Free Pts: ${this.progress.getAvailableSkillPoints(spec.id)}`;
+      vis.stats.string = t('select_card_stats', {
+        done,
+        golds,
+        rank,
+        pts: this.progress.getAvailableSkillPoints(spec.id),
+      });
     }
   }
 }

@@ -2,6 +2,7 @@ import { Button, Color, Graphics, Label, Node } from 'cc';
 import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { CampaignProgressStore } from '../data/CampaignProgress';
 import { CAMPAIGN_EDICTS } from '../data/EdictsData';
+import { getEdictName, getEdictRankDesc, t } from '../data/I18n';
 import { EdictDef, EdictId, PlayableCampaignId } from '../data/Types';
 import { AudioManager } from './AudioManager';
 import { createUiNode, drawPanel } from './SpriteLoader';
@@ -9,6 +10,7 @@ import { createUiNode, drawPanel } from './SpriteLoader';
 interface EdictCardVisual {
   def: EdictDef;
   cardG: Graphics;
+  titleLabel: Label;
   rankLabel: Label;
   effectsLabel: Label;
   upgradeBtn: Node;
@@ -16,16 +18,12 @@ interface EdictCardVisual {
   upgradeBg: Graphics;
 }
 
-const THRONE_TITLES: Record<PlayableCampaignId, string> = {
-  Westaria: 'THRONE ROOM — ROYAL EDICTS',
-  TheKhaganate: 'WAR TENT — KHAGANATE DECREES',
-  TheCult: 'ARCANE CITADEL — CULT EDICTS',
-};
-
 export class ThroneRoomView {
   readonly root: Node;
   private titleLabel!: Label;
   private pointsLabel!: Label;
+  private resetBtnLabel!: Label;
+  private backBtnLabel!: Label;
   private bonusSummaryLabel!: Label;
   private cardsContainer!: Node;
   private cards: EdictCardVisual[] = [];
@@ -63,9 +61,10 @@ export class ThroneRoomView {
 
     this.titleLabel = createUiNode('Title', topBar, 430, 34).addComponent(Label);
     this.titleLabel.node.setPosition(-405, 0);
-    this.titleLabel.string = THRONE_TITLES.Westaria;
+    this.titleLabel.string = t('throne_title_westaria');
     this.titleLabel.fontSize = 20;
     this.titleLabel.isBold = true;
+    this.titleLabel.overflow = Label.Overflow.SHRINK;
     this.titleLabel.color = new Color(255, 224, 130, 255);
 
     const pBadge = createUiNode('PointsBadge', topBar, 220, 36);
@@ -74,9 +73,10 @@ export class ThroneRoomView {
     this.pointsLabel = createUiNode('L', pBadge, 210, 26).addComponent(Label);
     this.pointsLabel.fontSize = 15;
     this.pointsLabel.isBold = true;
+    this.pointsLabel.overflow = Label.Overflow.SHRINK;
     this.pointsLabel.color = new Color(255, 230, 125, 255);
 
-    const makeBtn = (name: string, txt: string, x: number, w: number, fill: Color, onClick: () => void) => {
+    const makeBtn = (name: string, txt: string, x: number, w: number, fill: Color, onClick: () => void): Label => {
       const b = createUiNode(name, topBar, w, 38);
       b.setPosition(x, 0);
       drawPanel(b.addComponent(Graphics), w, 38, fill, new Color(214, 173, 86, 230), 2, 8);
@@ -84,6 +84,7 @@ export class ThroneRoomView {
       l.string = txt;
       l.fontSize = 14;
       l.isBold = true;
+      l.overflow = Label.Overflow.SHRINK;
       l.color = new Color(255, 235, 175, 255);
       const comp = b.addComponent(Button);
       comp.transition = Button.Transition.SCALE;
@@ -92,13 +93,14 @@ export class ThroneRoomView {
         this.audio.playSfx('ui_click');
         onClick();
       });
+      return l;
     };
 
-    makeBtn('BtnResetEdicts', 'RESET EDICTS', 240, 155, new Color(102, 42, 42, 240), () => {
+    this.resetBtnLabel = makeBtn('BtnResetEdicts', t('throne_btn_reset'), 240, 155, new Color(102, 42, 42, 240), () => {
       this.progress.resetEdicts();
       this.refresh();
     });
-    makeBtn('BtnBackMap', 'BACK TO CAMPAIGN MAP', 470, 235, new Color(48, 82, 52, 245), () => {
+    this.backBtnLabel = makeBtn('BtnBackMap', t('throne_btn_back'), 470, 235, new Color(48, 82, 52, 245), () => {
       this.onBackToMap();
     });
 
@@ -170,6 +172,7 @@ export class ThroneRoomView {
       this.cards.push({
         def,
         cardG,
+        titleLabel: title,
         rankLabel,
         effectsLabel,
         upgradeBtn: upBtn,
@@ -177,6 +180,10 @@ export class ThroneRoomView {
         upgradeBg: upBg,
       });
     });
+  }
+
+  refreshLocale(): void {
+    this.refresh();
   }
 
   show(): void {
@@ -195,9 +202,16 @@ export class ThroneRoomView {
       this.rebuildGrid(campaign);
     }
 
-    this.titleLabel.string = THRONE_TITLES[campaign];
+    this.resetBtnLabel.string = t('throne_btn_reset');
+    this.backBtnLabel.string = t('throne_btn_back');
+    this.titleLabel.string =
+      campaign === 'TheKhaganate'
+        ? t('throne_title_khaganate')
+        : campaign === 'TheCult'
+          ? t('throne_title_cult')
+          : t('throne_title_westaria');
     const freePts = this.progress.getAvailableSkillPoints(campaign);
-    this.pointsLabel.string = `AVAILABLE POINTS: ${freePts}`;
+    this.pointsLabel.string = t('throne_available_pts', { pts: freePts });
 
     for (const cv of this.cards) {
       const r = this.progress.getEdictRank(cv.def.id, campaign);
@@ -206,45 +220,64 @@ export class ThroneRoomView {
       const borderCol = r === 3 ? new Color(245, 205, 82, 255) : r > 0 ? new Color(125, 205, 125, 235) : new Color(110, 105, 125, 180);
       drawPanel(cv.cardG, 380, 162, new Color(28, 26, 40, 240), borderCol, 2, 12);
 
+      cv.titleLabel.string = getEdictName(cv.def.id, cv.def.name);
       const pips = `${'●'.repeat(r)}${'○'.repeat(3 - r)}  (${r}/3)`;
       cv.rankLabel.string = pips;
       cv.rankLabel.color = r > 0 ? new Color(125, 235, 135, 255) : new Color(180, 175, 190, 220);
 
       cv.effectsLabel.string = cv.def.ranks
-        .map((rk) => `${r >= rk.rank ? '✓' : '·'} Lv${rk.rank}: ${rk.description}`)
+        .map((rk) => `${r >= rk.rank ? '✓' : '·'} Lv${rk.rank}: ${getEdictRankDesc(cv.def.id, rk.rank, rk.description)}`)
         .join('\n');
 
       if (r >= 3) {
         drawPanel(cv.upgradeBg, 210, 34, new Color(46, 56, 36, 235), new Color(214, 173, 86, 200), 1.5, 8);
-        cv.upgradeLbl.string = 'MAXED';
+        cv.upgradeLbl.string = t('throne_maxed');
         cv.upgradeLbl.color = new Color(245, 220, 135, 255);
       } else if (canUp) {
         drawPanel(cv.upgradeBg, 210, 34, new Color(50, 92, 54, 245), new Color(135, 230, 135, 245), 2, 8);
-        cv.upgradeLbl.string = `UPGRADE TO LV.${r + 1} (1 PT)`;
+        cv.upgradeLbl.string = t('throne_upgrade', { lv: r + 1 });
         cv.upgradeLbl.color = new Color(255, 248, 210, 255);
       } else {
         drawPanel(cv.upgradeBg, 210, 34, new Color(36, 36, 46, 225), new Color(95, 95, 110, 180), 1.5, 8);
-        cv.upgradeLbl.string = 'NEED SKILL POINT';
+        cv.upgradeLbl.string = t('throne_need_pt');
         cv.upgradeLbl.color = new Color(160, 160, 175, 210);
       }
     }
 
     const b = this.progress.getBonuses(campaign);
     if (campaign === 'TheKhaganate') {
-      this.bonusSummaryLabel.string =
-        `Horde Army: Inf T${b.infantryTier} · Arc T${b.archersTier} · Cav T${b.cavalryTier} · Siege T${b.siegeTier}` +
-        `   |   Spells: ${b.unlockedSpells.length}/4` +
-        `   |   Speed ×${b.moveSpeedMul.toFixed(2)} · Capture +${b.captureGoldBonus}g · Poison +${b.poisonBonusDamage}`;
+      this.bonusSummaryLabel.string = t('throne_sum_khaganate', {
+        inf: b.infantryTier,
+        arc: b.archersTier,
+        cav: b.cavalryTier,
+        siege: b.siegeTier,
+        spells: b.unlockedSpells.length,
+        spd: b.moveSpeedMul.toFixed(2),
+        cap: b.captureGoldBonus,
+        poi: b.poisonBonusDamage,
+      });
     } else if (campaign === 'TheCult') {
-      this.bonusSummaryLabel.string =
-        `Cult Army: Inf T${b.infantryTier} · Arc T${b.archersTier} · Cav T${b.cavalryTier} · Mag T${b.magicTier}` +
-        `   |   Spells: ${b.unlockedSpells.length}/4` +
-        `   |   Supply Cost ×${b.supplyCostMul.toFixed(2)} · Spell Cost ×${b.spellCostMul.toFixed(2)} · Tower +${b.magicTowerResourceBonus}`;
+      this.bonusSummaryLabel.string = t('throne_sum_cult', {
+        inf: b.infantryTier,
+        arc: b.archersTier,
+        cav: b.cavalryTier,
+        mag: b.magicTier,
+        spells: b.unlockedSpells.length,
+        sup: b.supplyCostMul.toFixed(2),
+        spc: b.spellCostMul.toFixed(2),
+        twr: b.magicTowerResourceBonus,
+      });
     } else {
-      this.bonusSummaryLabel.string =
-        `Westaria Army: Inf T${b.infantryTier} · Arc T${b.archersTier} · Cav T${b.cavalryTier} · Mag T${b.magicTier}` +
-        `   |   Spells: ${b.unlockedSpells.length}/4` +
-        `   |   Start +${b.startGoldBonus}g · Stronghold HP ×${b.strongholdHpMul.toFixed(2)} · Charge ×${b.cavalryChargeMul}`;
+      this.bonusSummaryLabel.string = t('throne_sum_westaria', {
+        inf: b.infantryTier,
+        arc: b.archersTier,
+        cav: b.cavalryTier,
+        mag: b.magicTier,
+        spells: b.unlockedSpells.length,
+        gold: b.startGoldBonus,
+        shp: b.strongholdHpMul.toFixed(2),
+        chg: b.cavalryChargeMul,
+      });
     }
   }
 }

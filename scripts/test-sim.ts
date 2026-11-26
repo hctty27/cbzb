@@ -9,6 +9,19 @@ import { SPRITE_MANIFEST } from '../game/assets/scripts/data/AssetManifest.ts';
 import { BADGES } from '../game/assets/scripts/data/BadgesData.ts';
 import { CampaignProgressStore, createMemoryStorageAdapter } from '../game/assets/scripts/data/CampaignProgress.ts';
 import { CAMPAIGN_EDICTS } from '../game/assets/scripts/data/EdictsData.ts';
+import {
+  getBadgeDesc,
+  getBadgeName,
+  getEdictName,
+  getEdictRankDesc,
+  getLanguage,
+  getLevelBriefing,
+  getLevelName,
+  getSpellName,
+  getUnitName,
+  setLanguage,
+  t,
+} from '../game/assets/scripts/data/I18n.ts';
 import { GOLD_MEDAL_SEC, PLAYER_START_GOLD, PLAYER_START_MANA } from '../game/assets/scripts/data/Level1Data.ts';
 import {
   getCampaignBundleName,
@@ -16,8 +29,9 @@ import {
   getLevelMetaById,
   LEVEL_CATALOG,
 } from '../game/assets/scripts/data/LevelCatalog.ts';
-import { LevelDef, PlayableCampaignId } from '../game/assets/scripts/data/Types.ts';
-import { getRecruitIdsForFaction, getWestariaRecruitIds } from '../game/assets/scripts/data/UnitsData.ts';
+import { ALL_SPELLS } from '../game/assets/scripts/data/SpellsData.ts';
+import { LevelDef, PlayableCampaignId, SpellId } from '../game/assets/scripts/data/Types.ts';
+import { getRecruitIdsForFaction, getWestariaRecruitIds, UNIT_DEFS } from '../game/assets/scripts/data/UnitsData.ts';
 import { UserSettingsStore } from '../game/assets/scripts/data/UserSettings.ts';
 import { BattleSim } from '../game/assets/scripts/sim/BattleSim.ts';
 import { countAliveUnits, getSquadTotalHp } from '../game/assets/scripts/sim/CombatMath.ts';
@@ -584,6 +598,130 @@ async function runPhaseATests(): Promise<void> {
     withTimeout(() => new Promise((resolve) => setTimeout(resolve, 120)), 15, 'slow_op'),
     /slow_op timed out/,
   );
+}
+
+// 16. Phase B: Localization (zh/en coverage), UserSettingsStore Language & Save Export/Import
+{
+  const memLang = createMemoryStorageAdapter();
+  const lStore1 = new UserSettingsStore(true, memLang, 'zh');
+  assert.equal(lStore1.getLanguage(), 'zh');
+  lStore1.setLanguage('en');
+  const lStore2 = new UserSettingsStore(true, memLang, 'zh');
+  assert.equal(lStore2.getLanguage(), 'en');
+  lStore2.setLanguage('invalid' as 'en');
+  assert.equal(lStore2.getLanguage(), 'zh');
+
+  setLanguage('en');
+  assert.equal(getLanguage(), 'en');
+  const enStart = t('map_btn_start');
+  assert.equal(t('hud_gold', { gold: 500, rate: 4 }), 'GOLD: 500 (+4/s)');
+
+  setLanguage('zh');
+  assert.equal(getLanguage(), 'zh');
+  const zhStart = t('map_btn_start');
+  assert.notEqual(zhStart, enStart);
+  assert.equal(t('hud_gold', { gold: 500, rate: 4 }), '金币: 500 (+4/秒)');
+
+  // 100% Chinese coverage across Spells, Units, Edicts, Badges, and 24 Levels
+  for (const [id, sp] of Object.entries(ALL_SPELLS)) {
+    const zhName = getSpellName(id as SpellId, false, sp.name, sp.shortName);
+    const zhShort = getSpellName(id as SpellId, true, sp.name, sp.shortName);
+    assert.ok(zhName && zhName !== sp.name, `Spell ${id} missing zh name`);
+    assert.ok(zhShort && zhShort !== sp.shortName, `Spell ${id} missing zh shortName`);
+  }
+  for (const [id, u] of Object.entries(UNIT_DEFS)) {
+    const zhU = getUnitName(id, u.name);
+    assert.ok(zhU && zhU !== u.name, `Unit ${id} missing zh name`);
+  }
+  for (const edList of Object.values(CAMPAIGN_EDICTS)) {
+    for (const ed of edList) {
+      const zhEd = getEdictName(ed.id, ed.name);
+      assert.ok(zhEd && zhEd !== ed.name, `Edict ${ed.id} missing zh name`);
+      for (const rk of ed.ranks) {
+        const zhDesc = getEdictRankDesc(ed.id, rk.rank, rk.description);
+        assert.ok(zhDesc && zhDesc !== rk.description, `Edict ${ed.id} rank ${rk.rank} missing zh desc`);
+      }
+    }
+  }
+  for (const b of BADGES) {
+    assert.notEqual(getBadgeName(b.id, b.name), b.name, `Badge ${b.id} missing zh name`);
+    assert.notEqual(getBadgeDesc(b.id, b.description), b.description, `Badge ${b.id} missing zh desc`);
+  }
+  for (const lvl of LEVEL_CATALOG) {
+    assert.notEqual(getLevelName(lvl.id, lvl.name), lvl.name, `Level ${lvl.id} missing zh name`);
+    assert.notEqual(getLevelBriefing(lvl.id, lvl.briefing), lvl.briefing, `Level ${lvl.id} missing zh briefing`);
+  }
+  setLanguage('en');
+
+  // Save Export / Import round-trip + error checks
+  const srcMem = createMemoryStorageAdapter();
+  const srcStore = new CampaignProgressStore(true, srcMem);
+  srcStore.recordVictory(1, 'Gold', 142, {
+    maxVillagesOwned: 2,
+    maxMinesOwned: 1,
+    maxObelisksOwned: 1,
+    squadsPurchased: 4,
+    bannersSet: 1,
+    ultimatesUsed: 0,
+    chestsOpened: 1,
+    enemySquadsDestroyed: 10,
+    heroicEngagedCount: 2,
+    goldCollected: 1200,
+    maxSquadsOwned: 4,
+    strongholdsSeized: 3,
+  });
+  srcStore.upgradeEdict('town_guilds', 'Westaria');
+  srcStore.setActiveCampaign('TheCult');
+  srcStore.recordVictory(21, 'Silver', 420);
+
+  const code = srcStore.exportSaveCode();
+  assert.ok(code.startsWith('TKV3:'), 'Exported code must start with TKV3:');
+
+  // Import with whitespace/newlines wrapped around
+  const dstMem = createMemoryStorageAdapter();
+  const dstStore = new CampaignProgressStore(true, dstMem);
+  const resOk = dstStore.importSaveCode(`  ${code.slice(0, 40)}\n  ${code.slice(40)}  `);
+  assert.equal(resOk.ok, true);
+  if (resOk.ok) {
+    assert.equal(resOk.completedMissions, 2);
+    assert.equal(resOk.activeCampaign, 'TheCult');
+    assert.ok(resOk.unlockedBadges >= 2);
+  }
+  assert.equal(dstStore.getActiveCampaign(), 'TheCult');
+  assert.equal(dstStore.getLevelRecord(1).bestMedal, 'Gold');
+  assert.equal(dstStore.getLevelRecord(21).bestMedal, 'Silver');
+  assert.equal(dstStore.getEdictRank('town_guilds', 'Westaria'), 1);
+  assert.equal(dstStore.isBadgeUnlocked('BADGE_CHESTS_OPENED'), true);
+  assert.equal(dstStore.isBadgeUnlocked('BADGE_ANY_MISSION_PERFECT'), true);
+
+  // Error validation paths
+  assert.deepEqual(dstStore.importSaveCode('   '), { ok: false, error: 'EMPTY' });
+  assert.deepEqual(dstStore.importSaveCode('hello-world'), { ok: false, error: 'INVALID_FORMAT' });
+  const badChecksumPayload = Buffer.from(
+    JSON.stringify({
+      format: 'takeover-save',
+      version: 3,
+      exportedAt: 1,
+      checksum: 'deadbeef',
+      data: { activeCampaign: 'Westaria', campaigns: {}, badges: {} },
+    }),
+    'utf8',
+  )
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+  assert.deepEqual(dstStore.importSaveCode(`TKV3:${badChecksumPayload}`), { ok: false, error: 'CHECKSUM_MISMATCH' });
+
+  const badVerPayload = Buffer.from(
+    JSON.stringify({ format: 'takeover-save', version: 99, exportedAt: 1, checksum: '00000000', data: {} }),
+    'utf8',
+  )
+    .toString('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+  assert.deepEqual(dstStore.importSaveCode(`TKV3:${badVerPayload}`), { ok: false, error: 'UNSUPPORTED_VERSION' });
 }
 
 runPhaseATests()

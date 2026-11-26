@@ -84,6 +84,76 @@ export interface VictoryRewardSummary {
   newlyUnlockedBadges: BadgeDef[];
 }
 
+const SAVE_TRANSFER_PREFIX = 'TKV3:';
+
+export type SaveImportErrorCode = 'EMPTY' | 'INVALID_FORMAT' | 'CHECKSUM_MISMATCH' | 'UNSUPPORTED_VERSION';
+
+export type SaveImportResult =
+  | {
+      ok: true;
+      completedMissions: number;
+      unlockedBadges: number;
+      activeCampaign: PlayableCampaignId;
+    }
+  | {
+      ok: false;
+      error: SaveImportErrorCode;
+    };
+
+interface SaveTransferEnvelopeV3 {
+  format: 'takeover-save';
+  version: number;
+  exportedAt: number;
+  checksum: string;
+  data: MultiCampaignSaveState;
+}
+
+function fnv1aHex(str: string): string {
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < str.length; i++) {
+    hash ^= str.charCodeAt(i);
+    hash = Math.imul(hash, 0x01000193);
+  }
+  return (hash >>> 0).toString(16).padStart(8, '0');
+}
+
+const B64_ALPHA = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
+
+function encodeBase64Url(text: string): string {
+  const bytes = new TextEncoder().encode(text);
+  let out = '';
+  for (let i = 0; i < bytes.length; i += 3) {
+    const b0 = bytes[i];
+    const b1 = i + 1 < bytes.length ? bytes[i + 1] : 0;
+    const b2 = i + 2 < bytes.length ? bytes[i + 2] : 0;
+    out += B64_ALPHA[b0 >> 2];
+    out += B64_ALPHA[((b0 & 0x03) << 4) | (b1 >> 4)];
+    if (i + 1 < bytes.length) out += B64_ALPHA[((b1 & 0x0f) << 2) | (b2 >> 6)];
+    if (i + 2 < bytes.length) out += B64_ALPHA[b2 & 0x3f];
+  }
+  return out;
+}
+
+function decodeBase64Url(b64Url: string): string {
+  const norm = b64Url.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const bytes: number[] = [];
+  for (let i = 0; i < norm.length; i += 4) {
+    const c0 = B64_ALPHA.indexOf(norm[i]);
+    const c1 = i + 1 < norm.length ? B64_ALPHA.indexOf(norm[i + 1]) : -1;
+    const c2 = i + 2 < norm.length ? B64_ALPHA.indexOf(norm[i + 2]) : -1;
+    const c3 = i + 3 < norm.length ? B64_ALPHA.indexOf(norm[i + 3]) : -1;
+    if (c0 < 0 || c1 < 0) throw new Error('Invalid base64url');
+    bytes.push((c0 << 2) | (c1 >> 4));
+    if (c2 >= 0) {
+      bytes.push(((c1 & 0x0f) << 4) | (c2 >> 2));
+      if (c3 >= 0) {
+        bytes.push(((c2 & 0x03) << 6) | c3);
+      }
+    }
+  }
+  return new TextDecoder().decode(new Uint8Array(bytes));
+}
+
 export class CampaignProgressStore {
   private state: MultiCampaignSaveState;
   private freePlayAll = false;
@@ -208,6 +278,73 @@ export class CampaignProgressStore {
   resetAll(): void {
     this.state = this.createFreshMultiState();
     this.save();
+  }
+
+  exportSaveCode(): string {
+    const dataJson = JSON.stringify(this.state);
+    const envelope: SaveTransferEnvelopeV3 = {
+      format: 'takeover-save',
+      version: 3,
+      exportedAt: Date.now(),
+      checksum: fnv1aHex(dataJson),
+      data: this.state,
+    };
+    return `${SAVE_TRANSFER_PREFIX}${encodeBase64Url(JSON.stringify(envelope))}`;
+  }
+
+  importSaveCode(rawCode: string): SaveImportResult {
+    const cleaned = (rawCode ?? '').replace(/\s+/g, '');
+    if (!cleaned) {
+      return { ok: false, error: 'EMPTY' };
+    }
+    if (!cleaned.startsWith(SAVE_TRANSFER_PREFIX)) {
+      return { ok: false, error: 'INVALID_FORMAT' };
+    }
+
+    let parsed: Partial<SaveTransferEnvelopeV3>;
+    try {
+      const jsonStr = decodeBase64Url(cleaned.slice(SAVE_TRANSFER_PREFIX.length));
+      parsed = JSON.parse(jsonStr) as Partial<SaveTransferEnvelopeV3>;
+    } catch {
+      return { ok: false, error: 'INVALID_FORMAT' };
+    }
+
+    if (!parsed || parsed.format !== 'takeover-save' || !parsed.data || typeof parsed.checksum !== 'string') {
+      return { ok: false, error: 'INVALID_FORMAT' };
+    }
+    if (parsed.version !== 3) {
+      return { ok: false, error: 'UNSUPPORTED_VERSION' };
+    }
+    if (fnv1aHex(JSON.stringify(parsed.data)) !== parsed.checksum) {
+      return { ok: false, error: 'CHECKSUM_MISMATCH' };
+    }
+
+    const fresh = this.createFreshMultiState();
+    if (parsed.data.activeCampaign && CAMPAIGN_ORDER.includes(parsed.data.activeCampaign)) {
+      fresh.activeCampaign = parsed.data.activeCampaign;
+    }
+    if (parsed.data.campaigns) {
+      for (const cid of CAMPAIGN_ORDER) {
+        fresh.campaigns[cid] = this.sanitizeCampaignState(cid, parsed.data.campaigns[cid]);
+      }
+    }
+    if (parsed.data.badges) {
+      for (const b of BADGES) {
+        if (parsed.data.badges[b.id]) fresh.badges[b.id] = true;
+      }
+    }
+
+    this.state = fresh;
+    this.evaluatePersistentBadges();
+    this.save();
+
+    const completedMissions = CAMPAIGN_ORDER.reduce((sum, cid) => sum + this.getCompletedCount(cid), 0);
+    return {
+      ok: true,
+      completedMissions,
+      unlockedBadges: this.getUnlockedBadgesCount(),
+      activeCampaign: this.state.activeCampaign,
+    };
   }
 
   getActiveCampaign(): PlayableCampaignId {

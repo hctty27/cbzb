@@ -1,12 +1,19 @@
 import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
 import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { SPRITE_MANIFEST } from '../data/AssetManifest';
+import { t } from '../data/I18n';
 import { AudioManager } from './AudioManager';
 import { createUiNode, drawPanel, getStaticSpriteFrame } from './SpriteLoader';
 
 export class TitleView {
   readonly root: Node;
+  private subLabel!: Label;
+  private campLabel!: Label;
+  private quickLabel!: Label;
+  private langLabel!: Label;
+  private saveLabel!: Label;
   private muteLabel!: Label;
+  private attrLabel!: Label;
 
   constructor(
     parent: Node,
@@ -14,6 +21,8 @@ export class TitleView {
     private callbacks: {
       onOpenCampaign: () => void;
       onQuickPlayLevel1: () => void;
+      onToggleLanguage: () => void;
+      onOpenSaveModal: () => void;
     },
   ) {
     this.root = createUiNode('TitleView', parent, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
@@ -61,11 +70,13 @@ export class TitleView {
       10,
     );
     const subLbl = createUiNode('SubLabel', subNode, 540, 30).addComponent(Label);
-    subLbl.string = '3 CAMPAIGNS · 24 MISSIONS · 27 ROYAL EDICTS · 22 BADGES';
+    subLbl.string = t('title_subtitle');
     subLbl.fontSize = 14;
     subLbl.lineHeight = 20;
     subLbl.isBold = true;
+    subLbl.overflow = Label.Overflow.SHRINK;
     subLbl.color = new Color(248, 224, 152, 255);
+    this.subLabel = subLbl;
 
     const iriyEntry = SPRITE_MANIFEST['ui/iriysoft_logo'];
     const iriyNode = createUiNode('IriySoftLogo', this.root, iriyEntry.width, iriyEntry.height);
@@ -88,10 +99,12 @@ export class TitleView {
       if (campBtn.isValid) campSp.spriteFrame = sf;
     });
     const campLbl = createUiNode('Lbl', campBtn, 220, 44).addComponent(Label);
-    campLbl.string = 'CAMPAIGN';
+    campLbl.string = t('title_btn_campaign');
     campLbl.fontSize = 24;
     campLbl.isBold = true;
+    campLbl.overflow = Label.Overflow.SHRINK;
     campLbl.color = new Color(255, 224, 130, 255);
+    this.campLabel = campLbl;
     const cBtn = campBtn.addComponent(Button);
     cBtn.transition = Button.Transition.SCALE;
     cBtn.zoomScale = 1.06;
@@ -111,10 +124,12 @@ export class TitleView {
       if (quickBtn.isValid) qSp.spriteFrame = sf;
     });
     const qLbl = createUiNode('Lbl', quickBtn, 220, 44).addComponent(Label);
-    qLbl.string = 'QUICK BATTLE';
+    qLbl.string = t('title_btn_quick');
     qLbl.fontSize = 21;
     qLbl.isBold = true;
+    qLbl.overflow = Label.Overflow.SHRINK;
     qLbl.color = new Color(220, 240, 210, 255);
+    this.quickLabel = qLbl;
     const qComp = quickBtn.addComponent(Button);
     qComp.transition = Button.Transition.SCALE;
     qComp.zoomScale = 1.06;
@@ -124,46 +139,74 @@ export class TitleView {
       this.callbacks.onQuickPlayLevel1();
     });
 
-    const muteNode = createUiNode('BtnTitleMute', this.root, 120, 36);
-    muteNode.setPosition(COCOS_DESIGN_WIDTH * 0.5 - 84, COCOS_DESIGN_HEIGHT * 0.5 - 38);
-    drawPanel(
-      muteNode.addComponent(Graphics),
-      120,
-      36,
-      new Color(22, 24, 34, 210),
-      new Color(180, 145, 76, 220),
-      2,
-      8,
-    );
-    this.muteLabel = createUiNode('MuteLbl', muteNode, 110, 28).addComponent(Label);
-    this.muteLabel.fontSize = 15;
-    this.muteLabel.lineHeight = 20;
-    this.muteLabel.isBold = true;
-    this.muteLabel.color = new Color(240, 232, 210, 255);
-    this.refreshMuteLabel();
+    const makeTopBtn = (name: string, x: number, w: number, onClick: () => void): Label => {
+      const btnNode = createUiNode(name, this.root, w, 36);
+      btnNode.setPosition(x, COCOS_DESIGN_HEIGHT * 0.5 - 38);
+      drawPanel(
+        btnNode.addComponent(Graphics),
+        w,
+        36,
+        new Color(22, 24, 34, 215),
+        new Color(180, 145, 76, 220),
+        2,
+        8,
+      );
+      const lbl = createUiNode('Lbl', btnNode, w - 12, 28).addComponent(Label);
+      lbl.fontSize = 14;
+      lbl.lineHeight = 20;
+      lbl.isBold = true;
+      lbl.overflow = Label.Overflow.SHRINK;
+      lbl.color = new Color(240, 232, 210, 255);
+      const bComp = btnNode.addComponent(Button);
+      bComp.transition = Button.Transition.SCALE;
+      bComp.zoomScale = 1.05;
+      btnNode.on(Button.EventType.CLICK, () => {
+        this.audio.playSfx('ui_click');
+        onClick();
+      });
+      return lbl;
+    };
 
-    const mBtn = muteNode.addComponent(Button);
-    mBtn.transition = Button.Transition.SCALE;
-    muteNode.on(Button.EventType.CLICK, () => {
+    this.saveLabel = makeTopBtn('BtnTitleSave', COCOS_DESIGN_WIDTH * 0.5 - 344, 118, () => {
+      this.callbacks.onOpenSaveModal();
+    });
+
+    this.langLabel = makeTopBtn('BtnTitleLang', COCOS_DESIGN_WIDTH * 0.5 - 214, 112, () => {
+      this.callbacks.onToggleLanguage();
+    });
+
+    this.muteLabel = makeTopBtn('BtnTitleMute', COCOS_DESIGN_WIDTH * 0.5 - 84, 120, () => {
       this.audio.toggleMute();
-      this.audio.playSfx('ui_click');
       this.refreshMuteLabel();
     });
 
     const attrLbl = createUiNode('AttrLabel', this.root, 360, 28).addComponent(Label);
     attrLbl.node.setPosition(COCOS_DESIGN_WIDTH * 0.5 - 195, -COCOS_DESIGN_HEIGHT * 0.5 + 30);
-    attrLbl.string = 'COCOS 4 + TypeScript Remake · 16:9';
+    attrLbl.string = t('title_attr');
     attrLbl.fontSize = 13;
+    attrLbl.overflow = Label.Overflow.SHRINK;
     attrLbl.color = new Color(200, 195, 185, 220);
+    this.attrLabel = attrLbl;
+    this.refreshLocale();
   }
 
   private refreshMuteLabel(): void {
-    this.muteLabel.string = this.audio.isMuted() ? 'SOUND: OFF' : 'SOUND: ON';
+    this.muteLabel.string = this.audio.isMuted() ? t('title_sound_off') : t('title_sound_on');
+  }
+
+  refreshLocale(): void {
+    this.subLabel.string = t('title_subtitle');
+    this.campLabel.string = t('title_btn_campaign');
+    this.quickLabel.string = t('title_btn_quick');
+    this.langLabel.string = t('lang_toggle_btn');
+    this.saveLabel.string = t('title_btn_save');
+    this.attrLabel.string = t('title_attr');
+    this.refreshMuteLabel();
   }
 
   show(): void {
     this.root.active = true;
-    this.refreshMuteLabel();
+    this.refreshLocale();
     this.audio.playMusic('music_menu');
   }
 

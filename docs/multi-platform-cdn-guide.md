@@ -68,3 +68,16 @@ node tools\cocos-cli\dist\cli.js build --project game --platform android --build
    - `web-mobile`: `viewport-fit=cover`, `touch-action: none`, `#boot-splash`, and a portrait-mode `#rotate-overlay` prompt.
 4. **Safe Area, Touch Ergonomics & Persisted Settings ([SafeAreaHelper.ts](../game/assets/scripts/view/SafeAreaHelper.ts), [UserSettings.ts](../game/assets/scripts/data/UserSettings.ts), [HudView.ts](../game/assets/scripts/view/HudView.ts), [BattleView.ts](../game/assets/scripts/view/BattleView.ts))**:
    - Applies `sys.getSafeAreaRect()` insets to HUD edge panels, enlarges touch hitboxes on mobile, adds expanding tap/command feedback ripples, adds a touch-accessible `CANCEL [ESC]` button during spell targeting, and persists `muted`, `bgmVolume`, `sfxVolume`, and `preferredSpeed` under `takeover_settings_v1`.
+
+## 7. Phase B Rendering Performance, Bilingual Localization & Save Transfer
+
+1. **Auto-Atlas Packing & `SpriteFrame`-Native Loading ([icons.pac](../game/assets/resources/textures/icons/icons.pac), [buildings.pac](../game/assets/bundles/bundle_gameplay/textures/buildings/buildings.pac), [SpriteLoader.ts](../game/assets/scripts/view/SpriteLoader.ts))**:
+   - Packs the 45 UI/spell/unit icons (`resources`) and 44 building sprites (`bundle_gameplay`) into Cocos 4 Auto-Atlases while keeping multi-frame unit/VFX sprite strips unpacked so horizontal frame-strip slicing stays intact.
+   - `getStaticSpriteFrame` loads `${entry.path}/spriteFrame` directly from its AssetBundle with deduplicated in-flight promises and `retryAsync` backoff.
+2. **Object Pooling & Dirty-Checked UI ([BattleView.ts](../game/assets/scripts/view/BattleView.ts), [HudView.ts](../game/assets/scripts/view/HudView.ts))**:
+   - Pools squad root nodes, squad member sprites, strip VFX nodes, and floating combat text nodes via `cc.NodePool` to reduce allocation & GC pressure during battles.
+   - Dirty-checks Stronghold/Squad HP bars and throttles `HudView.tick(dt)` to 10 Hz (`0.1s` cadence + immediate flush on user actions), with `Label.CacheMode.CHAR` on dynamic numeric counters.
+3. **Bilingual Localization (`en` / `zh`) ([I18n.ts](../game/assets/scripts/data/I18n.ts), [UserSettings.ts](../game/assets/scripts/data/UserSettings.ts))**:
+   - Full `en` / `zh-CN` dictionary covering all UI screens, HUD/Pause controls, 35 unit types, 16 spells, 27 Royal Edicts, 22 Badges, and all 24 campaign briefings, persisted in `UserSettingsStore` with live switching on Title and Pause screens.
+4. **Cross-Device Save Backup & Transfer ([CampaignProgress.ts](../game/assets/scripts/data/CampaignProgress.ts), [SaveDataModal.ts](../game/assets/scripts/view/SaveDataModal.ts))**:
+   - Generates checksum-verified `TKV3:` Base64URL save transfer codes (`exportSaveCode` / `importSaveCode`) with copy-to-clipboard, `.txt` file export, modal paste import, and two-step reset confirmation.

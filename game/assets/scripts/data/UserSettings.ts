@@ -2,11 +2,14 @@ import { createBrowserStorageAdapter, IStorageAdapter } from './CampaignProgress
 
 const SETTINGS_STORAGE_KEY = 'takeover_settings_v1';
 
+export type LanguageCode = 'en' | 'zh';
+
 export interface UserSettingsState {
   muted: boolean;
   bgmVolume: number;
   sfxVolume: number;
   preferredSpeed: 1 | 2;
+  language: LanguageCode;
 }
 
 const DEFAULT_SETTINGS: UserSettingsState = {
@@ -14,6 +17,7 @@ const DEFAULT_SETTINGS: UserSettingsState = {
   bgmVolume: 0.45,
   sfxVolume: 0.7,
   preferredSpeed: 1,
+  language: 'en',
 };
 
 function clampVolume(v: unknown, fallback: number): number {
@@ -22,13 +26,23 @@ function clampVolume(v: unknown, fallback: number): number {
   return Math.round(clamped * 100) / 100;
 }
 
+function normalizeLanguage(v: unknown, fallback: LanguageCode): LanguageCode {
+  return v === 'zh' || v === 'en' ? v : fallback;
+}
+
 export class UserSettingsStore {
   private state: UserSettingsState;
   private storage: IStorageAdapter;
+  private defaultLanguage: LanguageCode;
 
-  constructor(autoLoad = true, storage: IStorageAdapter = createBrowserStorageAdapter()) {
+  constructor(
+    autoLoad = true,
+    storage: IStorageAdapter = createBrowserStorageAdapter(),
+    defaultLanguage: LanguageCode = 'en',
+  ) {
     this.storage = storage;
-    this.state = { ...DEFAULT_SETTINGS };
+    this.defaultLanguage = normalizeLanguage(defaultLanguage, 'en');
+    this.state = { ...DEFAULT_SETTINGS, language: this.defaultLanguage };
     if (autoLoad) this.load();
   }
 
@@ -42,9 +56,10 @@ export class UserSettingsStore {
         bgmVolume: clampVolume(parsed.bgmVolume, DEFAULT_SETTINGS.bgmVolume),
         sfxVolume: clampVolume(parsed.sfxVolume, DEFAULT_SETTINGS.sfxVolume),
         preferredSpeed: parsed.preferredSpeed === 2 ? 2 : 1,
+        language: normalizeLanguage(parsed.language, this.defaultLanguage),
       };
     } catch {
-      this.state = { ...DEFAULT_SETTINGS };
+      this.state = { ...DEFAULT_SETTINGS, language: this.defaultLanguage };
     }
   }
 
@@ -102,8 +117,17 @@ export class UserSettingsStore {
     this.save();
   }
 
+  getLanguage(): LanguageCode {
+    return this.state.language;
+  }
+
+  setLanguage(lang: LanguageCode): void {
+    this.state.language = normalizeLanguage(lang, this.defaultLanguage);
+    this.save();
+  }
+
   reset(): void {
-    this.state = { ...DEFAULT_SETTINGS };
+    this.state = { ...DEFAULT_SETTINGS, language: this.defaultLanguage };
     this.save();
   }
 }

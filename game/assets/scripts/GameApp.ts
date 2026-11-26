@@ -20,10 +20,11 @@ import {
 } from 'cc';
 import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from './core/CoordTransform';
 import { CampaignProgressStore, IStorageAdapter } from './data/CampaignProgress';
+import { getLevelName, setLanguage as setI18nLanguage, t } from './data/I18n';
 import { getCampaignLevelMetas, getLevelMetaById } from './data/LevelCatalog';
 import { CAMPAIGN_SPELL_ORDER } from './data/SpellsData';
 import { LevelDef, PlayableCampaignId, SpellId } from './data/Types';
-import { UserSettingsStore } from './data/UserSettings';
+import { LanguageCode, UserSettingsStore } from './data/UserSettings';
 import { BattleSim } from './sim/BattleSim';
 import { ensureBundle, loadMissionAssets } from './view/AssetBundleManager';
 import { AudioManager } from './view/AudioManager';
@@ -33,6 +34,7 @@ import { CampaignMapView } from './view/CampaignMapView';
 import { CampaignSelectView } from './view/CampaignSelectView';
 import { HudSelection, HudView } from './view/HudView';
 import { ResultOverlay } from './view/ResultOverlay';
+import { SaveDataModal } from './view/SaveDataModal';
 import { createUiNode, drawPanel } from './view/SpriteLoader';
 import { ThroneRoomView } from './view/ThroneRoomView';
 import { TitleView } from './view/TitleView';
@@ -70,6 +72,17 @@ function createCocosStorageAdapter(): IStorageAdapter {
   };
 }
 
+function detectBrowserLanguage(): LanguageCode {
+  try {
+    if (typeof navigator !== 'undefined' && typeof navigator.language === 'string') {
+      if (navigator.language.toLowerCase().startsWith('zh')) return 'zh';
+    }
+  } catch {
+    // Ignore unsupported navigator access
+  }
+  return 'en';
+}
+
 @ccclass('GameApp')
 export class GameApp extends Component {
   private settings!: UserSettingsStore;
@@ -85,12 +98,15 @@ export class GameApp extends Component {
   private battleView: BattleView | null = null;
   private hudView: HudView | null = null;
   private resultOverlay: ResultOverlay | null = null;
+  private saveModal: SaveDataModal | null = null;
 
   private loadingOverlay: Node | null = null;
   private loadingTitleLabel: Label | null = null;
   private loadingStatusLabel: Label | null = null;
   private loadingBarFillG: Graphics | null = null;
   private loadingErrorRow: Node | null = null;
+  private loadingRetryBtnLbl: Label | null = null;
+  private loadingBackBtnLbl: Label | null = null;
   private loadingErrorMode = false;
   private pendingLevelId: number | null = null;
 
@@ -105,7 +121,8 @@ export class GameApp extends Component {
     this.dismissHtmlSplash();
 
     const storage = createCocosStorageAdapter();
-    this.settings = new UserSettingsStore(true, storage);
+    this.settings = new UserSettingsStore(true, storage, detectBrowserLanguage());
+    setI18nLanguage(this.settings.getLanguage());
     this.audio = new AudioManager(this.node, this.settings);
     this.progress = new CampaignProgressStore(true, storage);
     this.sim = new BattleSim();
@@ -118,6 +135,8 @@ export class GameApp extends Component {
         this.progress.setActiveCampaign('Westaria');
         void this.enterLevel(1);
       },
+      onToggleLanguage: () => this.toggleLanguage(),
+      onOpenSaveModal: () => this.openSaveModal(),
     });
 
     game.on(Game.EVENT_HIDE, this.onAppHide, this);
@@ -125,6 +144,35 @@ export class GameApp extends Component {
     input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
 
     this.showTitle();
+  }
+
+  private toggleLanguage(): void {
+    const next: LanguageCode = this.settings.getLanguage() === 'en' ? 'zh' : 'en';
+    this.settings.setLanguage(next);
+    setI18nLanguage(next);
+
+    this.titleView.refreshLocale();
+    this.campaignSelectView?.refreshLocale();
+    this.campaignView?.refreshLocale();
+    this.throneView?.refreshLocale();
+    this.badgesView?.refreshLocale();
+    this.hudView?.refreshLocale();
+    this.resultOverlay?.refreshLocale();
+    this.saveModal?.refreshLocale();
+    if (this.loadingRetryBtnLbl) this.loadingRetryBtnLbl.string = t('load_btn_retry');
+    if (this.loadingBackBtnLbl) this.loadingBackBtnLbl.string = t('load_btn_back');
+  }
+
+  private openSaveModal(): void {
+    if (!this.saveModal) {
+      this.saveModal = new SaveDataModal(this.node, this.progress, this.audio, () => {
+        this.campaignSelectView?.refresh();
+        this.campaignView?.refresh();
+        this.throneView?.refresh();
+        this.badgesView?.refresh();
+      });
+    }
+    this.saveModal.show();
   }
 
   onDestroy(): void {
@@ -160,6 +208,10 @@ export class GameApp extends Component {
   private onKeyDown(ev: EventKeyboard): void {
     const code = ev.keyCode;
     if (code === KeyCode.ESCAPE || code === KeyCode.MOBILE_BACK) {
+      if (this.saveModal?.isOpen()) {
+        this.saveModal.hide();
+        return;
+      }
       if (this.loadingOverlay?.active) {
         if (this.loadingErrorMode) this.onLoadingBack();
         return;
@@ -187,7 +239,7 @@ export class GameApp extends Component {
       return;
     }
 
-    if (this.loadingOverlay?.active) return;
+    if (this.loadingOverlay?.active || this.saveModal?.isOpen()) return;
 
     if (this.mode === 'battle' && !this.shownResult && !this.sim.isMatchOver && this.hudView) {
       if (code === KeyCode.SPACE) {
@@ -260,14 +312,15 @@ export class GameApp extends Component {
     const errorRow = createUiNode('LoadingErrorRow', card, 380, 46);
     errorRow.setPosition(0, -64);
 
-    const makeErrBtn = (text: string, x: number, fillCol: Color, onClick: () => void) => {
-      const btn = createUiNode(`LoadingBtn_${text}`, errorRow, 150, 38);
+    const makeErrBtn = (name: string, text: string, x: number, fillCol: Color, onClick: () => void): Label => {
+      const btn = createUiNode(name, errorRow, 150, 38);
       btn.setPosition(x, 0);
       drawPanel(btn.addComponent(Graphics), 150, 38, fillCol, new Color(224, 185, 96, 240), 2, 8);
       const l = createUiNode('L', btn, 136, 26).addComponent(Label);
       l.string = text;
       l.fontSize = 15;
       l.isBold = true;
+      l.overflow = Label.Overflow.SHRINK;
       l.color = new Color(255, 236, 185, 255);
       const comp = btn.addComponent(Button);
       comp.transition = Button.Transition.SCALE;
@@ -276,14 +329,15 @@ export class GameApp extends Component {
         this.audio.playSfx('ui_click');
         onClick();
       });
+      return l;
     };
 
-    makeErrBtn('RETRY', -90, new Color(56, 86, 48, 245), () => {
+    this.loadingRetryBtnLbl = makeErrBtn('LoadingBtn_RETRY', t('load_btn_retry'), -90, new Color(56, 86, 48, 245), () => {
       if (this.pendingLevelId !== null) {
         void this.enterLevel(this.pendingLevelId);
       }
     });
-    makeErrBtn('BACK', 90, new Color(92, 40, 44, 245), () => {
+    this.loadingBackBtnLbl = makeErrBtn('LoadingBtn_BACK', t('load_btn_back'), 90, new Color(92, 40, 44, 245), () => {
       this.onLoadingBack();
     });
 
@@ -313,7 +367,7 @@ export class GameApp extends Component {
     this.loadingErrorMode = false;
     this.loadingTitleLabel.string = titleText;
     this.loadingTitleLabel.color = new Color(255, 228, 140, 255);
-    this.loadingStatusLabel.string = 'CONNECTING TO ASSET BUNDLE... 0%';
+    this.loadingStatusLabel.string = t('load_connecting');
     if (this.loadingErrorRow) this.loadingErrorRow.active = false;
     this.drawLoadingBar(0.05, false);
     this.loadingOverlay.setSiblingIndex(this.node.children.length - 1);
@@ -330,10 +384,10 @@ export class GameApp extends Component {
   private showLoadingError(err: unknown): void {
     if (!this.loadingOverlay || !this.loadingTitleLabel || !this.loadingStatusLabel) return;
     this.loadingErrorMode = true;
-    this.loadingTitleLabel.string = 'MISSION ASSET LOAD FAILED';
+    this.loadingTitleLabel.string = t('load_failed_title');
     this.loadingTitleLabel.color = new Color(255, 145, 130, 255);
     const detail = err instanceof Error ? err.message : String(err);
-    this.loadingStatusLabel.string = `Network/CDN error: ${detail.slice(0, 76)}`;
+    this.loadingStatusLabel.string = t('load_failed_detail', { detail: detail.slice(0, 76) });
     this.drawLoadingBar(1, true);
     if (this.loadingErrorRow) this.loadingErrorRow.active = true;
     this.loadingOverlay.setSiblingIndex(this.node.children.length - 1);
@@ -400,6 +454,7 @@ export class GameApp extends Component {
           this.showCampaign();
         },
         onOpenBadges: () => this.showBadges('campaign_select'),
+        onOpenSaveModal: () => this.openSaveModal(),
         onBackToTitle: () => this.showTitle(),
       });
     }
@@ -462,7 +517,12 @@ export class GameApp extends Component {
     const seq = ++this.enterSeq;
     this.pendingLevelId = levelId;
     const meta = getLevelMetaById(levelId);
-    this.showLoading(`MISSION ${meta.missionIndex}: ${meta.name.toUpperCase()}`);
+    this.showLoading(
+      t('load_mission_header', {
+        num: meta.missionIndex,
+        name: getLevelName(meta.id, meta.name).toUpperCase(),
+      }),
+    );
 
     let lvl: LevelDef;
     try {
@@ -518,6 +578,7 @@ export class GameApp extends Component {
           const ultId = CAMPAIGN_SPELL_ORDER[this.sim.playerFaction][3];
           if (fort && ultId) this.sim.castSpell(this.sim.playerFaction, ultId, fort.flashX, fort.flashY);
         },
+        onToggleLanguage: () => this.toggleLanguage(),
       });
     } else {
       this.hudView.root.active = true;
@@ -551,7 +612,7 @@ export class GameApp extends Component {
 
     this.sim.step(dt);
     this.battleView.updateView(dt);
-    this.hudView.refresh();
+    this.hudView.tick(dt);
 
     if (this.sim.isMatchOver && !this.shownResult) {
       this.shownResult = true;

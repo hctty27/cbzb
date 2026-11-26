@@ -2,6 +2,7 @@ import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
 import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { SPRITE_MANIFEST } from '../data/AssetManifest';
 import { CampaignProgressStore } from '../data/CampaignProgress';
+import { getCampaignTitle, getFactionLabel, getLevelBriefing, getLevelName, getMedalLabel, t } from '../data/I18n';
 import { getCampaignLevelMetas, LevelMeta } from '../data/LevelCatalog';
 import { PlayableCampaignId } from '../data/Types';
 import { preloadCampaign } from './AssetBundleManager';
@@ -18,25 +19,15 @@ interface PinVisual {
   bgG: Graphics;
 }
 
-const FACTION_LABELS: Record<string, string> = {
-  Westaria: 'Westaria Crusaders (Green)',
-  TheEmpire: 'The Empire (Purple)',
-  TheKhaganate: 'The Crimson Horde (Red)',
-  TheCult: 'The Icedales Cult (Blue)',
-};
-
-const CAMPAIGN_TITLES: Record<PlayableCampaignId, string> = {
-  Westaria: 'WESTARIA CAMPAIGN',
-  TheKhaganate: 'CRIMSON HORDE CAMPAIGN',
-  TheCult: 'ICEDALES CULT CAMPAIGN',
-};
-
 export class CampaignMapView {
   readonly root: Node;
   private titleLabel!: Label;
   private rankLabel!: Label;
   private pointsLabel!: Label;
   private xpBarG!: Graphics;
+  private throneBtnLbl!: Label;
+  private badgesBtnLbl!: Label;
+  private campaignsBtnLbl!: Label;
   private mapSprite!: Sprite;
   private mapNode!: Node;
   private mapDiffSprite!: Sprite;
@@ -50,6 +41,7 @@ export class CampaignMapView {
   private infoMeta!: Label;
   private infoBriefing!: Label;
   private infoRecord!: Label;
+  private startBtnLabel!: Label;
   private freePlayLabel!: Label;
   private startBtnNode!: Node;
 
@@ -129,6 +121,7 @@ export class CampaignMapView {
     this.titleLabel = titleN.addComponent(Label);
     this.titleLabel.fontSize = 20;
     this.titleLabel.isBold = true;
+    this.titleLabel.overflow = Label.Overflow.SHRINK;
     this.titleLabel.color = new Color(255, 222, 130, 255);
 
     const rankN = createUiNode('RankLbl', topBar, 250, 26);
@@ -136,6 +129,7 @@ export class CampaignMapView {
     this.rankLabel = rankN.addComponent(Label);
     this.rankLabel.fontSize = 13;
     this.rankLabel.isBold = true;
+    this.rankLabel.overflow = Label.Overflow.SHRINK;
     this.rankLabel.color = new Color(235, 238, 245, 255);
 
     const xpBarNode = createUiNode('XpBar', topBar, 220, 10);
@@ -149,9 +143,10 @@ export class CampaignMapView {
     this.pointsLabel = ptsN.addComponent(Label);
     this.pointsLabel.fontSize = 13;
     this.pointsLabel.isBold = true;
+    this.pointsLabel.overflow = Label.Overflow.SHRINK;
     this.pointsLabel.color = new Color(255, 228, 120, 255);
 
-    const makeTopBtn = (name: string, text: string, x: number, w: number, fill: Color, onClick: () => void) => {
+    const makeTopBtn = (name: string, text: string, x: number, w: number, fill: Color, onClick: () => void): Label => {
       const b = createUiNode(name, topBar, w, 38);
       b.setPosition(x, 0);
       drawPanel(b.addComponent(Graphics), w, 38, fill, new Color(220, 178, 92, 240), 2, 8);
@@ -159,6 +154,7 @@ export class CampaignMapView {
       l.string = text;
       l.fontSize = 13;
       l.isBold = true;
+      l.overflow = Label.Overflow.SHRINK;
       l.color = new Color(255, 236, 178, 255);
       const comp = b.addComponent(Button);
       comp.transition = Button.Transition.SCALE;
@@ -167,15 +163,16 @@ export class CampaignMapView {
         this.audio.playSfx('ui_click');
         onClick();
       });
+      return l;
     };
 
-    makeTopBtn('BtnThroneRoom', 'THRONE ROOM', 222, 165, new Color(56, 78, 46, 245), () => {
+    this.throneBtnLbl = makeTopBtn('BtnThroneRoom', t('map_btn_throne'), 222, 165, new Color(56, 78, 46, 245), () => {
       this.callbacks.onOpenThrone();
     });
-    makeTopBtn('BtnBadgesRoom', 'BADGES', 376, 118, new Color(76, 56, 30, 245), () => {
+    this.badgesBtnLbl = makeTopBtn('BtnBadgesRoom', t('map_btn_badges'), 376, 118, new Color(76, 56, 30, 245), () => {
       this.callbacks.onOpenBadges();
     });
-    makeTopBtn('BtnCampaignSelect', 'CAMPAIGNS', 530, 155, new Color(52, 38, 66, 245), () => {
+    this.campaignsBtnLbl = makeTopBtn('BtnCampaignSelect', t('map_btn_campaigns'), 530, 155, new Color(52, 38, 66, 245), () => {
       this.callbacks.onBackToSelect();
     });
 
@@ -237,10 +234,12 @@ export class CampaignMapView {
       if (this.startBtnNode.isValid) sp.spriteFrame = sf;
     });
     const sLbl = createUiNode('Lbl', this.startBtnNode, 220, 34).addComponent(Label);
-    sLbl.string = 'START MISSION';
+    sLbl.string = t('map_btn_start');
     sLbl.fontSize = 20;
     sLbl.isBold = true;
+    sLbl.overflow = Label.Overflow.SHRINK;
     sLbl.color = new Color(255, 228, 140, 255);
+    this.startBtnLabel = sLbl;
 
     const sBtn = this.startBtnNode.addComponent(Button);
     sBtn.transition = Button.Transition.SCALE;
@@ -309,6 +308,10 @@ export class CampaignMapView {
     }
   }
 
+  refreshLocale(): void {
+    this.refresh();
+  }
+
   show(): void {
     this.root.active = true;
     this.refresh();
@@ -320,6 +323,11 @@ export class CampaignMapView {
   }
 
   refresh(): void {
+    this.throneBtnLbl.string = t('map_btn_throne');
+    this.badgesBtnLbl.string = t('map_btn_badges');
+    this.campaignsBtnLbl.string = t('map_btn_campaigns');
+    this.startBtnLabel.string = t('map_btn_start');
+
     const campaign = this.progress.getActiveCampaign();
     if (this.builtCampaign !== campaign) {
       this.rebuildPins(campaign);
@@ -357,13 +365,15 @@ export class CampaignMapView {
 
     preloadCampaign(campaign, this.progress.selectedLevelId);
 
-    this.titleLabel.string = CAMPAIGN_TITLES[campaign];
+    this.titleLabel.string = getCampaignTitle(campaign);
     const rank = this.progress.getRank(campaign);
     const nextXp = this.progress.getNextRankXp(campaign);
     const freePts = this.progress.getAvailableSkillPoints(campaign);
 
-    this.rankLabel.string = nextXp ? `RANK ${rank} · XP ${this.progress.xp} / ${nextXp}` : `RANK ${rank} (MAX)`;
-    this.pointsLabel.string = `EDICT PTS: ${freePts}`;
+    this.rankLabel.string = nextXp
+      ? t('map_rank_xp', { rank, xp: this.progress.xp, next: nextXp })
+      : t('map_rank_max', { rank });
+    this.pointsLabel.string = t('map_edict_pts', { pts: freePts });
 
     this.xpBarG.clear();
     this.xpBarG.fillColor = new Color(34, 38, 56, 240);
@@ -379,9 +389,7 @@ export class CampaignMapView {
       this.xpBarG.roundRect(-109, -3, Math.max(4, 218 * ratio), 7, 3);
       this.xpBarG.fill();
     }
-    this.freePlayLabel.string = this.progress.isFreePlayAll()
-      ? 'FREE PLAY: ALL OPEN (ON)'
-      : 'FREE PLAY: UNLOCK ALL';
+    this.freePlayLabel.string = this.progress.isFreePlayAll() ? t('map_freeplay_on') : t('map_freeplay_off');
 
     const selId = this.progress.selectedLevelId;
     for (const pv of this.pins) {
@@ -427,18 +435,28 @@ export class CampaignMapView {
     const lvl: LevelMeta = lvls.find((l) => l.id === selId) ?? lvls[0];
     preloadTextureByKey(lvl.bgKey);
     const rec = this.progress.getLevelRecord(lvl.id);
-    const enemyNames = lvl.enemies.map((e) => FACTION_LABELS[e] ?? e).join('\n  ');
+    const enemyNames = lvl.enemies.map((e) => getFactionLabel(e)).join('\n  ');
 
-    this.infoTitle.string = `MISSION ${lvl.missionIndex}: ${lvl.name.toUpperCase()}`;
-    this.infoMeta.string = `Reward: +${lvl.xpReward} XP  |  Tech Tier: T${lvl.enemyTechTier}\nEnemies:\n  ${enemyNames}`;
-    this.infoBriefing.string = lvl.briefing;
+    this.infoTitle.string = t('map_mission_title', {
+      num: lvl.missionIndex,
+      name: getLevelName(lvl.id, lvl.name).toUpperCase(),
+    });
+    this.infoMeta.string = t('map_mission_meta', {
+      xp: lvl.xpReward,
+      tier: lvl.enemyTechTier,
+      enemies: enemyNames,
+    });
+    this.infoBriefing.string = getLevelBriefing(lvl.id, lvl.briefing);
 
     if (rec.completed && rec.bestTimeSec !== null) {
       const mm = String(Math.floor(rec.bestTimeSec / 60)).padStart(2, '0');
       const ss = String(rec.bestTimeSec % 60).padStart(2, '0');
-      this.infoRecord.string = `Status: CONQUERED (${rec.bestMedal ?? 'Bronze'} Medal)\nBest Time: ${mm}:${ss}`;
+      this.infoRecord.string = t('map_record_conquered', {
+        medal: getMedalLabel(rec.bestMedal ?? 'Bronze'),
+        time: `${mm}:${ss}`,
+      });
     } else {
-      this.infoRecord.string = `Status: READY FOR ASSAULT\nGold < 05:30 · Silver <= 09:30`;
+      this.infoRecord.string = t('map_record_ready');
     }
   }
 }

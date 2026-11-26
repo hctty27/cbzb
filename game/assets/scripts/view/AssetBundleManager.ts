@@ -1,9 +1,10 @@
-import { assetManager, AssetManager, JsonAsset, resources, Texture2D } from 'cc';
+import { assetManager, AssetManager, JsonAsset, resources, SpriteFrame } from 'cc';
 import { retryAsync } from '../core/AsyncRetry';
 import { AssetBundleName, SPRITE_MANIFEST } from '../data/AssetManifest';
+import { t } from '../data/I18n';
 import { getCampaignBundleName, getLevelMetaById } from '../data/LevelCatalog';
 import { LevelDef, PlayableCampaignId } from '../data/Types';
-import { loadTextureByKey } from './SpriteLoader';
+import { getStaticSpriteFrame } from './SpriteLoader';
 
 const bundleCache = new Map<AssetBundleName, AssetManager.Bundle>();
 const bundleInFlight = new Map<AssetBundleName, Promise<AssetManager.Bundle>>();
@@ -101,35 +102,35 @@ export async function loadMissionAssets(
 ): Promise<LevelDef> {
   const meta = getLevelMetaById(levelId);
 
-  onProgress?.(0.08, 'LOADING GAMEPLAY BUNDLE...');
+  onProgress?.(0.08, t('load_gameplay_bundle'));
   await ensureBundle('bundle_gameplay', (next, max) => {
-    onProgress?.(0.18, `GAMEPLAY BUNDLE RETRYING (${next}/${max})...`);
+    onProgress?.(0.18, t('load_retrying_bundle', { next, max }));
   });
 
-  onProgress?.(0.4, 'LOADING MISSION DATA...');
+  onProgress?.(0.4, t('load_mission_data'));
   const levelDef = await loadLevelDef(levelId, (next, max) => {
-    onProgress?.(0.5, `MISSION DATA RETRYING (${next}/${max})...`);
+    onProgress?.(0.5, t('load_retrying_mission', { next, max }));
   });
 
-  onProgress?.(0.72, 'LOADING BATTLEFIELD MAP...');
-  await loadTextureByKey(meta.bgKey, (next, max) => {
-    onProgress?.(0.8, `BATTLEFIELD MAP RETRYING (${next}/${max})...`);
+  onProgress?.(0.72, t('load_battlefield_map'));
+  await getStaticSpriteFrame(meta.bgKey, (next, max) => {
+    onProgress?.(0.8, t('load_retrying_map', { next, max }));
   });
 
-  onProgress?.(1, 'READY!');
+  onProgress?.(1, t('load_ready'));
   return levelDef;
 }
 
 /**
  * Fires off non-blocking background preloading for gameplay assets, campaign diff map,
- * and optionally the currently selected mission JSON & battle background texture.
+ * and optionally the currently selected mission JSON & battle background SpriteFrame.
  */
 export function preloadCampaign(campaign: PlayableCampaignId, selectedLevelId?: number): void {
   const campaignBundle = getCampaignBundleName(campaign);
   ensureBundle('bundle_gameplay')
     .then((b) => {
       const baseEntry = SPRITE_MANIFEST['map/campaign_map_base'];
-      if (baseEntry) b.preload(`${baseEntry.path}/texture`, Texture2D);
+      if (baseEntry) b.preload(`${baseEntry.path}/spriteFrame`, SpriteFrame);
     })
     .catch(() => {});
 
@@ -142,7 +143,7 @@ export function preloadCampaign(campaign: PlayableCampaignId, selectedLevelId?: 
     if (bgEntry) {
       ensureBundle(bgEntry.bundle ?? 'resources')
         .then((b) => {
-          b.preload(`${bgEntry.path}/texture`, Texture2D);
+          b.preload(`${bgEntry.path}/spriteFrame`, SpriteFrame);
         })
         .catch(() => {});
     }

@@ -2,6 +2,7 @@ import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
 import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { BADGES } from '../data/BadgesData';
 import { CampaignProgressStore } from '../data/CampaignProgress';
+import { getBadgeDesc, getBadgeName, t } from '../data/I18n';
 import { BadgeDef } from '../data/Types';
 import { AudioManager } from './AudioManager';
 import { createUiNode, drawPanel, getStaticSpriteFrame } from './SpriteLoader';
@@ -18,10 +19,14 @@ interface BadgeSlotVisual {
 
 export class BadgesRoomView {
   readonly root: Node;
+  private titleLabel!: Label;
   private countLabel!: Label;
   private pageLabel!: Label;
   private page1BtnG!: Graphics;
   private page2BtnG!: Graphics;
+  private page1BtnLbl!: Label;
+  private page2BtnLbl!: Label;
+  private backBtnLbl!: Label;
   private page = 0; // 0 = badges 1..12, 1 = badges 13..22
   private slots: BadgeSlotVisual[] = [];
   private slotContainer!: Node;
@@ -54,10 +59,12 @@ export class BadgesRoomView {
 
     const tLbl = createUiNode('Title', topBar, 380, 34).addComponent(Label);
     tLbl.node.setPosition(-425, 0);
-    tLbl.string = 'HALL OF BADGES — ACHIEVEMENTS';
+    tLbl.string = t('badges_title');
     tLbl.fontSize = 21;
     tLbl.isBold = true;
+    tLbl.overflow = Label.Overflow.SHRINK;
     tLbl.color = new Color(255, 224, 130, 255);
+    this.titleLabel = tLbl;
 
     const cBadge = createUiNode('CountBadge', topBar, 200, 34);
     cBadge.setPosition(-90, 0);
@@ -65,9 +72,10 @@ export class BadgesRoomView {
     this.countLabel = createUiNode('L', cBadge, 188, 24).addComponent(Label);
     this.countLabel.fontSize = 14;
     this.countLabel.isBold = true;
+    this.countLabel.overflow = Label.Overflow.SHRINK;
     this.countLabel.color = new Color(255, 230, 125, 255);
 
-    const makePageBtn = (name: string, txt: string, x: number, pg: number): Graphics => {
+    const makePageBtn = (name: string, txt: string, x: number, pg: number): { bgG: Graphics; lbl: Label } => {
       const b = createUiNode(name, topBar, 118, 36);
       b.setPosition(x, 0);
       const bgG = b.addComponent(Graphics);
@@ -75,6 +83,7 @@ export class BadgesRoomView {
       l.string = txt;
       l.fontSize = 13;
       l.isBold = true;
+      l.overflow = Label.Overflow.SHRINK;
       l.color = new Color(255, 235, 175, 255);
       const comp = b.addComponent(Button);
       comp.transition = Button.Transition.SCALE;
@@ -84,20 +93,26 @@ export class BadgesRoomView {
         this.page = pg;
         this.refresh();
       });
-      return bgG;
+      return { bgG, lbl: l };
     };
 
-    this.page1BtnG = makePageBtn('BtnPage1', 'PAGE 1 (1-12)', 115, 0);
-    this.page2BtnG = makePageBtn('BtnPage2', 'PAGE 2 (13-22)', 248, 1);
+    const p1 = makePageBtn('BtnPage1', t('badges_page_1'), 115, 0);
+    const p2 = makePageBtn('BtnPage2', t('badges_page_2'), 248, 1);
+    this.page1BtnG = p1.bgG;
+    this.page1BtnLbl = p1.lbl;
+    this.page2BtnG = p2.bgG;
+    this.page2BtnLbl = p2.lbl;
 
     const backBtn = createUiNode('BtnBack', topBar, 185, 38);
     backBtn.setPosition(485, 0);
     drawPanel(backBtn.addComponent(Graphics), 185, 38, new Color(48, 82, 52, 245), new Color(214, 173, 86, 230), 2, 8);
     const bLbl = createUiNode('L', backBtn, 175, 26).addComponent(Label);
-    bLbl.string = 'BACK';
+    bLbl.string = t('badges_back');
     bLbl.fontSize = 14;
     bLbl.isBold = true;
+    bLbl.overflow = Label.Overflow.SHRINK;
     bLbl.color = new Color(255, 235, 175, 255);
+    this.backBtnLbl = bLbl;
     const bc = backBtn.addComponent(Button);
     bc.transition = Button.Transition.SCALE;
     bc.zoomScale = 1.05;
@@ -162,6 +177,10 @@ export class BadgesRoomView {
     });
   }
 
+  refreshLocale(): void {
+    this.refresh();
+  }
+
   show(): void {
     this.root.active = true;
     this.refresh();
@@ -174,9 +193,17 @@ export class BadgesRoomView {
 
   refresh(): void {
     this.rebuildGrid();
+    this.titleLabel.string = t('badges_title');
+    this.page1BtnLbl.string = t('badges_page_1');
+    this.page2BtnLbl.string = t('badges_page_2');
+    this.backBtnLbl.string = t('badges_back');
+
     const unlockedTotal = this.progress.getUnlockedBadgesCount();
-    this.countLabel.string = `UNLOCKED: ${unlockedTotal} / ${BADGES.length}`;
-    this.pageLabel.string = `Showing Badges ${this.page === 0 ? '1 - 12' : '13 - 22'} of ${BADGES.length}  ·  Complete campaigns, medals, edicts & combat feats to unlock`;
+    this.countLabel.string = t('badges_unlocked_count', { unlocked: unlockedTotal, total: BADGES.length });
+    this.pageLabel.string = t('badges_footer', {
+      range: this.page === 0 ? '1 - 12' : '13 - 22',
+      total: BADGES.length,
+    });
 
     drawPanel(
       this.page1BtnG,
@@ -208,11 +235,11 @@ export class BadgesRoomView {
         unlocked ? 2.5 : 1.5,
         12,
       );
-      s.nameLbl.string = `#${s.def.index} ${s.def.name}`;
+      s.nameLbl.string = `#${s.def.index} ${getBadgeName(s.def.id, s.def.name)}`;
       s.nameLbl.color = unlocked ? new Color(255, 228, 132, 255) : new Color(195, 195, 210, 220);
-      s.descLbl.string = s.def.description;
+      s.descLbl.string = getBadgeDesc(s.def.id, s.def.description);
       s.descLbl.color = unlocked ? new Color(235, 242, 232, 255) : new Color(160, 165, 175, 205);
-      s.statusLbl.string = unlocked ? '★ UNLOCKED' : 'LOCKED';
+      s.statusLbl.string = unlocked ? t('badges_status_unlocked') : t('badges_status_locked');
       s.statusLbl.color = unlocked ? new Color(125, 235, 135, 255) : new Color(150, 130, 140, 200);
       const starKey = unlocked ? 'ui/star_gold' : 'ui/star_silver';
       getStaticSpriteFrame(starKey).then((sf) => {

@@ -1,4 +1,4 @@
-import { dist, flashToSim, simToFlash } from '../core/CoordTransform';
+import { dist, flashToSim } from '../core/CoordTransform';
 import { EventBus } from '../core/EventBus';
 import {
   getStrongholdMaxHp,
@@ -8,10 +8,9 @@ import {
   SUPPLY_STATS,
 } from '../data/BuildingsData';
 import { DEFAULT_WESTARIA_BONUSES } from '../data/EdictsData';
-import { ALL_SPELLS, FACTION_SPELL_ORDER } from '../data/SpellsData';
+import { ALL_SPELLS } from '../data/SpellsData';
 import {
   ActiveBannerState,
-  BannerSpellId,
   BattleBadgeStats,
   BuildSiteState,
   CampaignBonuses,
@@ -31,34 +30,24 @@ import {
 } from '../data/Types';
 import { CLASS_LOCK_INDEX, getUnitDefForClass, UNIT_DEFS } from '../data/UnitsData';
 import { AiController } from './AiController';
-import {
-  applyDamageToSquad,
-  computeFortressDamage,
-  computeLordsJudgementDamage,
-  computeSquadStrikeDamage,
-  countAliveUnits,
-  getAbilityValue,
-  hasAbility,
-  healAndResurrectSquad,
-} from './CombatMath';
-import { applyOneSecondEconomyTick, MAX_MANA, recalculateEconomy } from './EconomySim';
+import { hasAbility } from './CombatMath';
+import { applyOneSecondEconomyTick, recalculateEconomy } from './EconomySim';
 import { GraphNav } from './GraphNav';
+import {
+  ALL_FACTIONS,
+  BASE_ULTIMATE_MAX,
+  BattleSimContext,
+  CHEST_GOLD_REWARD,
+  createMemberOffsets,
+  SpawnSquadOptions,
+  XP_LEVEL_THRESHOLDS,
+} from './SimContext';
+import { canCastSpell as resolverCanCastSpell, castSpell as resolverCastSpell, updateBanners } from './SpellResolver';
+import { checkChestPickups, tickStatusEffectsOneSecond, updateSquad } from './SquadSystem';
 
 export interface SimEvents {
   event: SimEventPayload;
 }
-
-const MELEE_ENGAGE_FLASH_DIST = 44;
-const FORTRESS_ENGAGE_FLASH_DIST = 48;
-const REPAIR_PER_HALF_SEC = 5;
-const BANNER_TICK_SEC = 0.5;
-const OGRE_AGGRO_DIST = 85;
-const CHEST_PICKUP_DIST = 38;
-const CHEST_GOLD_REWARD = 500;
-const BASE_ULTIMATE_MAX = 200;
-const XP_LEVEL_THRESHOLDS = [100, 250, 450];
-
-const ALL_FACTIONS: FactionId[] = ['Westaria', 'TheEmpire', 'TheKhaganate', 'TheCult', 'Bandits'];
 
 const EMPTY_LEVEL_DEF: LevelDef = {
   id: 0,
@@ -81,63 +70,6 @@ const EMPTY_LEVEL_DEF: LevelDef = {
   nodes: [],
   edges: [],
 };
-
-function createMemberOffsets(count: number): Array<{ x: number; y: number }> {
-  if (count === 1) return [{ x: 0, y: 0 }];
-  if (count === 3) {
-    return [
-      { x: -10, y: -3 },
-      { x: 10, y: -3 },
-      { x: 0, y: 6 },
-    ];
-  }
-  if (count === 5) {
-    return [
-      { x: -12, y: -6 },
-      { x: 12, y: -6 },
-      { x: 0, y: 0 },
-      { x: -10, y: 8 },
-      { x: 10, y: 8 },
-    ];
-  }
-  if (count === 6) {
-    return [
-      { x: -12, y: -5 },
-      { x: 0, y: -5 },
-      { x: 12, y: -5 },
-      { x: -12, y: 5 },
-      { x: 0, y: 5 },
-      { x: 12, y: 5 },
-    ];
-  }
-  if (count === 7) {
-    return [
-      { x: -12, y: -6 },
-      { x: 0, y: -6 },
-      { x: 12, y: -6 },
-      { x: -14, y: 2 },
-      { x: 0, y: 2 },
-      { x: 14, y: 2 },
-      { x: 0, y: 9 },
-    ];
-  }
-  if (count >= 10) {
-    const pts: Array<{ x: number; y: number }> = [];
-    for (let i = 0; i < count; i++) {
-      const col = (i % 4) - 1.5;
-      const row = Math.floor(i / 4) - 1;
-      pts.push({ x: col * 9, y: row * 7 });
-    }
-    return pts;
-  }
-  const pts: Array<{ x: number; y: number }> = [];
-  for (let r = -1; r <= 1; r++) {
-    for (let c = -1; c <= 1; c++) {
-      pts.push({ x: c * 11, y: r * 7 });
-    }
-  }
-  return pts;
-}
 
 export class BattleSim {
   readonly events = new EventBus<SimEvents>();
@@ -166,10 +98,66 @@ export class BattleSim {
   private nextBannerId = 1;
   private secondAccum = 0;
   private rng: () => number;
+  private readonly simCtx: BattleSimContext;
 
   constructor(rng: () => number = Math.random, initialLevel?: LevelDef, bonuses: CampaignBonuses = DEFAULT_WESTARIA_BONUSES) {
     this.rng = rng;
+    this.simCtx = this.createSimContext();
     this.loadLevel(initialLevel ?? EMPTY_LEVEL_DEF, bonuses);
+  }
+
+  private createSimContext(): BattleSimContext {
+    const self = this;
+    return {
+      get sim() {
+        return self;
+      },
+      get levelDef() {
+        return self.levelDef;
+      },
+      get bonuses() {
+        return self.bonuses;
+      },
+      get playerFaction() {
+        return self.playerFaction;
+      },
+      get isMatchOver() {
+        return self.isMatchOver;
+      },
+      get strongholds() {
+        return self.strongholds;
+      },
+      get buildSites() {
+        return self.buildSites;
+      },
+      get chests() {
+        return self.chests;
+      },
+      get squads() {
+        return self.squads;
+      },
+      get activeBanners() {
+        return self.activeBanners;
+      },
+      get combatants() {
+        return self.combatants;
+      },
+      get battleStats() {
+        return self.battleStats;
+      },
+      get ai() {
+        return self.ai;
+      },
+      rng: () => self.rng(),
+      allocateBannerId: () => self.nextBannerId++,
+      emitEvent: (payload) => self.emitEvent(payload),
+      getEffectiveSpellCost: (faction, spellId) => self.getEffectiveSpellCost(faction, spellId),
+      spawnAtFlash: (defId, owner, fx, fy, garrisonNodeId, opts) =>
+        self.spawnAtFlash(defId, owner, fx, fy, garrisonNodeId, opts),
+      handleSquadDestroyed: (killer, victim) => self.handleSquadDestroyed(killer, victim),
+      captureStronghold: (newOwner, sh) => self.captureStronghold(newOwner, sh),
+      awardSquadXp: (sq, amount) => self.awardSquadXp(sq, amount),
+    };
   }
 
   get playerFaction(): PlayableCampaignId {
@@ -392,13 +380,7 @@ export class BattleSim {
     fx: number,
     fy: number,
     garrisonNodeId: string | null,
-    opts?: {
-      lifetimeSec?: number | null;
-      isAvatar?: boolean;
-      isSummoned?: boolean;
-      guardHomeFlash?: { x: number; y: number };
-      upkeepOverride?: number;
-    },
+    opts?: SpawnSquadOptions,
   ): SquadStateModel | null {
     const def = UNIT_DEFS[defId];
     if (!def) return null;
@@ -576,308 +558,11 @@ export class BattleSim {
   }
 
   canCastSpell(faction: FactionId, spellId: SpellId): boolean {
-    if (this.isMatchOver || faction === 'Bandits') return false;
-    const def = ALL_SPELLS[spellId];
-    if (!def || def.faction !== faction) return false;
-    if (faction === this.playerFaction && !this.bonuses.unlockedSpells.includes(spellId)) return false;
-    if (faction !== this.playerFaction && !FACTION_SPELL_ORDER[faction].includes(spellId)) return false;
-    const comb = this.combatants[faction];
-    if (def.kind === 'ultimate') {
-      return comb.ultimateCharge >= comb.ultimateMax;
-    }
-    return comb.mana >= this.getEffectiveSpellCost(faction, spellId);
+    return resolverCanCastSpell(this.simCtx, faction, spellId);
   }
 
   castSpell(faction: FactionId, spellId: SpellId, flashX: number, flashY: number): boolean {
-    if (!this.canCastSpell(faction, spellId)) return false;
-    const comb = this.combatants[faction];
-    const def = ALL_SPELLS[spellId];
-    const isPlayer = faction === this.playerFaction;
-    const manaCost = this.getEffectiveSpellCost(faction, spellId);
-
-    // 1. Instant / Offensive Spells
-    if (spellId === 'lords_judgement') {
-      comb.mana -= manaCost;
-      const rad = def.radius + 16;
-      const mul = isPlayer ? this.bonuses.lordsJudgementMul : 1.0;
-      for (const sq of this.squads) {
-        if (sq.owner === faction || sq.state === 'Dead' || sq.liberationTimer > 0) continue;
-        if (dist(sq.flashX, sq.flashY, flashX, flashY) <= rad) {
-          for (const m of sq.members) {
-            if (!m.alive) continue;
-            const dmg = computeLordsJudgementDamage(m.maxHp, mul, this.rng);
-            if (dmg >= m.hp) {
-              m.hp = 0;
-              m.alive = false;
-            } else {
-              m.hp -= dmg;
-            }
-          }
-          if (countAliveUnits(sq) <= 0) this.handleSquadDestroyed(faction, sq);
-        }
-      }
-      this.emitEvent({ type: 'spell_cast', faction, spellId, flashX, flashY });
-      if (isPlayer) this.ai.onPlayerSpellCast(this);
-      return true;
-    }
-
-    if (spellId === 'summon_stoneworms') {
-      comb.mana -= manaCost;
-      const rad = def.radius + 16;
-      const waves = 1 + (isPlayer ? this.bonuses.stonewormsExtraWaves : 0);
-      const waveScale = 1 + 0.35 * (waves - 1);
-      for (const sq of this.squads) {
-        if (sq.owner === faction || sq.state === 'Dead' || sq.liberationTimer > 0) continue;
-        if (dist(sq.flashX, sq.flashY, flashX, flashY) <= rad) {
-          const totalDmg = Math.max(12, Math.round(countAliveUnits(sq) * def.power * 3.2 * waveScale));
-          const slain = applyDamageToSquad(sq, totalDmg);
-          if (slain >= 0 && countAliveUnits(sq) <= 0) this.handleSquadDestroyed(faction, sq);
-        }
-      }
-      this.emitEvent({ type: 'spell_cast', faction, spellId, flashX, flashY });
-      if (isPlayer) this.ai.onPlayerSpellCast(this);
-      return true;
-    }
-
-    if (spellId === 'disentomb') {
-      comb.mana -= manaCost;
-      const sq = this.spawnAtFlash('k_immortals', faction, flashX, flashY, null, {
-        lifetimeSec: def.baseDurationSec,
-        isSummoned: true,
-      });
-      if (!sq) return false;
-      this.emitEvent({ type: 'spell_cast', faction, spellId, squadId: sq.id, flashX, flashY });
-      if (isPlayer) this.ai.onPlayerSpellCast(this);
-      return true;
-    }
-
-    if (spellId === 'raise_the_dead') {
-      comb.mana -= manaCost;
-      const sq = this.spawnAtFlash('e_undying_warriors', faction, flashX, flashY, null, {
-        lifetimeSec: def.baseDurationSec,
-        isSummoned: true,
-      });
-      if (!sq) return false;
-      this.emitEvent({ type: 'spell_cast', faction, spellId, squadId: sq.id, flashX, flashY });
-      return true;
-    }
-
-    if (spellId === 'ice_blast') {
-      comb.mana -= manaCost;
-      const rad = def.radius + 16;
-      const dur = def.baseDurationSec + (isPlayer ? this.bonuses.freezeDurationBonusSec : 0);
-      for (const sq of this.squads) {
-        if (sq.owner === faction || sq.state === 'Dead' || sq.liberationTimer > 0) continue;
-        if (dist(sq.flashX, sq.flashY, flashX, flashY) <= rad) {
-          const sqDef = UNIT_DEFS[sq.defId];
-          if (!hasAbility(sqDef.abilities, 'Mechanism')) {
-            sq.frozenTimer = Math.max(sq.frozenTimer, dur);
-          }
-          const frostDmg = Math.max(10, Math.round(countAliveUnits(sq) * def.power * 2));
-          applyDamageToSquad(sq, frostDmg);
-          if (countAliveUnits(sq) <= 0) this.handleSquadDestroyed(faction, sq);
-        }
-      }
-      this.emitEvent({ type: 'spell_cast', faction, spellId, flashX, flashY });
-      if (isPlayer) this.ai.onPlayerSpellCast(this);
-      return true;
-    }
-
-    if (spellId === 'frost_enchantment') {
-      comb.mana -= manaCost;
-      const rad = def.radius + 16;
-      for (const sq of this.squads) {
-        if (sq.owner !== faction || sq.state === 'Dead') continue;
-        if (dist(sq.flashX, sq.flashY, flashX, flashY) <= rad) {
-          sq.frostEnchantTimer = Math.max(sq.frostEnchantTimer, def.baseDurationSec);
-        }
-      }
-      this.emitEvent({ type: 'spell_cast', faction, spellId, flashX, flashY });
-      if (isPlayer) this.ai.onPlayerSpellCast(this);
-      return true;
-    }
-
-    if (spellId === 'terror') {
-      comb.mana -= manaCost;
-      const rad = def.radius + 16;
-      for (const sq of this.squads) {
-        if (sq.owner === faction || sq.state === 'Dead' || sq.liberationTimer > 0) continue;
-        if (dist(sq.flashX, sq.flashY, flashX, flashY) <= rad) {
-          sq.heroicTimer = 0;
-          if (!hasAbility(UNIT_DEFS[sq.defId].abilities, 'Discipline')) {
-            sq.fearTimer = Math.max(sq.fearTimer, def.baseDurationSec);
-          }
-        }
-      }
-      this.emitEvent({ type: 'spell_cast', faction, spellId, flashX, flashY });
-      return true;
-    }
-
-    // 2. Banners (5 types across 4 factions)
-    if (
-      spellId === 'banner_consecration' ||
-      spellId === 'banner_heroism' ||
-      spellId === 'banner_bloodlust' ||
-      spellId === 'banner_liberation' ||
-      spellId === 'banner_desecration'
-    ) {
-      comb.mana -= manaCost;
-      const durMul = faction === 'Westaria' && isPlayer ? this.bonuses.bannerDurationMul : 1.0;
-      const totalDur = def.baseDurationSec * durMul;
-      const banner: ActiveBannerState = {
-        id: this.nextBannerId++,
-        spellId: spellId as BannerSpellId,
-        owner: faction,
-        flashX,
-        flashY,
-        radius: def.radius,
-        power: def.power,
-        remainingSec: totalDur,
-        totalDurationSec: totalDur,
-        tickTimer: 0,
-      };
-      this.activeBanners.push(banner);
-      if (isPlayer) this.battleStats.bannersSet += 1;
-      this.emitEvent({
-        type: 'banner_placed',
-        faction,
-        spellId,
-        bannerId: banner.id,
-        flashX,
-        flashY,
-      });
-      if (isPlayer) this.ai.onPlayerSpellCast(this);
-      return true;
-    }
-
-    // 3. Ultimates (4 faction ultimates)
-    if (spellId === 'sign_of_advent') {
-      comb.ultimateCharge = 0;
-      const avatar = this.spawnAtFlash('w_avatar', faction, flashX, flashY, null, {
-        lifetimeSec: def.baseDurationSec,
-        isAvatar: true,
-      });
-      if (!avatar) return false;
-      if (isPlayer) this.battleStats.ultimatesUsed += 1;
-      this.emitEvent({
-        type: 'ultimate_cast',
-        faction,
-        spellId,
-        squadId: avatar.id,
-        flashX,
-        flashY,
-      });
-      if (isPlayer) this.ai.onPlayerSpellCast(this);
-      return true;
-    }
-
-    if (spellId === 'cataclysm') {
-      comb.ultimateCharge = 0;
-      // Meteor barrage across enemy squads, enemy strongholds, and light splash on caster's non-liberated squads
-      for (const sq of this.squads) {
-        if (sq.state === 'Dead') continue;
-        if (sq.owner !== faction) {
-          if (sq.liberationTimer > 0) continue;
-          for (const m of sq.members) {
-            if (!m.alive) continue;
-            const dmg = Math.max(8, Math.ceil(m.maxHp * (0.4 + this.rng() * 0.2)));
-            if (dmg >= m.hp) {
-              m.hp = 0;
-              m.alive = false;
-            } else {
-              m.hp -= dmg;
-            }
-          }
-          if (countAliveUnits(sq) <= 0) this.handleSquadDestroyed(faction, sq);
-        } else if (sq.liberationTimer <= 0) {
-          for (const m of sq.members) {
-            if (!m.alive) continue;
-            const selfDmg = Math.max(1, Math.floor(m.maxHp * 0.12));
-            m.hp = Math.max(1, m.hp - selfDmg);
-          }
-        }
-      }
-      for (const sh of this.strongholds) {
-        if (sh.owner === faction) continue;
-        const fortDmg = Math.max(80, Math.round(sh.maxHp * 0.25));
-        sh.hp = Math.max(0, sh.hp - fortDmg);
-        if (sh.hp <= 0) {
-          this.captureStronghold(faction, sh);
-        }
-      }
-      if (isPlayer) this.battleStats.ultimatesUsed += 1;
-      this.emitEvent({ type: 'ultimate_cast', faction, spellId, flashX, flashY });
-      if (isPlayer) this.ai.onPlayerSpellCast(this);
-      return true;
-    }
-
-    if (spellId === 'grand_transformation') {
-      comb.ultimateCharge = 0;
-      let harvestedSoldiers = 0;
-      for (const sq of this.squads) {
-        if (sq.owner === faction || sq.owner === 'Bandits' || sq.state === 'Dead' || sq.liberationTimer > 0) continue;
-        const sqDef = UNIT_DEFS[sq.defId];
-        if (hasAbility(sqDef.abilities, 'Mechanism')) continue;
-        let livingInSquad = 0;
-        for (const m of sq.members) {
-          if (m.alive) livingInSquad++;
-        }
-        let targetKills = Math.floor(livingInSquad * 0.5);
-        if (targetKills === 0 && livingInSquad >= 1 && this.rng() <= 0.5) targetKills = 1;
-        for (const m of sq.members) {
-          if (!m.alive || targetKills <= 0) continue;
-          m.alive = false;
-          m.hp = 0;
-          targetKills--;
-          harvestedSoldiers++;
-        }
-        if (countAliveUnits(sq) <= 0) {
-          this.handleSquadDestroyed(faction, sq);
-        }
-      }
-      const rewardGold = harvestedSoldiers * def.power;
-      const rewardMana = harvestedSoldiers * def.power;
-      comb.gold += rewardGold;
-      comb.mana = Math.min(MAX_MANA, comb.mana + rewardMana);
-      if (isPlayer) {
-        this.battleStats.goldCollected += rewardGold;
-        this.battleStats.ultimatesUsed += 1;
-      }
-      this.emitEvent({
-        type: 'ultimate_cast',
-        faction,
-        spellId,
-        goldAmount: rewardGold,
-        flashX,
-        flashY,
-      });
-      if (isPlayer) this.ai.onPlayerSpellCast(this);
-      return true;
-    }
-
-    if (spellId === 'call_of_the_grave') {
-      comb.ultimateCharge = 0;
-      let strikes = 0;
-      for (const sq of this.squads) {
-        if (strikes >= 2) break;
-        if (sq.owner === faction || sq.owner === 'Bandits' || sq.state === 'Dead' || sq.liberationTimer > 0) continue;
-        const sqDef = UNIT_DEFS[sq.defId];
-        if (hasAbility(sqDef.abilities, 'Undead') || hasAbility(sqDef.abilities, 'Mechanism')) continue;
-        strikes++;
-        const slain = applyDamageToSquad(sq, Math.max(40, Math.round(sq.members[0].maxHp * 2.5)));
-        if (slain >= 0 && countAliveUnits(sq) <= 0) {
-          this.handleSquadDestroyed(faction, sq);
-          this.spawnAtFlash('e_undying_warriors', faction, sq.flashX, sq.flashY, null, {
-            lifetimeSec: 40,
-            isSummoned: true,
-          });
-        }
-      }
-      this.emitEvent({ type: 'ultimate_cast', faction, spellId, flashX, flashY });
-      return true;
-    }
-
-    return false;
+    return resolverCastSpell(this.simCtx, faction, spellId, flashX, flashY);
   }
 
   orderSquadToNode(squadId: number, nodeId: string): boolean {
@@ -965,13 +650,12 @@ export class BattleSim {
           this.battleStats.goldCollected += Math.max(0, this.combatants[f].gold - beforeGold);
         }
       }
-      // Poison DoT & Giantbots regeneration once per second
-      this.tickStatusEffectsOneSecond();
+      tickStatusEffectsOneSecond(this.simCtx);
       this.updatePeakBadgeStats();
       this.ai.tickCpuOneSecond(this);
     }
 
-    this.updateBanners(dt);
+    updateBanners(this.simCtx, dt);
 
     for (const sq of this.squads) {
       if (sq.state === 'Dead') continue;
@@ -993,10 +677,10 @@ export class BattleSim {
           continue;
         }
       }
-      this.updateSquad(sq, dt);
+      updateSquad(this.simCtx, sq, dt);
     }
 
-    this.checkChestPickups();
+    checkChestPickups(this.simCtx);
 
     const hadDead = this.squads.some((s) => s.state === 'Dead');
     if (hadDead) {
@@ -1005,32 +689,6 @@ export class BattleSim {
     }
 
     this.checkWinLoss();
-  }
-
-  private tickStatusEffectsOneSecond(): void {
-    const pFaction = this.playerFaction;
-    for (const sq of this.squads) {
-      if (sq.state === 'Dead') continue;
-      // Poison DoT
-      if (sq.poisonTimer > 0 && sq.poisonDps > 0 && sq.liberationTimer <= 0) {
-        const dmg = Math.max(1, Math.round(sq.poisonDps * countAliveUnits(sq)));
-        const slain = applyDamageToSquad(sq, dmg);
-        if (slain > 0 && countAliveUnits(sq) <= 0) {
-          // Credit whichever hostile faction isn't the victim
-          const killer: FactionId = sq.owner === pFaction ? this.levelDef.enemies[0] ?? 'TheEmpire' : pFaction;
-          this.handleSquadDestroyed(killer, sq);
-          continue;
-        }
-      }
-      // Giantbots HP regeneration (Cult Giant Construction edict)
-      if (sq.owner === pFaction && sq.defId === 'b_giantbots' && this.bonuses.giantbotRegenPctPerSec > 0) {
-        for (const m of sq.members) {
-          if (!m.alive || m.hp >= m.maxHp) continue;
-          const gain = Math.max(1, Math.round((m.maxHp * this.bonuses.giantbotRegenPctPerSec) / 100));
-          m.hp = Math.min(m.maxHp, m.hp + gain);
-        }
-      }
-    }
   }
 
   private updatePeakBadgeStats(): void {
@@ -1051,127 +709,6 @@ export class BattleSim {
     if (ownedSquads > this.battleStats.maxSquadsOwned) this.battleStats.maxSquadsOwned = ownedSquads;
   }
 
-  private updateBanners(dt: number): void {
-    for (let i = this.activeBanners.length - 1; i >= 0; i--) {
-      const b = this.activeBanners[i];
-      b.remainingSec -= dt;
-      b.tickTimer -= dt;
-      if (b.tickTimer <= 0) {
-        b.tickTimer = BANNER_TICK_SEC;
-        for (const sq of this.squads) {
-          if (sq.owner !== b.owner || sq.state === 'Dead') continue;
-          if (dist(sq.flashX, sq.flashY, b.flashX, b.flashY) > b.radius + 14) continue;
-          if (b.spellId === 'banner_consecration' || b.spellId === 'banner_desecration') {
-            healAndResurrectSquad(sq, UNIT_DEFS[sq.defId], b.power);
-          } else if (b.spellId === 'banner_heroism') {
-            if (sq.heroicTimer <= 0 && b.owner === this.playerFaction) {
-              this.battleStats.heroicEngagedCount += 1;
-            }
-            sq.heroicTimer = 0.8;
-          } else if (b.spellId === 'banner_bloodlust') {
-            sq.bloodlustTimer = 0.8;
-            sq.bloodlustPower = b.power;
-          } else if (b.spellId === 'banner_liberation') {
-            sq.liberationTimer = 0.8;
-            sq.frozenTimer = 0;
-            sq.poisonTimer = 0;
-            sq.poisonDps = 0;
-            sq.fearTimer = 0;
-          }
-        }
-      }
-      if (b.remainingSec <= 0) {
-        this.emitEvent({
-          type: 'banner_expired',
-          faction: b.owner,
-          bannerId: b.id,
-          spellId: b.spellId,
-          flashX: b.flashX,
-          flashY: b.flashY,
-        });
-        this.activeBanners.splice(i, 1);
-      }
-    }
-  }
-
-  private checkChestPickups(): void {
-    for (const ch of this.chests) {
-      if (ch.collected) continue;
-      const collector = this.squads.find(
-        (sq) =>
-          sq.owner !== 'Bandits' &&
-          sq.state !== 'Dead' &&
-          dist(sq.flashX, sq.flashY, ch.flashX, ch.flashY) <= CHEST_PICKUP_DIST,
-      );
-      if (collector) {
-        ch.collected = true;
-        this.combatants[collector.owner].gold += ch.gold;
-        if (collector.owner === this.playerFaction) {
-          this.battleStats.chestsOpened += 1;
-          this.battleStats.goldCollected += ch.gold;
-        }
-        this.emitEvent({
-          type: 'chest_collected',
-          faction: collector.owner,
-          squadId: collector.id,
-          nodeId: ch.id,
-          goldAmount: ch.gold,
-          flashX: ch.flashX,
-          flashY: ch.flashY,
-        });
-      }
-    }
-  }
-
-  private updateFacing(sq: SquadStateModel, dx: number, dy: number): void {
-    if (Math.abs(dx) < 0.01 && Math.abs(dy) < 0.01) return;
-    if (Math.abs(dx) >= Math.abs(dy)) {
-      sq.facing = dx >= 0 ? 'right' : 'left';
-    } else {
-      sq.facing = dy >= 0 ? 'down' : 'up';
-    }
-  }
-
-  private applyOnHitEffects(attacker: SquadStateModel, attackerDef: UnitDefinition, target: SquadStateModel): void {
-    if (target.state === 'Dead' || target.liberationTimer > 0) return;
-    const targetDef = UNIT_DEFS[target.defId];
-
-    // Poisonous (Khaganate Hunters / Serpent Archers / Poison Catapult)
-    const poisonVal = getAbilityValue(attackerDef.abilities, 'Poisonous');
-    if (poisonVal > 0 && !hasAbility(targetDef.abilities, 'PoisonImmunity') && !hasAbility(targetDef.abilities, 'Mechanism')) {
-      const bonus = attacker.owner === this.playerFaction ? this.bonuses.poisonBonusDamage : 0;
-      target.poisonTimer = 4.0;
-      target.poisonDps = Math.max(target.poisonDps, poisonVal + bonus);
-    }
-
-    // Freeze on attack (Cult Acolytes FreezeArrow, Wizards FreezeBlast, or Rebel Army infantry freeze edict)
-    let freezePct = Math.max(
-      getAbilityValue(attackerDef.abilities, 'FreezeArrow'),
-      getAbilityValue(attackerDef.abilities, 'FreezeBlast'),
-    );
-    if (
-      attacker.owner === this.playerFaction &&
-      attackerDef.unitClass === 'Infantry' &&
-      this.bonuses.infantryFreezeChancePct > 0
-    ) {
-      freezePct = Math.max(freezePct, this.bonuses.infantryFreezeChancePct);
-    }
-    if (freezePct > 0 && !hasAbility(targetDef.abilities, 'Mechanism') && this.rng() * 100 < freezePct) {
-      target.frozenTimer = Math.max(target.frozenTimer, 2.0);
-    }
-  }
-
-  private getEffectiveMoveSpeed(sq: SquadStateModel, def: UnitDefinition): number {
-    let spd = def.speed;
-    if (sq.owner === this.playerFaction) {
-      spd *= this.bonuses.moveSpeedMul;
-      if (def.unitClass === 'Siege') {
-        spd *= this.bonuses.siegeSpeedMul;
-      }
-    }
-    return spd;
-  }
-
   private awardSquadXp(sq: SquadStateModel, amount: number): void {
     if (sq.owner !== this.playerFaction || sq.state === 'Dead' || sq.vetLevel >= 3) return;
     const mul = this.bonuses.squadXpMul;
@@ -1190,224 +727,6 @@ export class BattleSim {
         flashY: sq.flashY,
       });
     }
-  }
-
-  private updateSquad(sq: SquadStateModel, dt: number): void {
-    if (countAliveUnits(sq) <= 0) {
-      sq.state = 'Dead';
-      return;
-    }
-
-    // Frozen squads cannot move or attack
-    if (sq.frozenTimer > 0) {
-      sq.state = 'Stand';
-      sq.animPhase = 'go';
-      return;
-    }
-
-    const def = UNIT_DEFS[sq.defId];
-    const moveSpeed = this.getEffectiveMoveSpeed(sq, def);
-    if (sq.attackTimer > 0) sq.attackTimer = Math.max(0, sq.attackTimer - dt);
-
-    // 1. Check nearby enemy squad engagement
-    const aggro = sq.owner === 'Bandits' ? OGRE_AGGRO_DIST : Math.max(MELEE_ENGAGE_FLASH_DIST, def.range);
-    const enemySquad = this.findNearestEnemySquad(sq, aggro);
-    if (enemySquad) {
-      sq.state = 'Fight';
-      sq.animPhase = 'attack';
-      const dx = enemySquad.flashX - sq.flashX;
-      const dy = enemySquad.flashY - sq.flashY;
-      this.updateFacing(sq, dx, dy);
-
-      const d = dist(sq.flashX, sq.flashY, enemySquad.flashX, enemySquad.flashY);
-      if (def.range === 0 && d > 28) {
-        this.moveTowards(sq, enemySquad.flashX, enemySquad.flashY, moveSpeed, dt);
-      } else if (sq.attackTimer <= 0) {
-        sq.attackTimer = def.attackPeriodSec;
-        const enemyDef = UNIT_DEFS[enemySquad.defId];
-        const dmg = computeSquadStrikeDamage(
-          sq,
-          def,
-          enemyDef,
-          d <= MELEE_ENGAGE_FLASH_DIST,
-          this.rng,
-          this.bonuses,
-          this.playerFaction,
-          enemySquad,
-        );
-        if (sq.chargeReady && d <= MELEE_ENGAGE_FLASH_DIST) {
-          sq.chargeReady = false;
-        }
-        const slain = applyDamageToSquad(enemySquad, dmg);
-        this.applyOnHitEffects(sq, def, enemySquad);
-        this.emitEvent({
-          type: 'attack_hit',
-          faction: sq.owner,
-          squadId: sq.id,
-          flashX: enemySquad.flashX,
-          flashY: enemySquad.flashY,
-          unitClass: def.unitClass,
-        });
-        if (slain > 0) {
-          this.awardSquadXp(sq, slain * 3);
-          if (countAliveUnits(enemySquad) <= 0) {
-            this.handleSquadDestroyed(sq.owner, enemySquad);
-            this.awardSquadXp(sq, 20);
-          }
-        }
-
-        // SplashDamage support (Trebuchet / Poison Catapult / Ogre / Avatar)
-        const splashPct = getAbilityValue(def.abilities, 'SplashDamage');
-        if (splashPct > 0) {
-          const splashDmg = Math.max(1, Math.round((dmg * splashPct) / 100));
-          for (const extra of this.squads) {
-            if (extra.id === enemySquad.id || extra.owner === sq.owner || extra.state === 'Dead') continue;
-            if (dist(extra.flashX, extra.flashY, enemySquad.flashX, enemySquad.flashY) <= 44) {
-              const sSlain = applyDamageToSquad(extra, splashDmg);
-              this.applyOnHitEffects(sq, def, extra);
-              if (sSlain > 0 && countAliveUnits(extra) <= 0) {
-                this.handleSquadDestroyed(sq.owner, extra);
-              }
-            }
-          }
-        }
-      }
-      return;
-    }
-
-    // Bandit Ogre returns to guard post if unengaged
-    if (sq.owner === 'Bandits' && sq.guardHomeFlash) {
-      if (dist(sq.flashX, sq.flashY, sq.guardHomeFlash.x, sq.guardHomeFlash.y) > 12) {
-        sq.state = 'Move';
-        sq.animPhase = 'go';
-        this.moveTowards(sq, sq.guardHomeFlash.x, sq.guardHomeFlash.y, moveSpeed, dt);
-        return;
-      }
-    }
-
-    // 2. Check enemy stronghold siege engagement (Bandits never besiege strongholds)
-    if (sq.owner !== 'Bandits') {
-      const enemyFortRange = Math.max(FORTRESS_ENGAGE_FLASH_DIST, def.range);
-      const enemyFort = this.findNearestEnemyStronghold(sq, enemyFortRange);
-      if (enemyFort) {
-        sq.state = 'Fight';
-        sq.animPhase = 'attack';
-        this.updateFacing(sq, enemyFort.flashX - sq.flashX, enemyFort.flashY - sq.flashY);
-        if (sq.attackTimer <= 0) {
-          sq.attackTimer = def.attackPeriodSec;
-          const dmg = computeFortressDamage(sq, def, enemyFort, this.rng, this.bonuses, this.playerFaction);
-          enemyFort.hp = Math.max(0, enemyFort.hp - dmg);
-          this.emitEvent({
-            type: 'attack_hit',
-            faction: sq.owner,
-            squadId: sq.id,
-            nodeId: enemyFort.id,
-            flashX: enemyFort.flashX,
-            flashY: enemyFort.flashY,
-            unitClass: def.unitClass,
-          });
-          if (enemyFort.hp <= 0) {
-            this.captureStronghold(sq.owner, enemyFort);
-            this.awardSquadXp(sq, 60);
-            sq.targetNodeId = enemyFort.id;
-            sq.pathFlash = [];
-            sq.state = 'Stand';
-            sq.animPhase = 'go';
-          }
-        }
-        return;
-      }
-    }
-
-    // 3. Follow movement path if ordered
-    if (sq.pathFlash.length > 0) {
-      sq.state = 'Move';
-      sq.animPhase = 'go';
-      const wp = sq.pathFlash[0];
-      const arrived = this.moveTowards(sq, wp.x, wp.y, moveSpeed, dt);
-      if (arrived) {
-        sq.pathFlash.shift();
-        if (sq.pathFlash.length === 0) {
-          sq.state = 'Stand';
-          sq.targetSquadId = null;
-        }
-      }
-      return;
-    }
-
-    // 4. Repair damaged friendly stronghold nearby
-    if (sq.owner !== 'Bandits') {
-      const nearFriendly = this.strongholds.find(
-        (sh) => sh.owner === sq.owner && dist(sh.flashX, sh.flashY, sq.flashX, sq.flashY) <= 52,
-      );
-      if (nearFriendly && nearFriendly.hp < nearFriendly.maxHp) {
-        sq.state = 'Repair';
-        sq.animPhase = 'go';
-        sq.repairTimer += dt;
-        while (sq.repairTimer >= 0.5) {
-          sq.repairTimer -= 0.5;
-          nearFriendly.hp = Math.min(nearFriendly.maxHp, nearFriendly.hp + REPAIR_PER_HALF_SEC);
-        }
-        return;
-      }
-    }
-
-    sq.state = 'Stand';
-    sq.animPhase = 'go';
-  }
-
-  private moveTowards(sq: SquadStateModel, targetFlashX: number, targetFlashY: number, speed: number, dt: number): boolean {
-    const targetSim = flashToSim(targetFlashX, targetFlashY);
-    const dx = targetSim.x - sq.simX;
-    const dy = targetSim.y - sq.simY;
-    const d = Math.hypot(dx, dy);
-    this.updateFacing(sq, dx, targetFlashY - sq.flashY);
-
-    const stepDist = speed * dt;
-    if (d <= stepDist || d < 0.5) {
-      sq.simX = targetSim.x;
-      sq.simY = targetSim.y;
-      sq.flashX = targetFlashX;
-      sq.flashY = targetFlashY;
-      return true;
-    }
-
-    const nx = dx / d;
-    const ny = dy / d;
-    sq.simX += nx * stepDist;
-    sq.simY += ny * stepDist;
-    const fl = simToFlash(sq.simX, sq.simY);
-    sq.flashX = fl.x;
-    sq.flashY = fl.y;
-    return false;
-  }
-
-  private findNearestEnemySquad(sq: SquadStateModel, maxFlashRange: number): SquadStateModel | null {
-    let best: SquadStateModel | null = null;
-    let bestD = maxFlashRange;
-    for (const other of this.squads) {
-      if (other.owner === sq.owner || other.state === 'Dead' || countAliveUnits(other) <= 0) continue;
-      const d = dist(sq.flashX, sq.flashY, other.flashX, other.flashY);
-      if (d <= bestD) {
-        bestD = d;
-        best = other;
-      }
-    }
-    return best;
-  }
-
-  private findNearestEnemyStronghold(sq: SquadStateModel, maxFlashRange: number): StrongholdState | null {
-    let best: StrongholdState | null = null;
-    let bestD = maxFlashRange;
-    for (const sh of this.strongholds) {
-      if (sh.owner === sq.owner) continue;
-      const d = dist(sq.flashX, sq.flashY, sh.flashX, sh.flashY);
-      if (d <= bestD) {
-        bestD = d;
-        best = sh;
-      }
-    }
-    return best;
   }
 
   private handleSquadDestroyed(killer: FactionId, victim: SquadStateModel): void {

@@ -81,3 +81,14 @@ node tools\cocos-cli\dist\cli.js build --project game --platform android --build
    - Full `en` / `zh-CN` dictionary covering all UI screens, HUD/Pause controls, 35 unit types, 16 spells, 27 Royal Edicts, 22 Badges, and all 24 campaign briefings, persisted in `UserSettingsStore` with live switching on Title and Pause screens.
 4. **Cross-Device Save Backup & Transfer ([CampaignProgress.ts](../game/assets/scripts/data/CampaignProgress.ts), [SaveDataModal.ts](../game/assets/scripts/view/SaveDataModal.ts))**:
    - Generates checksum-verified `TKV3:` Base64URL save transfer codes (`exportSaveCode` / `importSaveCode`) with copy-to-clipboard, `.txt` file export, modal paste import, and two-step reset confirmation.
+
+## 8. Phase C Engineering, Modular Architecture & Automated Release
+
+1. **Monolith Modularization**:
+   - **Simulation**: Split [BattleSim.ts](../game/assets/scripts/sim/BattleSim.ts) via [SimContext.ts](../game/assets/scripts/sim/SimContext.ts), [SpellResolver.ts](../game/assets/scripts/sim/SpellResolver.ts), and [SquadSystem.ts](../game/assets/scripts/sim/SquadSystem.ts) while maintaining zero `cc` imports across `core/`, `data/`, and `sim/`.
+   - **Battle Scene**: Split [BattleView.ts](../game/assets/scripts/view/BattleView.ts) into [BattleInputController.ts](../game/assets/scripts/view/BattleInputController.ts) and [BattleVfxController.ts](../game/assets/scripts/view/BattleVfxController.ts).
+   - **Battle HUD**: Split [HudView.ts](../game/assets/scripts/view/HudView.ts) into [HudSpellDock.ts](../game/assets/scripts/view/HudSpellDock.ts), [HudSelectionPanels.ts](../game/assets/scripts/view/HudSelectionPanels.ts), and [PauseModalView.ts](../game/assets/scripts/view/PauseModalView.ts).
+2. **Automated Quality Gates & CI ([check-hygiene.mjs](../scripts/check-hygiene.mjs), [tsconfig.sim.json](../game/tsconfig.sim.json), [ci.yml](../.github/workflows/ci.yml))**:
+   - Enforces zero UTF-8 BOMs, zero replacement characters, zero legacy portal SDK strings, zero `cc` imports in pure sim/data/core modules, `< 4 MB` `resources` budget, strict TypeScript checks, and all 16 simulation suites on every push/PR.
+3. **Parameterized Release Packager ([build-release.mjs](../scripts/build-release.mjs))**:
+   - Stamps transient build configs (`--target`, `--cdn-url`, `--out-dir`, `--dry-run`, `--skip-checks`), validates built `< 4 MB` `resources` + all 5 remote bundle manifests, stages `<target>-site/` vs `<target>-cdn/remote/`, and emits `release-manifest.json`.

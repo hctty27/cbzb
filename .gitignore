@@ -5,6 +5,7 @@ game/temp/
 game/local/
 game/build/
 game/profiles/
+dist-release/
 node_modules/
 __pycache__/
 *.pyc

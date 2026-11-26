@@ -1,0 +1,32 @@
+name: CI Quality Gate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Repository Hygiene & Budget Check
+        run: node scripts/check-hygiene.mjs
+
+      - name: TypeScript Strict Check (Pure Sim / Data / Core)
+        run: npx --yes -p typescript@5.8 tsc -p game/tsconfig.sim.json --noEmit
+
+      - name: Headless Simulation & Save Integrity Tests
+        run: npx --yes tsx scripts/test-sim.ts
+
+      - name: Release Pipeline Dry-Run Validation
+        run: node scripts/build-release.mjs --dry-run --target all --cdn-url https://cdn.example.com/takeover

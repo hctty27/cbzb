@@ -1,5 +1,5 @@
 import { Button, Color, Graphics, Label, Node } from 'cc';
-import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
+import { COCOS_BLEED_HEIGHT, COCOS_BLEED_WIDTH, COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { CampaignProgressStore } from '../data/CampaignProgress';
 import { CAMPAIGN_EDICTS } from '../data/EdictsData';
 import { getEdictName, getEdictRankDesc, t } from '../data/I18n';
@@ -40,18 +40,18 @@ export class ThroneRoomView {
   }
 
   private buildUi(): void {
-    const bg = createUiNode('ThroneBg', this.root, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
+    const bg = createUiNode('ThroneBg', this.root, COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT);
     const g = bg.addComponent(Graphics);
     g.fillColor = new Color(18, 16, 26, 255);
-    g.rect(-640, -360, 1280, 720);
+    g.rect(-1280, -720, 2560, 1440);
     g.fill();
 
     // Header
-    const topBar = createUiNode('ThroneTopBar', this.root, COCOS_DESIGN_WIDTH, 58);
+    const topBar = createUiNode('ThroneTopBar', this.root, COCOS_BLEED_WIDTH, 58);
     topBar.setPosition(0, COCOS_DESIGN_HEIGHT * 0.5 - 29);
     drawPanel(
       topBar.addComponent(Graphics),
-      COCOS_DESIGN_WIDTH,
+      COCOS_BLEED_WIDTH,
       58,
       new Color(26, 20, 34, 245),
       new Color(214, 173, 86, 240),
@@ -107,9 +107,9 @@ export class ThroneRoomView {
     this.cardsContainer = createUiNode('EdictsGrid', this.root, COCOS_DESIGN_WIDTH, 580);
 
     // Bottom Summary Strip
-    const bot = createUiNode('ThroneSummaryBar', this.root, COCOS_DESIGN_WIDTH, 48);
+    const bot = createUiNode('ThroneSummaryBar', this.root, COCOS_BLEED_WIDTH, 48);
     bot.setPosition(0, -COCOS_DESIGN_HEIGHT * 0.5 + 24);
-    drawPanel(bot.addComponent(Graphics), COCOS_DESIGN_WIDTH, 48, new Color(22, 20, 32, 242), new Color(175, 140, 72, 220), 2, 0);
+    drawPanel(bot.addComponent(Graphics), COCOS_BLEED_WIDTH, 48, new Color(22, 20, 32, 242), new Color(175, 140, 72, 220), 2, 0);
     this.bonusSummaryLabel = createUiNode('SumLbl', bot, 1220, 30).addComponent(Label);
     this.bonusSummaryLabel.fontSize = 14;
     this.bonusSummaryLabel.overflow = Label.Overflow.SHRINK;

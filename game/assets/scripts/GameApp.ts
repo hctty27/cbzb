@@ -14,11 +14,14 @@ import {
   Label,
   Node,
   profiler,
-  ResolutionPolicy,
   sys,
-  view,
 } from 'cc';
-import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from './core/CoordTransform';
+import {
+  COCOS_BLEED_HEIGHT,
+  COCOS_BLEED_WIDTH,
+  COCOS_DESIGN_HEIGHT,
+  COCOS_DESIGN_WIDTH,
+} from './core/CoordTransform';
 import { CampaignProgressStore, IStorageAdapter } from './data/CampaignProgress';
 import { getLevelName, setLanguage as setI18nLanguage, t } from './data/I18n';
 import { getCampaignLevelMetas, getLevelMetaById } from './data/LevelCatalog';
@@ -35,6 +38,7 @@ import { CampaignSelectView } from './view/CampaignSelectView';
 import { HudSelection, HudView } from './view/HudView';
 import { ResultOverlay } from './view/ResultOverlay';
 import { SaveDataModal } from './view/SaveDataModal';
+import { applyAdaptiveResolution, onScreenResize } from './view/ScreenLayout';
 import { createUiNode, drawPanel } from './view/SpriteLoader';
 import { ThroneRoomView } from './view/ThroneRoomView';
 import { TitleView } from './view/TitleView';
@@ -114,9 +118,10 @@ export class GameApp extends Component {
   private returnFromBadges: ScreenMode = 'campaign_select';
   private shownResult = false;
   private enterSeq = 0;
+  private unsubResize: (() => void) | null = null;
 
   onLoad(): void {
-    view.setDesignResolutionSize(COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT, ResolutionPolicy.SHOW_ALL);
+    applyAdaptiveResolution();
     profiler?.hideStats?.();
     this.dismissHtmlSplash();
 
@@ -142,8 +147,18 @@ export class GameApp extends Component {
     game.on(Game.EVENT_HIDE, this.onAppHide, this);
     game.on(Game.EVENT_SHOW, this.onAppShow, this);
     input.on(Input.EventType.KEY_DOWN, this.onKeyDown, this);
+    this.unsubResize = onScreenResize(() => {
+      applyAdaptiveResolution();
+      this.scheduleOnce(() => this.relayoutAll(), 0);
+    });
 
     this.showTitle();
+  }
+
+  private relayoutAll(): void {
+    this.hudView?.relayout();
+    this.titleView?.relayout();
+    this.campaignSelectView?.relayout();
   }
 
   private toggleLanguage(): void {
@@ -179,6 +194,8 @@ export class GameApp extends Component {
     game.off(Game.EVENT_HIDE, this.onAppHide, this);
     game.off(Game.EVENT_SHOW, this.onAppShow, this);
     input.off(Input.EventType.KEY_DOWN, this.onKeyDown, this);
+    this.unsubResize?.();
+    this.unsubResize = null;
     this.battleView?.destroy();
   }
 
@@ -268,9 +285,9 @@ export class GameApp extends Component {
   }
 
   private buildLoadingOverlay(): void {
-    const overlay = createUiNode('LoadingOverlay', this.node, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
+    const overlay = createUiNode('LoadingOverlay', this.node, COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT);
     overlay.addComponent(BlockInputEvents);
-    drawPanel(overlay.addComponent(Graphics), COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT, new Color(8, 10, 18, 215), undefined, 0, 0);
+    drawPanel(overlay.addComponent(Graphics), COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT, new Color(8, 10, 18, 215), undefined, 0, 0);
 
     const card = createUiNode('LoadingCard', overlay, 520, 215);
     drawPanel(card.addComponent(Graphics), 520, 215, new Color(24, 22, 36, 250), new Color(214, 173, 86, 245), 2.5, 14);
@@ -582,6 +599,7 @@ export class GameApp extends Component {
       });
     } else {
       this.hudView.root.active = true;
+      this.hudView.relayout();
       this.hudView.setPaused(false);
       this.hudView.setSelection({ strongholdId: null, buildSiteId: null, squadId: null });
       this.hudView.setActiveSpell(null);

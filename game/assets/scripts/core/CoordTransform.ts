@@ -9,6 +9,10 @@ export const LOGICAL_Y_KOEFF = 2;
 export const COCOS_DESIGN_WIDTH = 1280;
 export const COCOS_DESIGN_HEIGHT = 720;
 
+/** Full-bleed backdrop dimensions covering ultra-wide and 4:3/tall adaptive viewports. */
+export const COCOS_BLEED_WIDTH = 2560;
+export const COCOS_BLEED_HEIGHT = 1440;
+
 /**
  * Scale factor mapping Flash height 600 -> Cocos height 720 cleanly (1.2x),
  * centering Flash X=[0..800] inside Cocos 1280px width while revealing outer terrain wings.

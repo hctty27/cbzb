@@ -1,11 +1,12 @@
 import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
-import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
+import { COCOS_BLEED_HEIGHT, COCOS_BLEED_WIDTH, COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { SPRITE_MANIFEST } from '../data/AssetManifest';
 import { BADGES } from '../data/BadgesData';
 import { CampaignProgressStore } from '../data/CampaignProgress';
 import { getCampaignCardCopy, t } from '../data/I18n';
 import { PlayableCampaignId } from '../data/Types';
 import { AudioManager } from './AudioManager';
+import { computeCoverScale } from './ScreenLayout';
 import { createUiNode, drawPanel, getStaticSpriteFrame } from './SpriteLoader';
 
 interface CampaignCardSpec {
@@ -38,6 +39,7 @@ const CAMPAIGN_CARDS: CampaignCardSpec[] = [
 
 export class CampaignSelectView {
   readonly root: Node;
+  private bgNode!: Node;
   private headerTitleLbl!: Label;
   private saveBtnLbl!: Label;
   private badgesBtnLbl!: Label;
@@ -65,23 +67,23 @@ export class CampaignSelectView {
   private buildUi(): void {
     const bgEntry = SPRITE_MANIFEST['ui/title_bg'];
     const bgN = createUiNode('SelectBg', this.root, bgEntry.width, bgEntry.height);
+    this.bgNode = bgN;
     const bgSp = bgN.addComponent(Sprite);
     bgSp.sizeMode = Sprite.SizeMode.RAW;
-    const coverScale = Math.max(COCOS_DESIGN_WIDTH / bgEntry.width, COCOS_DESIGN_HEIGHT / bgEntry.height);
-    bgN.setScale(coverScale, coverScale, 1);
+    this.relayout();
     getStaticSpriteFrame('ui/title_bg').then((sf) => {
       if (bgN.isValid) bgSp.spriteFrame = sf;
     });
 
-    const shade = createUiNode('Shade', this.root, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
-    drawPanel(shade.addComponent(Graphics), COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT, new Color(12, 10, 18, 200), undefined, 0, 0);
+    const shade = createUiNode('Shade', this.root, COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT);
+    drawPanel(shade.addComponent(Graphics), COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT, new Color(12, 10, 18, 200), undefined, 0, 0);
 
     // Top bar
-    const topBar = createUiNode('SelectTopBar', this.root, COCOS_DESIGN_WIDTH, 58);
+    const topBar = createUiNode('SelectTopBar', this.root, COCOS_BLEED_WIDTH, 58);
     topBar.setPosition(0, COCOS_DESIGN_HEIGHT * 0.5 - 29);
     drawPanel(
       topBar.addComponent(Graphics),
-      COCOS_DESIGN_WIDTH,
+      COCOS_BLEED_WIDTH,
       58,
       new Color(22, 18, 32, 245),
       new Color(205, 168, 86, 240),
@@ -210,8 +212,16 @@ export class CampaignSelectView {
     this.refresh();
   }
 
+  relayout(): void {
+    if (!this.bgNode?.isValid) return;
+    const bgEntry = SPRITE_MANIFEST['ui/title_bg'];
+    const coverScale = computeCoverScale(bgEntry.width, bgEntry.height);
+    this.bgNode.setScale(coverScale, coverScale, 1);
+  }
+
   show(): void {
     this.root.active = true;
+    this.relayout();
     this.refresh();
     this.audio.playMusic('music_menu');
   }

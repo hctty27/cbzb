@@ -1,4 +1,4 @@
-import { Button, Color, Graphics, Label, Node } from 'cc';
+import { Button, Color, Graphics, Label, Node, UITransform } from 'cc';
 import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { getLevelName, getSpellName, getTutorialHint, t } from '../data/I18n';
 import { TUTORIAL1_HINTS, TUTORIAL2_HINTS } from '../data/Level1Data';
@@ -11,6 +11,7 @@ import { HudSelectionPanels } from './HudSelectionPanels';
 import { HudSpellDock } from './HudSpellDock';
 import { PauseModalView } from './PauseModalView';
 import { getDesignSafeAreaInsets, SafeAreaInsets } from './SafeAreaHelper';
+import { getHudHalfExtents } from './ScreenLayout';
 import { createUiNode, drawPanel } from './SpriteLoader';
 
 export interface HudSelection {
@@ -21,6 +22,14 @@ export interface HudSelection {
 
 export class HudView {
   readonly root: Node;
+
+  private topBarNode!: Node;
+  private topBarG!: Graphics;
+  private speedBtnNode!: Node;
+  private pauseBtnNode!: Node;
+  private muteBtnNode!: Node;
+  private mapBtnNode!: Node;
+  private tutBannerNode!: Node;
 
   private goldLabel!: Label;
   private supplyLabel!: Label;
@@ -92,43 +101,34 @@ export class HudView {
       onToggleLanguage: () => this.callbacks.onToggleLanguage(),
     });
 
+    this.relayout();
     this.rebuildForCampaign();
   }
 
   private buildTopBar(): void {
     const bar = createUiNode('TopBar', this.root, COCOS_DESIGN_WIDTH, 50);
-    bar.setPosition(0, COCOS_DESIGN_HEIGHT * 0.5 - 25 - this.safeInsets.top);
-    drawPanel(
-      bar.addComponent(Graphics),
-      COCOS_DESIGN_WIDTH,
-      50,
-      new Color(18, 22, 32, 232),
-      new Color(175, 140, 72, 220),
-      2,
-      0,
-    );
+    this.topBarNode = bar;
+    this.topBarG = bar.addComponent(Graphics);
 
-    const makeStat = (x: number, color: Color): Label => {
-      const n = createUiNode('Stat', bar, 210, 32);
-      n.setPosition(x, 0);
+    const makeStat = (width: number, color: Color): Label => {
+      const n = createUiNode('Stat', bar, width, 32);
       const lbl = n.addComponent(Label);
-      lbl.fontSize = 17;
+      lbl.fontSize = 16;
       lbl.lineHeight = 22;
       lbl.isBold = true;
-      lbl.cacheMode = Label.CacheMode.CHAR;
+      lbl.enableWrapText = false;
       lbl.overflow = Label.Overflow.SHRINK;
       lbl.color = color;
       return lbl;
     };
 
-    this.goldLabel = makeStat(-515, new Color(255, 218, 92, 255));
-    this.supplyLabel = makeStat(-315, new Color(130, 230, 140, 255));
-    this.manaLabel = makeStat(-130, new Color(125, 200, 255, 255));
-    this.timerLabel = makeStat(65, new Color(240, 236, 224, 255));
+    this.goldLabel = makeStat(210, new Color(255, 218, 92, 255));
+    this.supplyLabel = makeStat(155, new Color(130, 230, 140, 255));
+    this.manaLabel = makeStat(160, new Color(125, 200, 255, 255));
+    this.timerLabel = makeStat(250, new Color(240, 236, 224, 255));
 
-    const makeTopBtn = (labelText: string, x: number, w: number, onClick: () => void, charCache = false): Label => {
+    const makeTopBtn = (labelText: string, w: number, onClick: () => void): { node: Node; lbl: Label } => {
       const b = createUiNode(`TopBtn_${labelText}`, bar, w, 34);
-      b.setPosition(x, 0);
       drawPanel(b.addComponent(Graphics), w, 34, new Color(46, 38, 62, 240), new Color(205, 168, 86, 230), 2, 7);
       const ln = createUiNode('Lbl', b, w - 8, 26);
       const l = ln.addComponent(Label);
@@ -137,7 +137,6 @@ export class HudView {
       l.lineHeight = 18;
       l.isBold = true;
       l.overflow = Label.Overflow.SHRINK;
-      if (charCache) l.cacheMode = Label.CacheMode.CHAR;
       l.color = new Color(255, 230, 165, 255);
       const comp = b.addComponent(Button);
       comp.transition = Button.Transition.SCALE;
@@ -146,37 +145,38 @@ export class HudView {
         this.audio.playSfx('ui_click');
         onClick();
       });
-      return l;
+      return { node: b, lbl: l };
     };
 
-    this.speedLabel = makeTopBtn(
-      t('hud_speed_1x'),
-      270,
-      96,
-      () => {
-        this.toggleSpeed();
-      },
-      true,
-    );
+    const speedBtn = makeTopBtn(t('hud_speed_1x'), 96, () => {
+      this.toggleSpeed();
+    });
+    this.speedBtnNode = speedBtn.node;
+    this.speedLabel = speedBtn.lbl;
 
-    this.pauseTopBtnLabel = makeTopBtn(t('hud_pause_btn'), 382, 102, () => {
+    const pauseBtn = makeTopBtn(t('hud_pause_btn'), 102, () => {
       this.togglePause();
     });
+    this.pauseBtnNode = pauseBtn.node;
+    this.pauseTopBtnLabel = pauseBtn.lbl;
 
-    this.muteLabel = makeTopBtn(t('hud_mute_off'), 498, 112, () => {
+    const muteBtn = makeTopBtn(t('hud_mute_off'), 112, () => {
       this.audio.toggleMute();
       this.refresh();
     });
+    this.muteBtnNode = muteBtn.node;
+    this.muteLabel = muteBtn.lbl;
 
-    this.mapTopBtnLabel = makeTopBtn(t('hud_map_btn'), 598, 72, () => {
+    const mapBtn = makeTopBtn(t('hud_map_btn'), 72, () => {
       this.callbacks.onCampaignMap();
     });
+    this.mapBtnNode = mapBtn.node;
+    this.mapTopBtnLabel = mapBtn.lbl;
   }
 
   private buildTutorialBanner(): void {
-    const bannerY = COCOS_DESIGN_HEIGHT * 0.5 - 70 - this.safeInsets.top;
     const tutNode = createUiNode('TutorialBanner', this.root, 760, 32);
-    tutNode.setPosition(-20, bannerY);
+    this.tutBannerNode = tutNode;
     drawPanel(
       tutNode.addComponent(Graphics),
       760,
@@ -193,7 +193,6 @@ export class HudView {
     this.tutLabel.color = new Color(242, 236, 205, 255);
 
     this.cancelSpellBtn = createUiNode('CancelSpellBtn', this.root, 148, 32);
-    this.cancelSpellBtn.setPosition(456, bannerY);
     drawPanel(
       this.cancelSpellBtn.addComponent(Graphics),
       148,
@@ -218,6 +217,45 @@ export class HudView {
       this.callbacks.onSelectSpell(null);
     });
     this.cancelSpellBtn.active = false;
+  }
+
+  relayout(): void {
+    const { halfW, halfH } = getHudHalfExtents();
+    const insets = getDesignSafeAreaInsets();
+    this.safeInsets = insets;
+
+    const barWidth = halfW * 2;
+    this.topBarNode.getComponent(UITransform)?.setContentSize(barWidth, 50);
+    this.topBarNode.setPosition(0, halfH - 25 - insets.top);
+    this.topBarG.clear();
+    drawPanel(
+      this.topBarG,
+      barWidth,
+      50,
+      new Color(18, 22, 32, 232),
+      new Color(175, 140, 72, 220),
+      2,
+      0,
+    );
+
+    const L = -halfW + insets.left;
+    this.goldLabel.node.setPosition(L + 115, 0);
+    this.supplyLabel.node.setPosition(L + 305, 0);
+    this.manaLabel.node.setPosition(L + 468, 0);
+    this.timerLabel.node.setPosition(L + 685, 0);
+
+    const R = halfW - insets.right;
+    this.speedBtnNode.setPosition(R - 370, 0);
+    this.pauseBtnNode.setPosition(R - 258, 0);
+    this.muteBtnNode.setPosition(R - 142, 0);
+    this.mapBtnNode.setPosition(R - 42, 0);
+
+    const bannerY = halfH - 70 - insets.top;
+    this.tutBannerNode.setPosition(-20, bannerY);
+    this.cancelSpellBtn.setPosition(R - 184, bannerY);
+
+    this.spellDock.layout(halfW, halfH, insets);
+    this.selectionPanels.layout(halfH, insets);
   }
 
   isPauseModalOpen(): boolean {
@@ -298,7 +336,7 @@ export class HudView {
 
     const p = this.sim.getCombatant(this.sim.playerFaction);
 
-    const goldTxt = t('hud_gold', { gold: p.gold, rate: p.netGoldPerSec });
+    const goldTxt = t('hud_gold', { gold: p.gold, rate: Math.round(p.netGoldPerSec * 10) / 10 });
     if (goldTxt !== this.lastGoldText) {
       this.lastGoldText = goldTxt;
       this.goldLabel.string = goldTxt;

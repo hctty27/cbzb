@@ -1,5 +1,5 @@
-import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
-import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
+import { BlockInputEvents, Button, Color, Graphics, Label, Node, Sprite } from 'cc';
+import { COCOS_BLEED_HEIGHT, COCOS_BLEED_WIDTH, COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { VictoryRewardSummary } from '../data/CampaignProgress';
 import { getBadgeName, getLevelName, getMedalLabel, t } from '../data/I18n';
 import { MedalRank } from '../data/Types';
@@ -38,8 +38,9 @@ export class ResultOverlay {
   }
 
   private buildUi(): void {
-    const dim = createUiNode('ResultDim', this.root, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
-    drawPanel(dim.addComponent(Graphics), COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT, new Color(8, 10, 16, 200), undefined, 0, 0);
+    const dim = createUiNode('ResultDim', this.root, COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT);
+    dim.addComponent(BlockInputEvents);
+    drawPanel(dim.addComponent(Graphics), COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT, new Color(8, 10, 16, 200), undefined, 0, 0);
 
     const card = createUiNode('ResultCard', this.root, 640, 440);
     drawPanel(

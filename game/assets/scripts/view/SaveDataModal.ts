@@ -1,5 +1,5 @@
 import { BlockInputEvents, Button, Color, Graphics, Label, Node } from 'cc';
-import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
+import { COCOS_BLEED_HEIGHT, COCOS_BLEED_WIDTH } from '../core/CoordTransform';
 import { CampaignProgressStore } from '../data/CampaignProgress';
 import { t } from '../data/I18n';
 import { PlayableCampaignId } from '../data/Types';
@@ -32,7 +32,7 @@ export class SaveDataModal {
     private audio: AudioManager,
     private onSaveChanged: () => void,
   ) {
-    this.root = createUiNode('SaveDataModal', parent, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
+    this.root = createUiNode('SaveDataModal', parent, COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT);
     this.buildUi();
     this.root.active = false;
   }
@@ -41,8 +41,8 @@ export class SaveDataModal {
     this.root.addComponent(BlockInputEvents);
     drawPanel(
       this.root.addComponent(Graphics),
-      COCOS_DESIGN_WIDTH,
-      COCOS_DESIGN_HEIGHT,
+      COCOS_BLEED_WIDTH,
+      COCOS_BLEED_HEIGHT,
       new Color(8, 10, 16, 200),
       undefined,
       0,

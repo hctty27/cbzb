@@ -1,4 +1,5 @@
 import { execFileSync } from 'node:child_process';
+import crypto from 'node:crypto';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -107,6 +108,95 @@ function runNodeScript(scriptPath, args = []) {
   execFileSync(process.execPath, [scriptPath, ...args], { cwd: ROOT, stdio: 'inherit' });
 }
 
+function findHashedFile(dir, prefix, ext) {
+  if (!fs.existsSync(dir)) return null;
+  const re = new RegExp(`^${prefix}\\.([a-f0-9]+)\\.${ext}$`, 'i');
+  for (const name of fs.readdirSync(dir)) {
+    const m = name.match(re);
+    if (m) return { name, hash: m[1] };
+  }
+  return null;
+}
+
+function md5Short(...buffers) {
+  const h = crypto.createHash('md5');
+  for (const b of buffers) h.update(b);
+  return h.digest('hex').slice(0, 5);
+}
+
+/**
+ * Cocos CLI hashes `bundleVers.main` from config JSON only, keeping `assets/main/index.<hash>.js`
+ * identical across script-only changes. Re-hash from `config + index.js` and propagate up through
+ * settings -> application -> index -> index.html so browser/CDN caches always bust cleanly.
+ */
+function rehashMainBundle(siteDir) {
+  const mainDir = path.join(siteDir, 'assets', 'main');
+  const mainCfg = findHashedFile(mainDir, 'config', 'json');
+  const mainJs = findHashedFile(mainDir, 'index', 'js');
+  if (!mainCfg || !mainJs || mainCfg.hash !== mainJs.hash) return;
+
+  const oldMain = mainCfg.hash;
+  const cfgPath = path.join(mainDir, mainCfg.name);
+  const jsPath = path.join(mainDir, mainJs.name);
+  const newMain = md5Short(fs.readFileSync(cfgPath), fs.readFileSync(jsPath));
+  if (newMain === oldMain) return;
+
+  fs.renameSync(cfgPath, path.join(mainDir, `config.${newMain}.json`));
+  fs.renameSync(jsPath, path.join(mainDir, `index.${newMain}.js`));
+
+  const srcDir = path.join(siteDir, 'src');
+  const settingsFile = findHashedFile(srcDir, 'settings', 'json');
+  if (!settingsFile) return;
+
+  const oldSettingsPath = path.join(srcDir, settingsFile.name);
+  const settingsRaw = fs.readFileSync(oldSettingsPath, 'utf8');
+  const updatedSettings = settingsRaw.replaceAll(`"main":"${oldMain}"`, `"main":"${newMain}"`);
+  const newSettingsHash = md5Short(Buffer.from(updatedSettings, 'utf8'));
+  const newSettingsName = `settings.${newSettingsHash}.json`;
+  fs.writeFileSync(path.join(srcDir, newSettingsName), updatedSettings, 'utf8');
+  if (newSettingsName !== settingsFile.name) {
+    fs.unlinkSync(oldSettingsPath);
+  }
+
+  const appFile = findHashedFile(siteDir, 'application', 'js');
+  let appReplace = null;
+  if (appFile) {
+    const oldAppPath = path.join(siteDir, appFile.name);
+    const appRaw = fs.readFileSync(oldAppPath, 'utf8');
+    const updatedApp = appRaw.replaceAll(`src/${settingsFile.name}`, `src/${newSettingsName}`);
+    const newAppHash = md5Short(Buffer.from(updatedApp, 'utf8'));
+    const newAppName = `application.${newAppHash}.js`;
+    fs.writeFileSync(path.join(siteDir, newAppName), updatedApp, 'utf8');
+    if (newAppName !== appFile.name) {
+      fs.unlinkSync(oldAppPath);
+    }
+    appReplace = { oldName: appFile.name, newName: newAppName };
+  }
+
+  const idxFile = findHashedFile(siteDir, 'index', 'js');
+  let idxReplace = null;
+  if (idxFile && appReplace) {
+    const oldIdxPath = path.join(siteDir, idxFile.name);
+    const idxRaw = fs.readFileSync(oldIdxPath, 'utf8');
+    const updatedIdx = idxRaw.replaceAll(appReplace.oldName, appReplace.newName);
+    const newIdxHash = md5Short(Buffer.from(updatedIdx, 'utf8'));
+    const newIdxName = `index.${newIdxHash}.js`;
+    fs.writeFileSync(path.join(siteDir, newIdxName), updatedIdx, 'utf8');
+    if (newIdxName !== idxFile.name) {
+      fs.unlinkSync(oldIdxPath);
+    }
+    idxReplace = { oldName: idxFile.name, newName: newIdxName };
+  }
+
+  const htmlPath = path.join(siteDir, 'index.html');
+  if (fs.existsSync(htmlPath)) {
+    let html = fs.readFileSync(htmlPath, 'utf8');
+    if (idxReplace) html = html.replaceAll(idxReplace.oldName, idxReplace.newName);
+    if (appReplace) html = html.replaceAll(appReplace.oldName, appReplace.newName);
+    fs.writeFileSync(htmlPath, html, 'utf8');
+  }
+}
+
 function verifyAndStageTarget(target, cdnUrl, buildOutDir, absOutDir) {
   const resourcesOut = path.join(buildOutDir, 'assets', 'resources');
   if (!fs.existsSync(resourcesOut)) {
@@ -151,6 +241,7 @@ function verifyAndStageTarget(target, cdnUrl, buildOutDir, absOutDir) {
       return rel !== 'remote' && !rel.startsWith(`remote${path.sep}`);
     },
   });
+  rehashMainBundle(siteDest);
 
   let cdnBytes = 0;
   let cdnDest = null;

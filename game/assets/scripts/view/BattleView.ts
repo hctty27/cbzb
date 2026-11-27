@@ -1,5 +1,7 @@
 import { Color, Graphics, Label, Node, NodePool, Sprite, UITransform } from 'cc';
 import {
+  COCOS_BLEED_HEIGHT,
+  COCOS_BLEED_WIDTH,
   COCOS_DESIGN_HEIGHT,
   COCOS_DESIGN_WIDTH,
   flashToCocos,
@@ -116,13 +118,13 @@ export class BattleView {
   }
 
   private buildLayers(): void {
-    const sky = createUiNode('SkyBackdrop', this.root, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
+    const sky = createUiNode('SkyBackdrop', this.root, COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT);
     const sg = sky.addComponent(Graphics);
     sg.fillColor = new Color(210, 232, 245, 255);
-    sg.rect(-640, -360, 1280, 720);
+    sg.rect(-1280, -720, 2560, 1440);
     sg.fill();
     sg.fillColor = new Color(230, 244, 252, 210);
-    sg.rect(-640, -120, 1280, 480);
+    sg.rect(-1280, -120, 2560, 720 + 120);
     sg.fill();
 
     this.worldLayer = createUiNode('WorldLayer', this.root, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
@@ -134,24 +136,6 @@ export class BattleView {
     this.mapNode.setScale(SWF_TO_COCOS_SCALE, SWF_TO_COCOS_SCALE, 1);
     this.mapSprite = this.mapNode.addComponent(Sprite);
     this.mapSprite.sizeMode = Sprite.SizeMode.RAW;
-
-    // Soft atmospheric veil over +-480 sky rectangle border
-    const veil = createUiNode('SkySeamVeil', this.worldLayer, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
-    const vg = veil.addComponent(Graphics);
-    for (const side of [-1, 1]) {
-      const seamX = side * 480;
-      const bands = [
-        { offset: -22, w: 32, a: 45 },
-        { offset: -10, w: 28, a: 95 },
-        { offset: 4, w: 34, a: 145 },
-        { offset: 22, w: 40, a: 90 },
-      ];
-      for (const b of bands) {
-        vg.fillColor = new Color(220, 238, 248, b.a);
-        vg.rect(seamX + side * b.offset - b.w * 0.5, -360, b.w, 720);
-        vg.fill();
-      }
-    }
 
     this.pathG = createUiNode('PathOverlay', this.worldLayer, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT).addComponent(Graphics);
     this.selectG = createUiNode('SelectOverlay', this.worldLayer, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT).addComponent(Graphics);

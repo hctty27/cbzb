@@ -1,5 +1,5 @@
 import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
-import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
+import { COCOS_BLEED_HEIGHT, COCOS_BLEED_WIDTH, COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { SPRITE_MANIFEST } from '../data/AssetManifest';
 import { CampaignProgressStore } from '../data/CampaignProgress';
 import { getCampaignTitle, getFactionLabel, getLevelBriefing, getLevelName, getMedalLabel, t } from '../data/I18n';
@@ -64,10 +64,10 @@ export class CampaignMapView {
   }
 
   private buildUi(): void {
-    const backdrop = createUiNode('MapBackdrop', this.root, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
+    const backdrop = createUiNode('MapBackdrop', this.root, COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT);
     const bgG = backdrop.addComponent(Graphics);
     bgG.fillColor = new Color(24, 20, 18, 255);
-    bgG.rect(-640, -360, 1280, 720);
+    bgG.rect(-1280, -720, 2560, 1440);
     bgG.fill();
 
     const mapEntry = SPRITE_MANIFEST['map/campaign_map_base'];
@@ -104,11 +104,11 @@ export class CampaignMapView {
     this.pinContainer.setScale(pinScale, pinScale, 1);
 
     // Top Header Bar
-    const topBar = createUiNode('CampaignTopBar', this.root, COCOS_DESIGN_WIDTH, 56);
+    const topBar = createUiNode('CampaignTopBar', this.root, COCOS_BLEED_WIDTH, 56);
     topBar.setPosition(0, COCOS_DESIGN_HEIGHT * 0.5 - 28);
     drawPanel(
       topBar.addComponent(Graphics),
-      COCOS_DESIGN_WIDTH,
+      COCOS_BLEED_WIDTH,
       56,
       new Color(20, 18, 28, 242),
       new Color(195, 155, 78, 235),

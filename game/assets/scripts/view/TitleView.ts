@@ -1,12 +1,14 @@
 import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
-import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
+import { COCOS_BLEED_WIDTH, COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { SPRITE_MANIFEST } from '../data/AssetManifest';
 import { t } from '../data/I18n';
 import { AudioManager } from './AudioManager';
+import { computeCoverScale } from './ScreenLayout';
 import { createUiNode, drawPanel, getStaticSpriteFrame } from './SpriteLoader';
 
 export class TitleView {
   readonly root: Node;
+  private bgNode!: Node;
   private subLabel!: Label;
   private campLabel!: Label;
   private quickLabel!: Label;
@@ -32,21 +34,21 @@ export class TitleView {
   private buildUi(): void {
     const bgEntry = SPRITE_MANIFEST['ui/title_bg'];
     const bgNode = createUiNode('TitleBg', this.root, bgEntry.width, bgEntry.height);
+    this.bgNode = bgNode;
     const bgSprite = bgNode.addComponent(Sprite);
     bgSprite.sizeMode = Sprite.SizeMode.RAW;
-    const coverScale = Math.max(COCOS_DESIGN_WIDTH / bgEntry.width, COCOS_DESIGN_HEIGHT / bgEntry.height);
-    bgNode.setScale(coverScale, coverScale, 1);
+    this.relayout();
     getStaticSpriteFrame('ui/title_bg').then((sf) => {
       if (bgNode.isValid) bgSprite.spriteFrame = sf;
     });
 
-    const topGrad = createUiNode('TopShade', this.root, COCOS_DESIGN_WIDTH, 140);
+    const topGrad = createUiNode('TopShade', this.root, COCOS_BLEED_WIDTH, 140);
     topGrad.setPosition(0, COCOS_DESIGN_HEIGHT * 0.5 - 70);
-    drawPanel(topGrad.addComponent(Graphics), COCOS_DESIGN_WIDTH, 140, new Color(10, 8, 12, 115), undefined, 0, 0);
+    drawPanel(topGrad.addComponent(Graphics), COCOS_BLEED_WIDTH, 140, new Color(10, 8, 12, 115), undefined, 0, 0);
 
-    const botGrad = createUiNode('BottomShade', this.root, COCOS_DESIGN_WIDTH, 160);
+    const botGrad = createUiNode('BottomShade', this.root, COCOS_BLEED_WIDTH, 160);
     botGrad.setPosition(0, -COCOS_DESIGN_HEIGHT * 0.5 + 80);
-    drawPanel(botGrad.addComponent(Graphics), COCOS_DESIGN_WIDTH, 160, new Color(10, 8, 12, 175), undefined, 0, 0);
+    drawPanel(botGrad.addComponent(Graphics), COCOS_BLEED_WIDTH, 160, new Color(10, 8, 12, 175), undefined, 0, 0);
 
     const logoEntry = SPRITE_MANIFEST['ui/title_logo'];
     const logoNode = createUiNode('TakeoverLogo', this.root, logoEntry.width, logoEntry.height);
@@ -204,8 +206,16 @@ export class TitleView {
     this.refreshMuteLabel();
   }
 
+  relayout(): void {
+    if (!this.bgNode?.isValid) return;
+    const bgEntry = SPRITE_MANIFEST['ui/title_bg'];
+    const coverScale = computeCoverScale(bgEntry.width, bgEntry.height);
+    this.bgNode.setScale(coverScale, coverScale, 1);
+  }
+
   show(): void {
     this.root.active = true;
+    this.relayout();
     this.refreshLocale();
     this.audio.playMusic('music_menu');
   }

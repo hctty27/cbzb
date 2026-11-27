@@ -1,5 +1,5 @@
 import { Color, EventMouse, EventTouch, Graphics, Node, sys, view } from 'cc';
-import { COCOS_DESIGN_HEIGHT, cocosToFlash, dist, flashToCocos, MAP_TO_COCOS_SCALE } from '../core/CoordTransform';
+import { cocosToFlash, dist, flashToCocos, MAP_TO_COCOS_SCALE } from '../core/CoordTransform';
 import { ALL_SPELLS } from '../data/SpellsData';
 import { SpellId } from '../data/Types';
 import { UNIT_DEFS } from '../data/UnitsData';
@@ -56,7 +56,7 @@ export class BattleInputController {
       const vis = view.getVisibleSize();
       const localX = uiX - vis.width * 0.5;
       const localY = uiY - vis.height * 0.5;
-      if (localY > COCOS_DESIGN_HEIGHT * 0.5 - 52) return;
+      if (localY > vis.height * 0.5 - 52) return;
       const fl = cocosToFlash(localX, localY);
       const pad = sys.isMobile ? 8 : 0;
 

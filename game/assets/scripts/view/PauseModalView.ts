@@ -1,5 +1,5 @@
 import { BlockInputEvents, Button, Color, Graphics, Label, Node } from 'cc';
-import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
+import { COCOS_BLEED_HEIGHT, COCOS_BLEED_WIDTH } from '../core/CoordTransform';
 import { t } from '../data/I18n';
 import { BattleSim } from '../sim/BattleSim';
 import { AudioManager } from './AudioManager';
@@ -34,12 +34,12 @@ export class PauseModalView {
     private audio: AudioManager,
     private callbacks: PauseModalCallbacks,
   ) {
-    this.modalNode = createUiNode('PauseModal', parent, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
+    this.modalNode = createUiNode('PauseModal', parent, COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT);
     this.modalNode.addComponent(BlockInputEvents);
     drawPanel(
       this.modalNode.addComponent(Graphics),
-      COCOS_DESIGN_WIDTH,
-      COCOS_DESIGN_HEIGHT,
+      COCOS_BLEED_WIDTH,
+      COCOS_BLEED_HEIGHT,
       new Color(8, 10, 16, 185),
       undefined,
       0,

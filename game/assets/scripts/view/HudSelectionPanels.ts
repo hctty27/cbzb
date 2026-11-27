@@ -1,5 +1,4 @@
 import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
-import { COCOS_DESIGN_HEIGHT } from '../core/CoordTransform';
 import { MAX_STRONGHOLD_LEVEL, STRONGHOLD_STATS, STRONGHOLD_UPGRADE_COSTS } from '../data/BuildingsData';
 import { getUnitName, t } from '../data/I18n';
 import { PlayableCampaignId } from '../data/Types';
@@ -9,6 +8,7 @@ import { countAliveUnits, getSquadTotalHp } from '../sim/CombatMath';
 import { AudioManager } from './AudioManager';
 import type { HudSelection } from './HudView';
 import { SafeAreaInsets } from './SafeAreaHelper';
+import { getHudHalfExtents } from './ScreenLayout';
 import { createUiNode, drawPanel, getStaticSpriteFrame } from './SpriteLoader';
 
 const FACTION_COLOR_SUFFIX: Record<PlayableCampaignId, string> = {
@@ -76,11 +76,18 @@ export class HudSelectionPanels {
     this.buildStrongholdPanel(parent);
     this.buildSitePanel(parent);
     this.buildSquadBar(parent);
+    this.layout(getHudHalfExtents().halfH, this.safeInsets);
+  }
+
+  layout(halfH: number, insets: SafeAreaInsets): void {
+    this.safeInsets = insets;
+    this.actionPanel.setPosition(85, -halfH + 64 + insets.bottom);
+    this.buildPanel.setPosition(85, -halfH + 60 + insets.bottom);
+    this.squadBar.setPosition(85, -halfH + 38 + insets.bottom);
   }
 
   private buildStrongholdPanel(parent: Node): void {
     this.actionPanel = createUiNode('StrongholdActionPanel', parent, 760, 118);
-    this.actionPanel.setPosition(85, -COCOS_DESIGN_HEIGHT * 0.5 + 64 + this.safeInsets.bottom);
     drawPanel(
       this.actionPanel.addComponent(Graphics),
       760,
@@ -194,7 +201,6 @@ export class HudSelectionPanels {
 
   private buildSitePanel(parent: Node): void {
     this.buildPanel = createUiNode('BuildSitePanel', parent, 460, 108);
-    this.buildPanel.setPosition(85, -COCOS_DESIGN_HEIGHT * 0.5 + 60 + this.safeInsets.bottom);
     drawPanel(
       this.buildPanel.addComponent(Graphics),
       460,
@@ -265,7 +271,6 @@ export class HudSelectionPanels {
 
   private buildSquadBar(parent: Node): void {
     this.squadBar = createUiNode('SelectedSquadBar', parent, 620, 62);
-    this.squadBar.setPosition(85, -COCOS_DESIGN_HEIGHT * 0.5 + 38 + this.safeInsets.bottom);
     drawPanel(
       this.squadBar.addComponent(Graphics),
       620,

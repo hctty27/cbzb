@@ -1,5 +1,5 @@
 import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
-import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
+import { COCOS_BLEED_HEIGHT, COCOS_BLEED_WIDTH, COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { BADGES } from '../data/BadgesData';
 import { CampaignProgressStore } from '../data/CampaignProgress';
 import { getBadgeDesc, getBadgeName, t } from '../data/I18n';
@@ -42,14 +42,14 @@ export class BadgesRoomView {
   }
 
   private buildUi(): void {
-    const bg = createUiNode('BadgesBg', this.root, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
-    drawPanel(bg.addComponent(Graphics), COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT, new Color(18, 16, 26, 255), undefined, 0, 0);
+    const bg = createUiNode('BadgesBg', this.root, COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT);
+    drawPanel(bg.addComponent(Graphics), COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT, new Color(18, 16, 26, 255), undefined, 0, 0);
 
-    const topBar = createUiNode('BadgesTopBar', this.root, COCOS_DESIGN_WIDTH, 58);
+    const topBar = createUiNode('BadgesTopBar', this.root, COCOS_BLEED_WIDTH, 58);
     topBar.setPosition(0, COCOS_DESIGN_HEIGHT * 0.5 - 29);
     drawPanel(
       topBar.addComponent(Graphics),
-      COCOS_DESIGN_WIDTH,
+      COCOS_BLEED_WIDTH,
       58,
       new Color(26, 20, 34, 245),
       new Color(214, 173, 86, 240),
@@ -124,9 +124,9 @@ export class BadgesRoomView {
     this.slotContainer = createUiNode('BadgeGrid', this.root, COCOS_DESIGN_WIDTH, 580);
     this.slotContainer.setPosition(0, -18);
 
-    const bot = createUiNode('Footer', this.root, COCOS_DESIGN_WIDTH, 40);
+    const bot = createUiNode('Footer', this.root, COCOS_BLEED_WIDTH, 40);
     bot.setPosition(0, -COCOS_DESIGN_HEIGHT * 0.5 + 20);
-    drawPanel(bot.addComponent(Graphics), COCOS_DESIGN_WIDTH, 40, new Color(22, 20, 32, 242), new Color(175, 140, 72, 220), 2, 0);
+    drawPanel(bot.addComponent(Graphics), COCOS_BLEED_WIDTH, 40, new Color(22, 20, 32, 242), new Color(175, 140, 72, 220), 2, 0);
     this.pageLabel = createUiNode('L', bot, 640, 26).addComponent(Label);
     this.pageLabel.fontSize = 13;
     this.pageLabel.color = new Color(210, 215, 230, 255);

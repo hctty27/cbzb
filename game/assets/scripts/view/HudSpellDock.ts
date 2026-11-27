@@ -1,11 +1,11 @@
 import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
-import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
 import { getSpellName, t } from '../data/I18n';
 import { ALL_SPELLS, CAMPAIGN_SPELL_ORDER } from '../data/SpellsData';
 import { SpellId } from '../data/Types';
 import { BattleSim } from '../sim/BattleSim';
 import { AudioManager } from './AudioManager';
 import { SafeAreaInsets } from './SafeAreaHelper';
+import { getHudHalfExtents } from './ScreenLayout';
 import { createUiNode, drawPanel, getStaticSpriteFrame } from './SpriteLoader';
 
 interface SpellSlotButton {
@@ -41,10 +41,8 @@ export class HudSpellDock {
     private callbacks: SpellDockCallbacks,
   ) {
     this.dockNode = createUiNode('SpellDock', parent, 234, 120);
-    this.dockNode.setPosition(
-      -COCOS_DESIGN_WIDTH * 0.5 + 126 + safeInsets.left,
-      -COCOS_DESIGN_HEIGHT * 0.5 + 65 + safeInsets.bottom,
-    );
+    const { halfW, halfH } = getHudHalfExtents();
+    this.layout(halfW, halfH, safeInsets);
     drawPanel(
       this.dockNode.addComponent(Graphics),
       234,
@@ -115,6 +113,10 @@ export class HudSpellDock {
   }
 
   onSlotClicked: ((idx: number) => void) | null = null;
+
+  layout(halfW: number, halfH: number, safeInsets: SafeAreaInsets): void {
+    this.dockNode.setPosition(-halfW + 126 + safeInsets.left, -halfH + 65 + safeInsets.bottom);
+  }
 
   triggerSlot(slotIdx: number, activeSpell: SpellId | null): void {
     const order = CAMPAIGN_SPELL_ORDER[this.sim.playerFaction];

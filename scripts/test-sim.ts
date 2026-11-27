@@ -620,7 +620,7 @@ async function runPhaseATests(): Promise<void> {
   assert.equal(getLanguage(), 'zh');
   const zhStart = t('map_btn_start');
   assert.notEqual(zhStart, enStart);
-  assert.equal(t('hud_gold', { gold: 500, rate: 4 }), '金币: 500 (+4/秒)');
+  assert.equal(t('hud_gold', { gold: 500, rate: 4 }), '金铢: 500 (+4/秒)');
 
   // 100% Chinese coverage across Spells, Units, Edicts, Badges, and 24 Levels
   for (const [id, sp] of Object.entries(ALL_SPELLS)) {

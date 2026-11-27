@@ -167,6 +167,132 @@
       "review_status": "pending"
     },
     {
+      "asset_id": "concept_ranged_human_crossbow",
+      "category": "concept_art",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism 3/4 full-body game character concept art of Crossbowman (九州人皇·弩兵) in iron brigandine over vermilion sleeves aiming bronze repeating crossbow on #26282e backdrop, zero text/watermarks.",
+      "references": [],
+      "license_checked": false,
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ],
+      "final_file": "docs/shanhai/concepts/concept_ranged_human_crossbow.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "concept_infantry_chaos_soul",
+      "category": "concept_art",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism 3/4 full-body game character concept art of Soul Corroder (混沌·蚀魂兵) in cracked obsidian-bronze armor with dark-violet mist and jagged halberd on #26282e backdrop, zero text/watermarks.",
+      "references": [],
+      "license_checked": false,
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ],
+      "final_file": "docs/shanhai/concepts/concept_infantry_chaos_soul.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "concept_ranged_chaos_nether",
+      "category": "concept_art",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism 3/4 full-body game character concept art of Nether Marksman (混沌·幽冥射手) in tattered cloak with blackened horn bow and violet rift bolt on #26282e backdrop, zero text/watermarks.",
+      "references": [],
+      "license_checked": false,
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ],
+      "final_file": "docs/shanhai/concepts/concept_ranged_chaos_nether.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "concept_buildings_human_secondary",
+      "category": "concept_art",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism isometric 45-degree 3/4 top-down RTS sprite sheet: Commandery Town Hall (郡城), Royal Granary (粮仓), and Imperial Mint Mine (金铢矿场) on #1c1d22, zero text/watermarks.",
+      "references": [],
+      "license_checked": false,
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ],
+      "final_file": "docs/shanhai/concepts/concept_buildings_human_secondary.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "concept_town_chaos",
+      "category": "concept_art",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism isometric 45-degree 3/4 top-down RTS outpost of Chaos Rift Hamlet (混沌·蚀魂聚落) with obsidian spires and glowing dark-violet fissure on #1c1d22, zero text/watermarks.",
+      "references": [],
+      "license_checked": false,
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ],
+      "final_file": "docs/shanhai/concepts/concept_town_chaos.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "concept_skills_human_set",
+      "category": "concept_art",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism 2x2 bronze-and-jade octagonal game skill icons on #16181d: Rain of Arrows, Iron Wall Formation, War Drums, Sovereign Decree, strictly zero text/watermarks.",
+      "references": [],
+      "license_checked": false,
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ],
+      "final_file": "docs/shanhai/concepts/concept_skills_human_set.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "concept_worldmap_jiuzhou",
+      "category": "concept_art",
+      "faction": "shared",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism 4:3 antique painted strategic world map of the Nine Provinces (九州战局舆图) with Zhongzhou plains, Kunlun snow peaks, Cangnan forests, desert canyons, Crimson Ridge volcano, and Youdu abyss rift, strictly zero text/watermarks.",
+      "references": [],
+      "license_checked": false,
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ],
+      "final_file": "docs/shanhai/concepts/concept_worldmap_jiuzhou.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
       "asset_id": "audio_sfx_attack_bow",
       "category": "audio_sfx",
       "faction": "shared",
@@ -991,6 +1117,1726 @@
         "替换旧MP3并保留原.meta UUID"
       ],
       "final_file": "game/assets/resources/audio/unit_heroic.mp3",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_beast_castle_lv1",
+      "category": "building",
+      "faction": "beast",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_castle_beast.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_castle_beast.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_beast_castle_lv1.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_beast_castle_ruin",
+      "category": "building",
+      "faction": "beast",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_castle_beast.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_castle_beast.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_beast_castle_ruin.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_celestial_castle_lv1",
+      "category": "building",
+      "faction": "celestial",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_castle_celestial.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_castle_celestial.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_celestial_castle_lv1.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_celestial_castle_ruin",
+      "category": "building",
+      "faction": "celestial",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_castle_celestial.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_castle_celestial.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_celestial_castle_ruin.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_chaos_castle_lv1",
+      "category": "building",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_castle_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_castle_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_castle_lv1.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_chaos_castle_ruin",
+      "category": "building",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_castle_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_castle_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_castle_ruin.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_chaos_granary_lv1",
+      "category": "building",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_buildings_human_secondary.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_buildings_human_secondary.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_granary_lv1.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_chaos_mine_lv1",
+      "category": "building",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_buildings_human_secondary.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_buildings_human_secondary.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_mine_lv1.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_chaos_town_lv1",
+      "category": "building",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_town_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_town_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_town_lv1.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_chaos_town_ruin",
+      "category": "building",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_town_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_town_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_town_ruin.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_human_castle_lv1",
+      "category": "building",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_castle_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_castle_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_castle_lv1.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_human_castle_ruin",
+      "category": "building",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_castle_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_castle_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_castle_ruin.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_human_granary_lv1",
+      "category": "building",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_buildings_human_secondary.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_buildings_human_secondary.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_granary_lv1.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_human_mine_lv1",
+      "category": "building",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_buildings_human_secondary.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_buildings_human_secondary.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_mine_lv1.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_human_town_lv1",
+      "category": "building",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_buildings_human_secondary.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_buildings_human_secondary.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_town_lv1.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "building_human_town_ruin",
+      "category": "building",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_buildings_human_secondary.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_buildings_human_secondary.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_town_ruin.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "map_jiuzhou_world_base",
+      "category": "world_map",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_worldmap_jiuzhou.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_worldmap_jiuzhou.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/terrain/map_jiuzhou_world_base.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_beast_infantry_mandrill_warrior_die",
+      "category": "unit_animation",
+      "faction": "beast",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_beast.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_beast.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/die.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_beast_infantry_mandrill_warrior_down_attack",
+      "category": "unit_animation",
+      "faction": "beast",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_beast.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_beast.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/down_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_beast_infantry_mandrill_warrior_down_go",
+      "category": "unit_animation",
+      "faction": "beast",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_beast.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_beast.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/down_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_beast_infantry_mandrill_warrior_left_attack",
+      "category": "unit_animation",
+      "faction": "beast",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_beast.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_beast.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/left_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_beast_infantry_mandrill_warrior_left_go",
+      "category": "unit_animation",
+      "faction": "beast",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_beast.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_beast.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/left_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_beast_infantry_mandrill_warrior_up_attack",
+      "category": "unit_animation",
+      "faction": "beast",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_beast.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_beast.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/up_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_beast_infantry_mandrill_warrior_up_go",
+      "category": "unit_animation",
+      "faction": "beast",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_beast.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_beast.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/up_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_celestial_infantry_heavenly_soldier_die",
+      "category": "unit_animation",
+      "faction": "celestial",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_celestial.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_celestial.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/die.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_celestial_infantry_heavenly_soldier_down_attack",
+      "category": "unit_animation",
+      "faction": "celestial",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_celestial.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_celestial.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/down_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_celestial_infantry_heavenly_soldier_down_go",
+      "category": "unit_animation",
+      "faction": "celestial",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_celestial.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_celestial.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/down_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_celestial_infantry_heavenly_soldier_left_attack",
+      "category": "unit_animation",
+      "faction": "celestial",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_celestial.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_celestial.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/left_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_celestial_infantry_heavenly_soldier_left_go",
+      "category": "unit_animation",
+      "faction": "celestial",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_celestial.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_celestial.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/left_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_celestial_infantry_heavenly_soldier_up_attack",
+      "category": "unit_animation",
+      "faction": "celestial",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_celestial.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_celestial.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/up_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_celestial_infantry_heavenly_soldier_up_go",
+      "category": "unit_animation",
+      "faction": "celestial",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_celestial.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_celestial.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/up_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_infantry_soul_corroder_die",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/die.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_infantry_soul_corroder_down_attack",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/down_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_infantry_soul_corroder_down_go",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/down_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_infantry_soul_corroder_left_attack",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/left_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_infantry_soul_corroder_left_go",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/left_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_infantry_soul_corroder_up_attack",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/up_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_infantry_soul_corroder_up_go",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/up_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_ranged_nether_marksman_die",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/die.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_ranged_nether_marksman_down_attack",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/down_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_ranged_nether_marksman_down_go",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/down_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_ranged_nether_marksman_left_attack",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/left_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_ranged_nether_marksman_left_go",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/left_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_ranged_nether_marksman_up_attack",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/up_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_chaos_ranged_nether_marksman_up_go",
+      "category": "unit_animation",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/up_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_infantry_iron_guard_die",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/die.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_infantry_iron_guard_down_attack",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/down_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_infantry_iron_guard_down_go",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/down_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_infantry_iron_guard_left_attack",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/left_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_infantry_iron_guard_left_go",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/left_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_infantry_iron_guard_up_attack",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/up_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_infantry_iron_guard_up_go",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/up_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_ranged_crossbowman_die",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/die.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_ranged_crossbowman_down_attack",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/down_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_ranged_crossbowman_down_go",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/down_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_ranged_crossbowman_left_attack",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/left_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_ranged_crossbowman_left_go",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/left_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_ranged_crossbowman_up_attack",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/up_attack.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "unit_human_ranged_crossbowman_up_go",
+      "category": "unit_animation",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/up_go.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "terrain_zhongzhou_l1",
+      "category": "battlefield_map",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_battlefield_zhongzhou.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_battlefield_zhongzhou.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/bundles/bundle_westaria/art/terrain/terrain_zhongzhou_l1.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "terrain_build_site_seal",
+      "category": "battlefield_map",
+      "faction": "shared",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (undefined) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/terrain/terrain_build_site_seal.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_faction_beast",
+      "category": "ui_chrome",
+      "faction": "beast",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_castle_beast.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_castle_beast.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_faction_beast.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_faction_celestial",
+      "category": "ui_chrome",
+      "faction": "celestial",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_castle_celestial.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_castle_celestial.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_faction_celestial.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_faction_human",
+      "category": "ui_chrome",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_castle_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_castle_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_faction_human.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_res_food",
+      "category": "ui_chrome",
+      "faction": "shared",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_ui_hud_style.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_ui_hud_style.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_res_food.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_res_gold",
+      "category": "ui_chrome",
+      "faction": "shared",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_ui_hud_style.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_ui_hud_style.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_res_gold.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_res_mana",
+      "category": "ui_chrome",
+      "faction": "shared",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_ui_hud_style.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_ui_hud_style.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_res_mana.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_skill_human_iron_wall",
+      "category": "icon_skill",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_skills_human_set.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_skills_human_set.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_skill_human_iron_wall.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_skill_human_rain_of_arrows",
+      "category": "icon_skill",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_skills_human_set.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_skills_human_set.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_skill_human_rain_of_arrows.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_skill_human_sovereign_decree",
+      "category": "icon_skill",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_skills_human_set.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_skills_human_set.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_skill_human_sovereign_decree.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_skill_human_war_drums",
+      "category": "icon_skill",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_skills_human_set.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_skills_human_set.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_skill_human_war_drums.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_unit_beast_infantry",
+      "category": "icon_unit",
+      "faction": "beast",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_beast.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_beast.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_unit_beast_infantry.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_unit_celestial_infantry",
+      "category": "icon_unit",
+      "faction": "celestial",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_celestial.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_celestial.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_unit_celestial_infantry.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_unit_chaos_infantry",
+      "category": "icon_unit",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_chaos_soul.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_chaos_soul.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_unit_chaos_infantry.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_unit_chaos_ranged",
+      "category": "icon_unit",
+      "faction": "chaos",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_ranged_chaos_nether.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_ranged_chaos_nether.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_unit_chaos_ranged.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_unit_human_crossbow",
+      "category": "icon_unit",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_ranged_human_crossbow.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_ranged_human_crossbow.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_unit_human_crossbow.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "icon_unit_human_infantry",
+      "category": "icon_unit",
+      "faction": "human",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_infantry_human.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_infantry_human.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/icon_unit_human_infantry.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "ui_btn_bronze_pill",
+      "category": "ui_chrome",
+      "faction": "shared",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_ui_hud_style.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_ui_hud_style.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/ui_btn_bronze_pill.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "ui_btn_gold_pill",
+      "category": "ui_chrome",
+      "faction": "shared",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_ui_hud_style.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_ui_hud_style.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/ui_btn_gold_pill.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "ui_hud_spell_dock",
+      "category": "ui_chrome",
+      "faction": "shared",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_ui_hud_style.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_ui_hud_style.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/ui_hud_spell_dock.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "ui_hud_top_bar",
+      "category": "ui_chrome",
+      "faction": "shared",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_ui_hud_style.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_ui_hud_style.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/ui_hud_top_bar.png",
+      "created_at": "2026-11-27",
+      "review_status": "pending"
+    },
+    {
+      "asset_id": "ui_title_bg_shanhai",
+      "category": "ui_chrome",
+      "faction": "shared",
+      "tool": "ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)",
+      "model": "ChatGPT Image Generation + procedural-phase-b-v1",
+      "prompt": "Derived from verified Phase-A concept (docs/shanhai/concepts/concept_battlefield_zhongzhou.png) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.",
+      "references": [
+        "docs/shanhai/concepts/concept_battlefield_zhongzhou.png"
+      ],
+      "license_checked": false,
+      "human_edits": [
+        "泛洪抠图与边缘去黑边",
+        "锚点对齐与尺寸规范化",
+        "序列帧合成/战损烟尘绘制",
+        "preview 图集人工复核"
+      ],
+      "final_file": "game/assets/resources/art/ui/ui_title_bg_shanhai.png",
       "created_at": "2026-11-27",
       "review_status": "pending"
     }

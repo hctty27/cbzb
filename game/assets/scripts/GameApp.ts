@@ -84,7 +84,8 @@ function detectBrowserLanguage(): LanguageCode {
   } catch {
     // Ignore unsupported navigator access
   }
-  return 'en';
+  // 《山海烽火》 targets Mainland China first; default to 'zh' with live toggle to 'en'.
+  return 'zh';
 }
 
 @ccclass('GameApp')

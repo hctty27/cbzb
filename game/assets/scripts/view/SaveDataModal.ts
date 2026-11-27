@@ -252,7 +252,7 @@ export class SaveDataModal {
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'takeover-save.txt';
+      a.download = 'shanhai-fenghuo-save.txt';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);

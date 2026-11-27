@@ -1,6 +1,6 @@
 import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
 import { MAX_STRONGHOLD_LEVEL, STRONGHOLD_STATS, STRONGHOLD_UPGRADE_COSTS } from '../data/BuildingsData';
-import { getUnitName, t } from '../data/I18n';
+import { getStrongholdDisplayName, getUnitName, t } from '../data/I18n';
 import { PlayableCampaignId } from '../data/Types';
 import { getRecruitIdsForFaction, UNIT_DEFS } from '../data/UnitsData';
 import { BattleSim } from '../sim/BattleSim';
@@ -350,7 +350,8 @@ export class HudSelectionPanels {
     this.squadBar.active = Boolean(!sh && !bs && sq);
 
     if (sh) {
-      const headerTxt = t('hud_fort_header', { name: sh.name, lv: sh.level, hp: sh.hp, maxHp: sh.maxHp });
+      const shDisplayName = getStrongholdDisplayName(sh.kind, sh.owner, sh.name);
+      const headerTxt = t('hud_fort_header', { name: shDisplayName, lv: sh.level, hp: sh.hp, maxHp: sh.maxHp });
       if (headerTxt !== this.lastActionHeader) {
         this.lastActionHeader = headerTxt;
         this.actionTitleLabel.string = headerTxt;

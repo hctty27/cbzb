@@ -1,5 +1,6 @@
-import { Button, Color, Graphics, Label, Node, UITransform } from 'cc';
+import { Button, Color, Graphics, Label, Node, Sprite, UITransform } from 'cc';
 import { COCOS_DESIGN_HEIGHT, COCOS_DESIGN_WIDTH } from '../core/CoordTransform';
+import { SPRITE_MANIFEST } from '../data/AssetManifest';
 import { getLevelName, getSpellName, getTutorialHint, t } from '../data/I18n';
 import { TUTORIAL1_HINTS, TUTORIAL2_HINTS } from '../data/Level1Data';
 import { ALL_SPELLS } from '../data/SpellsData';
@@ -12,7 +13,7 @@ import { HudSpellDock } from './HudSpellDock';
 import { PauseModalView } from './PauseModalView';
 import { getDesignSafeAreaInsets, SafeAreaInsets } from './SafeAreaHelper';
 import { getHudHalfExtents } from './ScreenLayout';
-import { createUiNode, drawPanel } from './SpriteLoader';
+import { createUiNode, drawPanel, getStaticSpriteFrame } from './SpriteLoader';
 
 export interface HudSelection {
   strongholdId: string | null;
@@ -25,6 +26,9 @@ export class HudView {
 
   private topBarNode!: Node;
   private topBarG!: Graphics;
+  private goldIconNode!: Node;
+  private foodIconNode!: Node;
+  private manaIconNode!: Node;
   private speedBtnNode!: Node;
   private pauseBtnNode!: Node;
   private muteBtnNode!: Node;
@@ -106,14 +110,30 @@ export class HudView {
   }
 
   private buildTopBar(): void {
-    const bar = createUiNode('TopBar', this.root, COCOS_DESIGN_WIDTH, 50);
+    const bar = createUiNode('TopBar', this.root, COCOS_DESIGN_WIDTH, 52);
     this.topBarNode = bar;
     this.topBarG = bar.addComponent(Graphics);
+
+    const makeIcon = (name: string, key: string): Node => {
+      const iconN = createUiNode(name, bar, 30, 30);
+      const sp = iconN.addComponent(Sprite);
+      sp.sizeMode = Sprite.SizeMode.CUSTOM;
+      if (SPRITE_MANIFEST[key]) {
+        void getStaticSpriteFrame(key).then((sf) => {
+          if (iconN.isValid) sp.spriteFrame = sf;
+        });
+      }
+      return iconN;
+    };
+
+    this.goldIconNode = makeIcon('IconGold', 'ui/icon_res_gold');
+    this.foodIconNode = makeIcon('IconFood', 'ui/icon_res_food');
+    this.manaIconNode = makeIcon('IconMana', 'ui/icon_res_mana');
 
     const makeStat = (width: number, color: Color): Label => {
       const n = createUiNode('Stat', bar, width, 32);
       const lbl = n.addComponent(Label);
-      lbl.fontSize = 16;
+      lbl.fontSize = 15;
       lbl.lineHeight = 22;
       lbl.isBold = true;
       lbl.enableWrapText = false;
@@ -122,10 +142,10 @@ export class HudView {
       return lbl;
     };
 
-    this.goldLabel = makeStat(210, new Color(255, 218, 92, 255));
-    this.supplyLabel = makeStat(155, new Color(130, 230, 140, 255));
-    this.manaLabel = makeStat(160, new Color(125, 200, 255, 255));
-    this.timerLabel = makeStat(250, new Color(240, 236, 224, 255));
+    this.goldLabel = makeStat(176, new Color(255, 222, 108, 255));
+    this.supplyLabel = makeStat(140, new Color(156, 232, 162, 255));
+    this.manaLabel = makeStat(148, new Color(140, 220, 255, 255));
+    this.timerLabel = makeStat(220, new Color(240, 234, 216, 255));
 
     const makeTopBtn = (labelText: string, w: number, onClick: () => void): { node: Node; lbl: Label } => {
       const b = createUiNode(`TopBtn_${labelText}`, bar, w, 34);
@@ -225,24 +245,27 @@ export class HudView {
     this.safeInsets = insets;
 
     const barWidth = halfW * 2;
-    this.topBarNode.getComponent(UITransform)?.setContentSize(barWidth, 50);
-    this.topBarNode.setPosition(0, halfH - 25 - insets.top);
+    this.topBarNode.getComponent(UITransform)?.setContentSize(barWidth, 52);
+    this.topBarNode.setPosition(0, halfH - 26 - insets.top);
     this.topBarG.clear();
     drawPanel(
       this.topBarG,
       barWidth,
-      50,
-      new Color(18, 22, 32, 232),
-      new Color(175, 140, 72, 220),
+      52,
+      new Color(16, 18, 24, 236),
+      new Color(192, 152, 82, 235),
       2,
       0,
     );
 
     const L = -halfW + insets.left;
-    this.goldLabel.node.setPosition(L + 115, 0);
-    this.supplyLabel.node.setPosition(L + 305, 0);
-    this.manaLabel.node.setPosition(L + 468, 0);
-    this.timerLabel.node.setPosition(L + 685, 0);
+    this.goldIconNode.setPosition(L + 26, 0);
+    this.goldLabel.node.setPosition(L + 130, 0);
+    this.foodIconNode.setPosition(L + 234, 0);
+    this.supplyLabel.node.setPosition(L + 318, 0);
+    this.manaIconNode.setPosition(L + 402, 0);
+    this.manaLabel.node.setPosition(L + 492, 0);
+    this.timerLabel.node.setPosition(L + 692, 0);
 
     const R = halfW - insets.right;
     this.speedBtnNode.setPosition(R - 370, 0);

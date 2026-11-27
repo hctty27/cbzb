@@ -340,8 +340,9 @@ export class CampaignMapView {
       });
     }
 
+    const usingOriginalWorldMap = Boolean(SPRITE_MANIFEST['map/campaign_map_base']?.path.startsWith('art/'));
     const mapFrame = this.progress.getRivadisMapFrame(campaign);
-    if (mapFrame <= 1) {
+    if (usingOriginalWorldMap || mapFrame <= 1) {
       this.diffLoadSeq++;
       this.loadedDiffKey = '';
       this.mapDiffNode.active = false;

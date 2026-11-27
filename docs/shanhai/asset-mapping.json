@@ -3,8 +3,8 @@
   "version": "1.0",
   "updated_at": "2026-11-27",
   "summary": {
-    "total_legacy_runtime_assets": 593,
-    "png_count": 547,
+    "total_legacy_runtime_assets": 592,
+    "png_count": 546,
     "audio_count": 46,
     "unit_directory_count": 42,
     "counts_by_category": {
@@ -18,16 +18,15 @@
       "icon_skill": 12,
       "icon_unit": 33,
       "map_prop": 2,
-      "ui_chrome": 11,
-      "ui_legacy_brand": 1
+      "ui_chrome": 11
     },
     "counts_by_status": {
-      "pending": 546,
-      "synthesized": 46,
-      "remove": 1
+      "pending": 461,
+      "integrated": 85,
+      "synthesized": 46
     },
-    "phase_a_concepts_generated": 9,
-    "phase_a_concepts_total": 9
+    "phase_a_concepts_generated": 16,
+    "phase_a_concepts_total": 16
   },
   "factions": {
     "Westaria": {
@@ -688,6 +687,118 @@
         "外部工具生成并标准化命名",
         "生成后人工目视检查去字/视角/纯色底质检"
       ]
+    },
+    {
+      "asset_id": "concept_ranged_human_crossbow",
+      "name_zh": "九州人皇·弩兵概念图",
+      "category": "concept_art",
+      "faction": "human",
+      "status": "generated",
+      "file": "docs/shanhai/concepts/concept_ranged_human_crossbow.png",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism 3/4 full-body game character concept art of Crossbowman (九州人皇·弩兵) in iron brigandine over vermilion sleeves aiming bronze repeating crossbow on #26282e backdrop, zero text/watermarks.",
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ]
+    },
+    {
+      "asset_id": "concept_infantry_chaos_soul",
+      "name_zh": "混沌·蚀魂兵概念图",
+      "category": "concept_art",
+      "faction": "chaos",
+      "status": "generated",
+      "file": "docs/shanhai/concepts/concept_infantry_chaos_soul.png",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism 3/4 full-body game character concept art of Soul Corroder (混沌·蚀魂兵) in cracked obsidian-bronze armor with dark-violet mist and jagged halberd on #26282e backdrop, zero text/watermarks.",
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ]
+    },
+    {
+      "asset_id": "concept_ranged_chaos_nether",
+      "name_zh": "混沌·幽冥射手概念图",
+      "category": "concept_art",
+      "faction": "chaos",
+      "status": "generated",
+      "file": "docs/shanhai/concepts/concept_ranged_chaos_nether.png",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism 3/4 full-body game character concept art of Nether Marksman (混沌·幽冥射手) in tattered cloak with blackened horn bow and violet rift bolt on #26282e backdrop, zero text/watermarks.",
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ]
+    },
+    {
+      "asset_id": "concept_buildings_human_secondary",
+      "name_zh": "九州人皇·郡城/粮仓/矿场概念拼板",
+      "category": "concept_art",
+      "faction": "human",
+      "status": "generated",
+      "file": "docs/shanhai/concepts/concept_buildings_human_secondary.png",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism isometric 45-degree 3/4 top-down RTS sprite sheet: Commandery Town Hall (郡城), Royal Granary (粮仓), and Imperial Mint Mine (金铢矿场) on #1c1d22, zero text/watermarks.",
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ]
+    },
+    {
+      "asset_id": "concept_town_chaos",
+      "name_zh": "混沌·蚀魂聚落概念图",
+      "category": "concept_art",
+      "faction": "chaos",
+      "status": "generated",
+      "file": "docs/shanhai/concepts/concept_town_chaos.png",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism isometric 45-degree 3/4 top-down RTS outpost of Chaos Rift Hamlet (混沌·蚀魂聚落) with obsidian spires and glowing dark-violet fissure on #1c1d22, zero text/watermarks.",
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ]
+    },
+    {
+      "asset_id": "concept_skills_human_set",
+      "name_zh": "九州人皇·4项技能图标拼板",
+      "category": "concept_art",
+      "faction": "human",
+      "status": "generated",
+      "file": "docs/shanhai/concepts/concept_skills_human_set.png",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism 2x2 bronze-and-jade octagonal game skill icons on #16181d: Rain of Arrows, Iron Wall Formation, War Drums, Sovereign Decree, strictly zero text/watermarks.",
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ]
+    },
+    {
+      "asset_id": "concept_worldmap_jiuzhou",
+      "name_zh": "九州战局舆图概念图",
+      "category": "concept_art",
+      "faction": "shared",
+      "status": "generated",
+      "file": "docs/shanhai/concepts/concept_worldmap_jiuzhou.png",
+      "tool": "ChatGPT 图像生成",
+      "model": "ChatGPT Image Generation (external)",
+      "prompt": "Eastern Dark Realism 4:3 antique painted strategic world map of the Nine Provinces (九州战局舆图) with Zhongzhou plains, Kunlun snow peaks, Cangnan forests, desert canyons, Crimson Ridge volcano, and Youdu abyss rift, strictly zero text/watermarks.",
+      "human_edits": [
+        "人工设定构图与Art Bible约束",
+        "外部工具生成并标准化命名",
+        "生成后人工目视检查去字/视角/纯色底质检"
+      ]
     }
   ],
   "assets": [
@@ -807,9 +918,9 @@
       "legacy_key": "map/campaign_map_base",
       "legacy_path": "game/assets/bundles/bundle_gameplay/maps/campaign_map_base.png",
       "new_id": "map_jiuzhou_world_base",
-      "new_target_path": "game/assets/art/terrain/jiuzhou_world/map_jiuzhou_world_base.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/terrain/map_jiuzhou_world_base.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -897,9 +1008,9 @@
       "legacy_key": "buildings/castle_blue",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/castle_blue.png",
       "new_id": "building_celestial_castle_lv1",
-      "new_target_path": "game/assets/art/buildings/celestial/building_celestial_castle_lv1.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_celestial_castle_lv1.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -907,9 +1018,9 @@
       "legacy_key": "buildings/castle_blue_raze",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/castle_blue_raze.png",
       "new_id": "building_celestial_castle_ruin",
-      "new_target_path": "game/assets/art/buildings/celestial/building_celestial_castle_ruin.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_celestial_castle_ruin.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -917,9 +1028,9 @@
       "legacy_key": "buildings/castle_green",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/castle_green.png",
       "new_id": "building_human_castle_lv1",
-      "new_target_path": "game/assets/art/buildings/human/building_human_castle_lv1.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_castle_lv1.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -927,9 +1038,9 @@
       "legacy_key": "buildings/castle_green_raze",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/castle_green_raze.png",
       "new_id": "building_human_castle_ruin",
-      "new_target_path": "game/assets/art/buildings/human/building_human_castle_ruin.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_castle_ruin.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -937,9 +1048,9 @@
       "legacy_key": "buildings/castle_purple",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/castle_purple.png",
       "new_id": "building_chaos_castle_lv1",
-      "new_target_path": "game/assets/art/buildings/chaos/building_chaos_castle_lv1.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_castle_lv1.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -947,9 +1058,9 @@
       "legacy_key": "buildings/castle_purple_raze",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/castle_purple_raze.png",
       "new_id": "building_chaos_castle_ruin",
-      "new_target_path": "game/assets/art/buildings/chaos/building_chaos_castle_ruin.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_castle_ruin.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -957,9 +1068,9 @@
       "legacy_key": "buildings/castle_red",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/castle_red.png",
       "new_id": "building_beast_castle_lv1",
-      "new_target_path": "game/assets/art/buildings/beast/building_beast_castle_lv1.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_beast_castle_lv1.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -967,9 +1078,9 @@
       "legacy_key": "buildings/castle_red_raze",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/castle_red_raze.png",
       "new_id": "building_beast_castle_ruin",
-      "new_target_path": "game/assets/art/buildings/beast/building_beast_castle_ruin.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_beast_castle_ruin.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1067,9 +1178,9 @@
       "legacy_key": "buildings/mine_green",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/mine_green.png",
       "new_id": "building_human_mine_lv1",
-      "new_target_path": "game/assets/art/buildings/human/building_human_mine_lv1.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_mine_lv1.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1077,9 +1188,9 @@
       "legacy_key": "buildings/mine_purple",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/mine_purple.png",
       "new_id": "building_chaos_mine_lv1",
-      "new_target_path": "game/assets/art/buildings/chaos/building_chaos_mine_lv1.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_mine_lv1.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1157,9 +1268,9 @@
       "legacy_key": "buildings/town_green",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/town_green.png",
       "new_id": "building_human_town_lv1",
-      "new_target_path": "game/assets/art/buildings/human/building_human_town_lv1.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_town_lv1.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1167,9 +1278,9 @@
       "legacy_key": "buildings/town_green_raze",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/town_green_raze.png",
       "new_id": "building_human_town_ruin",
-      "new_target_path": "game/assets/art/buildings/human/building_human_town_ruin.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_town_ruin.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1177,9 +1288,9 @@
       "legacy_key": "buildings/town_purple",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/town_purple.png",
       "new_id": "building_chaos_town_lv1",
-      "new_target_path": "game/assets/art/buildings/chaos/building_chaos_town_lv1.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_town_lv1.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1187,9 +1298,9 @@
       "legacy_key": "buildings/town_purple_raze",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/town_purple_raze.png",
       "new_id": "building_chaos_town_ruin",
-      "new_target_path": "game/assets/art/buildings/chaos/building_chaos_town_ruin.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_town_ruin.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1227,9 +1338,9 @@
       "legacy_key": "buildings/village_green",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/village_green.png",
       "new_id": "building_human_granary_lv1",
-      "new_target_path": "game/assets/art/buildings/human/building_human_granary_lv1.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_human_granary_lv1.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1237,9 +1348,9 @@
       "legacy_key": "buildings/village_purple",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/buildings/village_purple.png",
       "new_id": "building_chaos_granary_lv1",
-      "new_target_path": "game/assets/art/buildings/chaos/building_chaos_granary_lv1.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/buildings/building_chaos_granary_lv1.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1707,9 +1818,9 @@
       "legacy_key": "units/b_infantry/die",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/b_infantry/die.png",
       "new_id": "unit_celestial_infantry_heavenly_soldier_die",
-      "new_target_path": "game/assets/animation/units/celestial/celestial_infantry_heavenly_soldier/die.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/die.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1717,9 +1828,9 @@
       "legacy_key": "units/b_infantry/down_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/b_infantry/down_attack.png",
       "new_id": "unit_celestial_infantry_heavenly_soldier_down_attack",
-      "new_target_path": "game/assets/animation/units/celestial/celestial_infantry_heavenly_soldier/down_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/down_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1727,9 +1838,9 @@
       "legacy_key": "units/b_infantry/down_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/b_infantry/down_go.png",
       "new_id": "unit_celestial_infantry_heavenly_soldier_down_go",
-      "new_target_path": "game/assets/animation/units/celestial/celestial_infantry_heavenly_soldier/down_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/down_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1737,9 +1848,9 @@
       "legacy_key": "units/b_infantry/left_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/b_infantry/left_attack.png",
       "new_id": "unit_celestial_infantry_heavenly_soldier_left_attack",
-      "new_target_path": "game/assets/animation/units/celestial/celestial_infantry_heavenly_soldier/left_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1747,9 +1858,9 @@
       "legacy_key": "units/b_infantry/left_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/b_infantry/left_go.png",
       "new_id": "unit_celestial_infantry_heavenly_soldier_left_go",
-      "new_target_path": "game/assets/animation/units/celestial/celestial_infantry_heavenly_soldier/left_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1757,9 +1868,9 @@
       "legacy_key": "units/b_infantry/right_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/b_infantry/right_attack.png",
       "new_id": "unit_celestial_infantry_heavenly_soldier_right_attack",
-      "new_target_path": "game/assets/animation/units/celestial/celestial_infantry_heavenly_soldier/right_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1767,9 +1878,9 @@
       "legacy_key": "units/b_infantry/right_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/b_infantry/right_go.png",
       "new_id": "unit_celestial_infantry_heavenly_soldier_right_go",
-      "new_target_path": "game/assets/animation/units/celestial/celestial_infantry_heavenly_soldier/right_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1777,9 +1888,9 @@
       "legacy_key": "units/b_infantry/up_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/b_infantry/up_attack.png",
       "new_id": "unit_celestial_infantry_heavenly_soldier_up_attack",
-      "new_target_path": "game/assets/animation/units/celestial/celestial_infantry_heavenly_soldier/up_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/up_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -1787,9 +1898,9 @@
       "legacy_key": "units/b_infantry/up_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/b_infantry/up_go.png",
       "new_id": "unit_celestial_infantry_heavenly_soldier_up_go",
-      "new_target_path": "game/assets/animation/units/celestial/celestial_infantry_heavenly_soldier/up_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/celestial_infantry_heavenly_soldier/up_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2157,9 +2268,9 @@
       "legacy_key": "units/e_archers/die",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_archers/die.png",
       "new_id": "unit_chaos_ranged_nether_marksman_die",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_ranged_nether_marksman/die.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/die.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2167,9 +2278,9 @@
       "legacy_key": "units/e_archers/down_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_archers/down_attack.png",
       "new_id": "unit_chaos_ranged_nether_marksman_down_attack",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_ranged_nether_marksman/down_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/down_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2177,9 +2288,9 @@
       "legacy_key": "units/e_archers/down_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_archers/down_go.png",
       "new_id": "unit_chaos_ranged_nether_marksman_down_go",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_ranged_nether_marksman/down_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/down_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2187,9 +2298,9 @@
       "legacy_key": "units/e_archers/left_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_archers/left_attack.png",
       "new_id": "unit_chaos_ranged_nether_marksman_left_attack",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_ranged_nether_marksman/left_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2197,9 +2308,9 @@
       "legacy_key": "units/e_archers/left_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_archers/left_go.png",
       "new_id": "unit_chaos_ranged_nether_marksman_left_go",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_ranged_nether_marksman/left_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2207,9 +2318,9 @@
       "legacy_key": "units/e_archers/right_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_archers/right_attack.png",
       "new_id": "unit_chaos_ranged_nether_marksman_right_attack",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_ranged_nether_marksman/right_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2217,9 +2328,9 @@
       "legacy_key": "units/e_archers/right_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_archers/right_go.png",
       "new_id": "unit_chaos_ranged_nether_marksman_right_go",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_ranged_nether_marksman/right_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2227,9 +2338,9 @@
       "legacy_key": "units/e_archers/up_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_archers/up_attack.png",
       "new_id": "unit_chaos_ranged_nether_marksman_up_attack",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_ranged_nether_marksman/up_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/up_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2237,9 +2348,9 @@
       "legacy_key": "units/e_archers/up_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_archers/up_go.png",
       "new_id": "unit_chaos_ranged_nether_marksman_up_go",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_ranged_nether_marksman/up_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_ranged_nether_marksman/up_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2517,9 +2628,9 @@
       "legacy_key": "units/e_infantry/die",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_infantry/die.png",
       "new_id": "unit_chaos_infantry_soul_corroder_die",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_infantry_soul_corroder/die.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/die.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2527,9 +2638,9 @@
       "legacy_key": "units/e_infantry/down_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_infantry/down_attack.png",
       "new_id": "unit_chaos_infantry_soul_corroder_down_attack",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_infantry_soul_corroder/down_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/down_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2537,9 +2648,9 @@
       "legacy_key": "units/e_infantry/down_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_infantry/down_go.png",
       "new_id": "unit_chaos_infantry_soul_corroder_down_go",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_infantry_soul_corroder/down_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/down_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2547,9 +2658,9 @@
       "legacy_key": "units/e_infantry/left_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_infantry/left_attack.png",
       "new_id": "unit_chaos_infantry_soul_corroder_left_attack",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_infantry_soul_corroder/left_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2557,9 +2668,9 @@
       "legacy_key": "units/e_infantry/left_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_infantry/left_go.png",
       "new_id": "unit_chaos_infantry_soul_corroder_left_go",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_infantry_soul_corroder/left_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2567,9 +2678,9 @@
       "legacy_key": "units/e_infantry/right_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_infantry/right_attack.png",
       "new_id": "unit_chaos_infantry_soul_corroder_right_attack",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_infantry_soul_corroder/right_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2577,9 +2688,9 @@
       "legacy_key": "units/e_infantry/right_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_infantry/right_go.png",
       "new_id": "unit_chaos_infantry_soul_corroder_right_go",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_infantry_soul_corroder/right_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2587,9 +2698,9 @@
       "legacy_key": "units/e_infantry/up_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_infantry/up_attack.png",
       "new_id": "unit_chaos_infantry_soul_corroder_up_attack",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_infantry_soul_corroder/up_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/up_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -2597,9 +2708,9 @@
       "legacy_key": "units/e_infantry/up_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/e_infantry/up_go.png",
       "new_id": "unit_chaos_infantry_soul_corroder_up_go",
-      "new_target_path": "game/assets/animation/units/chaos/chaos_infantry_soul_corroder/up_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/chaos_infantry_soul_corroder/up_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -3507,9 +3618,9 @@
       "legacy_key": "units/k_infantry/die",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/k_infantry/die.png",
       "new_id": "unit_beast_infantry_mandrill_warrior_die",
-      "new_target_path": "game/assets/animation/units/beast/beast_infantry_mandrill_warrior/die.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/die.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -3517,9 +3628,9 @@
       "legacy_key": "units/k_infantry/down_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/k_infantry/down_attack.png",
       "new_id": "unit_beast_infantry_mandrill_warrior_down_attack",
-      "new_target_path": "game/assets/animation/units/beast/beast_infantry_mandrill_warrior/down_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/down_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -3527,9 +3638,9 @@
       "legacy_key": "units/k_infantry/down_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/k_infantry/down_go.png",
       "new_id": "unit_beast_infantry_mandrill_warrior_down_go",
-      "new_target_path": "game/assets/animation/units/beast/beast_infantry_mandrill_warrior/down_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/down_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -3537,9 +3648,9 @@
       "legacy_key": "units/k_infantry/left_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/k_infantry/left_attack.png",
       "new_id": "unit_beast_infantry_mandrill_warrior_left_attack",
-      "new_target_path": "game/assets/animation/units/beast/beast_infantry_mandrill_warrior/left_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -3547,9 +3658,9 @@
       "legacy_key": "units/k_infantry/left_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/k_infantry/left_go.png",
       "new_id": "unit_beast_infantry_mandrill_warrior_left_go",
-      "new_target_path": "game/assets/animation/units/beast/beast_infantry_mandrill_warrior/left_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -3557,9 +3668,9 @@
       "legacy_key": "units/k_infantry/right_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/k_infantry/right_attack.png",
       "new_id": "unit_beast_infantry_mandrill_warrior_right_attack",
-      "new_target_path": "game/assets/animation/units/beast/beast_infantry_mandrill_warrior/right_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -3567,9 +3678,9 @@
       "legacy_key": "units/k_infantry/right_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/k_infantry/right_go.png",
       "new_id": "unit_beast_infantry_mandrill_warrior_right_go",
-      "new_target_path": "game/assets/animation/units/beast/beast_infantry_mandrill_warrior/right_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -3577,9 +3688,9 @@
       "legacy_key": "units/k_infantry/up_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/k_infantry/up_attack.png",
       "new_id": "unit_beast_infantry_mandrill_warrior_up_attack",
-      "new_target_path": "game/assets/animation/units/beast/beast_infantry_mandrill_warrior/up_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/up_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -3587,9 +3698,9 @@
       "legacy_key": "units/k_infantry/up_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/k_infantry/up_go.png",
       "new_id": "unit_beast_infantry_mandrill_warrior_up_go",
-      "new_target_path": "game/assets/animation/units/beast/beast_infantry_mandrill_warrior/up_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/beast_infantry_mandrill_warrior/up_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4047,9 +4158,9 @@
       "legacy_key": "units/w_archers/die",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_archers/die.png",
       "new_id": "unit_human_ranged_crossbowman_die",
-      "new_target_path": "game/assets/animation/units/human/human_ranged_crossbowman/die.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/die.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4057,9 +4168,9 @@
       "legacy_key": "units/w_archers/down_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_archers/down_attack.png",
       "new_id": "unit_human_ranged_crossbowman_down_attack",
-      "new_target_path": "game/assets/animation/units/human/human_ranged_crossbowman/down_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/down_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4067,9 +4178,9 @@
       "legacy_key": "units/w_archers/down_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_archers/down_go.png",
       "new_id": "unit_human_ranged_crossbowman_down_go",
-      "new_target_path": "game/assets/animation/units/human/human_ranged_crossbowman/down_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/down_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4077,9 +4188,9 @@
       "legacy_key": "units/w_archers/left_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_archers/left_attack.png",
       "new_id": "unit_human_ranged_crossbowman_left_attack",
-      "new_target_path": "game/assets/animation/units/human/human_ranged_crossbowman/left_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4087,9 +4198,9 @@
       "legacy_key": "units/w_archers/left_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_archers/left_go.png",
       "new_id": "unit_human_ranged_crossbowman_left_go",
-      "new_target_path": "game/assets/animation/units/human/human_ranged_crossbowman/left_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4097,9 +4208,9 @@
       "legacy_key": "units/w_archers/right_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_archers/right_attack.png",
       "new_id": "unit_human_ranged_crossbowman_right_attack",
-      "new_target_path": "game/assets/animation/units/human/human_ranged_crossbowman/right_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4107,9 +4218,9 @@
       "legacy_key": "units/w_archers/right_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_archers/right_go.png",
       "new_id": "unit_human_ranged_crossbowman_right_go",
-      "new_target_path": "game/assets/animation/units/human/human_ranged_crossbowman/right_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4117,9 +4228,9 @@
       "legacy_key": "units/w_archers/up_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_archers/up_attack.png",
       "new_id": "unit_human_ranged_crossbowman_up_attack",
-      "new_target_path": "game/assets/animation/units/human/human_ranged_crossbowman/up_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/up_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4127,9 +4238,9 @@
       "legacy_key": "units/w_archers/up_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_archers/up_go.png",
       "new_id": "unit_human_ranged_crossbowman_up_go",
-      "new_target_path": "game/assets/animation/units/human/human_ranged_crossbowman/up_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_ranged_crossbowman/up_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4497,9 +4608,9 @@
       "legacy_key": "units/w_infantry/die",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_infantry/die.png",
       "new_id": "unit_human_infantry_iron_guard_die",
-      "new_target_path": "game/assets/animation/units/human/human_infantry_iron_guard/die.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/die.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4507,9 +4618,9 @@
       "legacy_key": "units/w_infantry/down_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_infantry/down_attack.png",
       "new_id": "unit_human_infantry_iron_guard_down_attack",
-      "new_target_path": "game/assets/animation/units/human/human_infantry_iron_guard/down_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/down_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4517,9 +4628,9 @@
       "legacy_key": "units/w_infantry/down_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_infantry/down_go.png",
       "new_id": "unit_human_infantry_iron_guard_down_go",
-      "new_target_path": "game/assets/animation/units/human/human_infantry_iron_guard/down_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/down_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4527,9 +4638,9 @@
       "legacy_key": "units/w_infantry/left_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_infantry/left_attack.png",
       "new_id": "unit_human_infantry_iron_guard_left_attack",
-      "new_target_path": "game/assets/animation/units/human/human_infantry_iron_guard/left_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4537,9 +4648,9 @@
       "legacy_key": "units/w_infantry/left_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_infantry/left_go.png",
       "new_id": "unit_human_infantry_iron_guard_left_go",
-      "new_target_path": "game/assets/animation/units/human/human_infantry_iron_guard/left_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4547,9 +4658,9 @@
       "legacy_key": "units/w_infantry/right_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_infantry/right_attack.png",
       "new_id": "unit_human_infantry_iron_guard_right_attack",
-      "new_target_path": "game/assets/animation/units/human/human_infantry_iron_guard/right_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/left_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4557,9 +4668,9 @@
       "legacy_key": "units/w_infantry/right_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_infantry/right_go.png",
       "new_id": "unit_human_infantry_iron_guard_right_go",
-      "new_target_path": "game/assets/animation/units/human/human_infantry_iron_guard/right_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/left_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4567,9 +4678,9 @@
       "legacy_key": "units/w_infantry/up_attack",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_infantry/up_attack.png",
       "new_id": "unit_human_infantry_iron_guard_up_attack",
-      "new_target_path": "game/assets/animation/units/human/human_infantry_iron_guard/up_attack.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/up_attack.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -4577,9 +4688,9 @@
       "legacy_key": "units/w_infantry/up_go",
       "legacy_path": "game/assets/bundles/bundle_gameplay/textures/units/w_infantry/up_go.png",
       "new_id": "unit_human_infantry_iron_guard_up_go",
-      "new_target_path": "game/assets/animation/units/human/human_infantry_iron_guard/up_go.png",
+      "new_target_path": "game/assets/bundles/bundle_gameplay/art/units/human_infantry_iron_guard/up_go.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -5517,9 +5628,9 @@
       "legacy_key": "map/level1_bg",
       "legacy_path": "game/assets/bundles/bundle_westaria/maps/level1_bg.png",
       "new_id": "terrain_battlefield_level1_bg",
-      "new_target_path": "game/assets/art/terrain/zhongzhou_l1/terrain_battlefield_level1_bg.png",
+      "new_target_path": "game/assets/bundles/bundle_westaria/art/terrain/terrain_zhongzhou_l1.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6047,9 +6158,9 @@
       "legacy_key": "icons/spell_banner_consecration",
       "legacy_path": "game/assets/resources/textures/icons/spell_banner_consecration.png",
       "new_id": "icon_skill_human_iron_wall",
-      "new_target_path": "game/assets/art/ui/icons/icon_skill_human_iron_wall.png",
+      "new_target_path": "game/assets/resources/art/ui/icon_skill_human_iron_wall.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6057,9 +6168,9 @@
       "legacy_key": "icons/spell_banner_heroism",
       "legacy_path": "game/assets/resources/textures/icons/spell_banner_heroism.png",
       "new_id": "icon_skill_human_war_drums",
-      "new_target_path": "game/assets/art/ui/icons/icon_skill_human_war_drums.png",
+      "new_target_path": "game/assets/resources/art/ui/icon_skill_human_war_drums.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6127,9 +6238,9 @@
       "legacy_key": "icons/spell_lords_judgement",
       "legacy_path": "game/assets/resources/textures/icons/spell_lords_judgement.png",
       "new_id": "icon_skill_human_rain_of_arrows",
-      "new_target_path": "game/assets/art/ui/icons/icon_skill_human_rain_of_arrows.png",
+      "new_target_path": "game/assets/resources/art/ui/icon_skill_human_rain_of_arrows.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6137,9 +6248,9 @@
       "legacy_key": "icons/spell_sign_of_advent",
       "legacy_path": "game/assets/resources/textures/icons/spell_sign_of_advent.png",
       "new_id": "icon_skill_human_sovereign_decree",
-      "new_target_path": "game/assets/art/ui/icons/icon_skill_human_sovereign_decree.png",
+      "new_target_path": "game/assets/resources/art/ui/icon_skill_human_sovereign_decree.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6207,9 +6318,9 @@
       "legacy_key": "icons/unit_b_infantry",
       "legacy_path": "game/assets/resources/textures/icons/unit_b_infantry.png",
       "new_id": "icon_unit_celestial_infantry_heavenly_soldier",
-      "new_target_path": "game/assets/art/ui/icons/icon_unit_celestial_infantry_heavenly_soldier.png",
+      "new_target_path": "game/assets/resources/art/ui/icon_unit_celestial_infantry.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6257,9 +6368,9 @@
       "legacy_key": "icons/unit_e_archers",
       "legacy_path": "game/assets/resources/textures/icons/unit_e_archers.png",
       "new_id": "icon_unit_chaos_ranged_nether_marksman",
-      "new_target_path": "game/assets/art/ui/icons/icon_unit_chaos_ranged_nether_marksman.png",
+      "new_target_path": "game/assets/resources/art/ui/icon_unit_chaos_ranged.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6267,9 +6378,9 @@
       "legacy_key": "icons/unit_e_infantry",
       "legacy_path": "game/assets/resources/textures/icons/unit_e_infantry.png",
       "new_id": "icon_unit_chaos_infantry_soul_corroder",
-      "new_target_path": "game/assets/art/ui/icons/icon_unit_chaos_infantry_soul_corroder.png",
+      "new_target_path": "game/assets/resources/art/ui/icon_unit_chaos_infantry.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6327,9 +6438,9 @@
       "legacy_key": "icons/unit_k_infantry",
       "legacy_path": "game/assets/resources/textures/icons/unit_k_infantry.png",
       "new_id": "icon_unit_beast_infantry_mandrill_warrior",
-      "new_target_path": "game/assets/art/ui/icons/icon_unit_beast_infantry_mandrill_warrior.png",
+      "new_target_path": "game/assets/resources/art/ui/icon_unit_beast_infantry.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6377,9 +6488,9 @@
       "legacy_key": "icons/unit_w_archers",
       "legacy_path": "game/assets/resources/textures/icons/unit_w_archers.png",
       "new_id": "icon_unit_human_ranged_crossbowman",
-      "new_target_path": "game/assets/art/ui/icons/icon_unit_human_ranged_crossbowman.png",
+      "new_target_path": "game/assets/resources/art/ui/icon_unit_human_crossbow.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6417,9 +6528,9 @@
       "legacy_key": "icons/unit_w_infantry",
       "legacy_path": "game/assets/resources/textures/icons/unit_w_infantry.png",
       "new_id": "icon_unit_human_infantry_iron_guard",
-      "new_target_path": "game/assets/art/ui/icons/icon_unit_human_infantry_iron_guard.png",
+      "new_target_path": "game/assets/resources/art/ui/icon_unit_human_infantry.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6487,9 +6598,9 @@
       "legacy_key": "map/build_site",
       "legacy_path": "game/assets/resources/textures/map/build_site.png",
       "new_id": "terrain_build_site_seal",
-      "new_target_path": "game/assets/art/terrain/terrain_build_site_seal.png",
+      "new_target_path": "game/assets/resources/art/terrain/terrain_build_site_seal.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6507,9 +6618,9 @@
       "legacy_key": "ui/btn_pill",
       "legacy_path": "game/assets/resources/textures/ui/btn_pill.png",
       "new_id": "ui_btn_bronze_pill",
-      "new_target_path": "game/assets/art/ui/ui_btn_bronze_pill.png",
+      "new_target_path": "game/assets/resources/art/ui/ui_btn_bronze_pill.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",
@@ -6553,17 +6664,6 @@
     },
     {
       "asset_type": "png",
-      "category": "ui_legacy_brand",
-      "legacy_key": "ui/iriysoft_logo",
-      "legacy_path": "game/assets/resources/textures/ui/iriysoft_logo.png",
-      "new_id": null,
-      "new_target_path": null,
-      "phase": "B",
-      "status": "remove",
-      "note": "原版第三方开发商 Logo，原创化阶段彻底移除"
-    },
-    {
-      "asset_type": "png",
       "category": "ui_chrome",
       "legacy_key": "ui/star_gold",
       "legacy_path": "game/assets/resources/textures/ui/star_gold.png",
@@ -6588,9 +6688,9 @@
       "legacy_key": "ui/title_bg",
       "legacy_path": "game/assets/resources/textures/ui/title_bg.png",
       "new_id": "ui_title_bg_shanhai",
-      "new_target_path": "game/assets/art/ui/ui_title_bg_shanhai.png",
+      "new_target_path": "game/assets/resources/art/ui/ui_title_bg_shanhai.png",
       "phase": "B",
-      "status": "pending"
+      "status": "integrated"
     },
     {
       "asset_type": "png",

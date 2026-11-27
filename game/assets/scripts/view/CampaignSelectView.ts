@@ -19,21 +19,21 @@ interface CampaignCardSpec {
 const CAMPAIGN_CARDS: CampaignCardSpec[] = [
   {
     id: 'Westaria',
-    iconKey: 'icons/unit_w_infantry3',
-    accent: new Color(110, 225, 130, 245),
-    fill: new Color(22, 42, 30, 240),
+    iconKey: 'ui/icon_faction_human',
+    accent: new Color(230, 132, 82, 245),
+    fill: new Color(40, 22, 20, 242),
   },
   {
     id: 'TheKhaganate',
-    iconKey: 'icons/unit_k_cavalry3',
-    accent: new Color(235, 105, 95, 245),
-    fill: new Color(46, 22, 24, 240),
+    iconKey: 'ui/icon_faction_beast',
+    accent: new Color(118, 210, 128, 245),
+    fill: new Color(22, 38, 26, 242),
   },
   {
     id: 'TheCult',
-    iconKey: 'icons/unit_b_archers3',
-    accent: new Color(95, 185, 245, 245),
-    fill: new Color(20, 34, 52, 240),
+    iconKey: 'ui/icon_faction_celestial',
+    accent: new Color(122, 212, 245, 245),
+    fill: new Color(20, 34, 48, 242),
   },
 ];
 
@@ -137,13 +137,13 @@ export class CampaignSelectView {
       card.setPosition(xs[idx], -20);
       drawPanel(card.addComponent(Graphics), 365, 520, spec.fill, spec.accent, 3, 16);
 
-      const emblem = createUiNode('Emblem', card, 96, 96);
+      const emblem = createUiNode('Emblem', card, 108, 108);
       emblem.setPosition(0, 175);
-      drawPanel(emblem.addComponent(Graphics), 106, 106, new Color(18, 18, 28, 220), spec.accent, 2, 16);
-      const icN = createUiNode('Icon', emblem, 78, 78);
+      drawPanel(emblem.addComponent(Graphics), 108, 108, new Color(18, 18, 24, 225), spec.accent, 2, 16);
+      const icN = createUiNode('Icon', emblem, 94, 94);
       const icSp = icN.addComponent(Sprite);
       icSp.sizeMode = Sprite.SizeMode.CUSTOM;
-      getStaticSpriteFrame(spec.iconKey).then((sf) => {
+      void getStaticSpriteFrame(spec.iconKey).then((sf) => {
         if (icN.isValid) icSp.spriteFrame = sf;
       });
 
@@ -177,11 +177,11 @@ export class CampaignSelectView {
       statsL.overflow = Label.Overflow.CLAMP;
       statsL.color = new Color(255, 224, 128, 255);
 
-      const playBtn = createUiNode(`BtnSelect_${spec.id}`, card, 250, 54);
+      const playBtn = createUiNode(`BtnSelect_${spec.id}`, card, 250, 62);
       playBtn.setPosition(0, -204);
       const pSp = playBtn.addComponent(Sprite);
       pSp.sizeMode = Sprite.SizeMode.CUSTOM;
-      getStaticSpriteFrame('ui/btn_pill').then((sf) => {
+      void getStaticSpriteFrame(SPRITE_MANIFEST['ui/btn_pill_active'] ? 'ui/btn_pill_active' : 'ui/btn_pill').then((sf) => {
         if (playBtn.isValid) pSp.spriteFrame = sf;
       });
       const pLbl = createUiNode('L', playBtn, 220, 34).addComponent(Label);

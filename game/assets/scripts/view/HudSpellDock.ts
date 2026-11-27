@@ -1,4 +1,5 @@
 import { Button, Color, Graphics, Label, Node, Sprite } from 'cc';
+import { SPRITE_MANIFEST } from '../data/AssetManifest';
 import { getSpellName, t } from '../data/I18n';
 import { ALL_SPELLS, CAMPAIGN_SPELL_ORDER } from '../data/SpellsData';
 import { SpellId } from '../data/Types';
@@ -40,24 +41,34 @@ export class HudSpellDock {
     safeInsets: SafeAreaInsets,
     private callbacks: SpellDockCallbacks,
   ) {
-    this.dockNode = createUiNode('SpellDock', parent, 234, 120);
+    this.dockNode = createUiNode('SpellDock', parent, 280, 120);
     const { halfW, halfH } = getHudHalfExtents();
     this.layout(halfW, halfH, safeInsets);
     drawPanel(
       this.dockNode.addComponent(Graphics),
-      234,
+      280,
       120,
-      new Color(20, 20, 32, 235),
-      new Color(180, 145, 78, 225),
+      new Color(18, 20, 28, 228),
+      new Color(188, 150, 82, 230),
       2,
       12,
     );
 
+    if (SPRITE_MANIFEST['ui/hud_spell_dock']) {
+      const frameN = createUiNode('DockFrame', this.dockNode, 286, 124);
+      const frameSp = frameN.addComponent(Sprite);
+      frameSp.sizeMode = Sprite.SizeMode.CUSTOM;
+      frameSp.color = new Color(255, 255, 255, 195);
+      void getStaticSpriteFrame('ui/hud_spell_dock').then((sf) => {
+        if (frameN.isValid) frameSp.spriteFrame = sf;
+      });
+    }
+
     const coords = [
-      { x: -55, y: 28 },
-      { x: 55, y: 28 },
-      { x: -55, y: -28 },
-      { x: 55, y: -28 },
+      { x: -55, y: 26 },
+      { x: 55, y: 26 },
+      { x: -55, y: -26 },
+      { x: 55, y: -26 },
     ];
 
     for (let idx = 0; idx < 4; idx++) {
@@ -115,7 +126,7 @@ export class HudSpellDock {
   onSlotClicked: ((idx: number) => void) | null = null;
 
   layout(halfW: number, halfH: number, safeInsets: SafeAreaInsets): void {
-    this.dockNode.setPosition(-halfW + 126 + safeInsets.left, -halfH + 65 + safeInsets.bottom);
+    this.dockNode.setPosition(-halfW + 148 + safeInsets.left, -halfH + 65 + safeInsets.bottom);
   }
 
   triggerSlot(slotIdx: number, activeSpell: SpellId | null): void {

@@ -1,88 +1,90 @@
-import { BadgeId, EdictId, MedalRank, PlayableCampaignId, SpellId } from './Types';
+import { BadgeId, EdictId, FactionId, MedalRank, PlayableCampaignId, SpellId, StrongholdKind } from './Types';
 import { LanguageCode } from './UserSettings';
 
-let activeLanguage: LanguageCode = 'en';
+let activeLanguage: LanguageCode = 'zh';
 
 export function getLanguage(): LanguageCode {
   return activeLanguage;
 }
 
 export function setLanguage(lang: LanguageCode): void {
-  activeLanguage = lang === 'zh' ? 'zh' : 'en';
+  activeLanguage = lang === 'en' ? 'en' : 'zh';
 }
 
 const EN_UI = {
   // Title
-  title_subtitle: '3 CAMPAIGNS · 24 MISSIONS · 27 ROYAL EDICTS · 22 BADGES',
+  title_game_name: 'SHANHAI FENGHUO',
+  title_tagline: 'THE SEAL SHATTERED · NINE PROVINCES AFLAME',
+  title_subtitle: '3 FACTIONS · 24 CHAPTERS · 27 IMPERIAL DECREES · 22 MERITS',
   title_btn_campaign: 'CAMPAIGN',
-  title_btn_quick: 'QUICK BATTLE',
+  title_btn_quick: 'CH.1 QUICK PLAY',
   title_sound_on: 'SOUND: ON',
   title_sound_off: 'SOUND: OFF',
   title_btn_save: 'SAVE DATA',
-  title_attr: 'COCOS 4 + TypeScript Remake · 16:9',
+  title_attr: 'Shanhai Fenghuo · Original Eastern Fantasy RTS · 16:9',
   lang_toggle_btn: 'EN / 中文',
 
   // Campaign Select
-  select_title: 'SELECT CAMPAIGN — RIVADIS',
-  select_badges_btn: 'BADGES ({unlocked}/{total})',
+  select_title: 'SELECT FACTION — NINE PROVINCES',
+  select_badges_btn: 'MERITS ({unlocked}/{total})',
   select_back_menu: 'MAIN MENU',
-  select_play_btn: 'PLAY CAMPAIGN',
-  select_card_stats: 'Missions: {done} / 8  (Gold: {golds})\nCommander Rank: {rank} · Free Pts: {pts}',
+  select_play_btn: 'ENTER CAMPAIGN',
+  select_card_stats: 'Chapters: {done} / 8  (Gold: {golds})\nCommander Rank: {rank} · Free Pts: {pts}',
 
   // Campaign Map
   map_rank_xp: 'RANK {rank} · XP {xp} / {next}',
   map_rank_max: 'RANK {rank} (MAX)',
-  map_edict_pts: 'EDICT PTS: {pts}',
-  map_btn_throne: 'THRONE ROOM',
-  map_btn_badges: 'BADGES',
-  map_btn_campaigns: 'CAMPAIGNS',
-  map_mission_title: 'MISSION {num}: {name}',
-  map_mission_meta: 'Reward: +{xp} XP  |  Tech Tier: T{tier}\nEnemies:\n  {enemies}',
-  map_record_conquered: 'Status: CONQUERED ({medal} Medal)\nBest Time: {time}',
-  map_record_ready: 'Status: READY FOR ASSAULT\nGold < 05:30 · Silver <= 09:30',
-  map_btn_start: 'START MISSION',
+  map_edict_pts: 'DECREE PTS: {pts}',
+  map_btn_throne: 'DECREE HALL',
+  map_btn_badges: 'MERITS',
+  map_btn_campaigns: 'FACTIONS',
+  map_mission_title: 'CHAPTER {num}: {name}',
+  map_mission_meta: 'Reward: +{xp} XP  |  Enemy Tier: T{tier}\nHostiles:\n  {enemies}',
+  map_record_conquered: 'Status: CONQUERED ({medal} Seal)\nBest Time: {time}',
+  map_record_ready: 'Status: READY FOR BATTLE\nGold < 05:30 · Silver <= 09:30',
+  map_btn_start: 'MARCH TO WAR',
   map_freeplay_on: 'FREE PLAY: ALL OPEN (ON)',
   map_freeplay_off: 'FREE PLAY: UNLOCK ALL',
 
   // Throne Room
-  throne_title_westaria: 'THRONE ROOM — ROYAL EDICTS',
-  throne_title_khaganate: 'WAR TENT — KHAGANATE DECREES',
-  throne_title_cult: 'ARCANE CITADEL — CULT EDICTS',
+  throne_title_westaria: 'JIUZHOU IMPERIAL HALL — HUMAN DECREES',
+  throne_title_khaganate: 'WILDERNESS ALTAR — BEAST OATHS',
+  throne_title_cult: 'KUNLUN SANCTUM — CELESTIAL MANDATES',
   throne_available_pts: 'AVAILABLE POINTS: {pts}',
-  throne_btn_reset: 'RESET EDICTS',
-  throne_btn_back: 'BACK TO CAMPAIGN MAP',
+  throne_btn_reset: 'RESET DECREES',
+  throne_btn_back: 'BACK TO WORLD MAP',
   throne_maxed: 'MAXED',
   throne_upgrade: 'UPGRADE TO LV.{lv} (1 PT)',
-  throne_need_pt: 'NEED SKILL POINT',
+  throne_need_pt: 'NEED DECREE PT',
   throne_sum_khaganate:
-    'Horde Army: Inf T{inf} · Arc T{arc} · Cav T{cav} · Siege T{siege}   |   Spells: {spells}/4   |   Speed ×{spd} · Capture +{cap}g · Poison +{poi}',
+    'Beast Horde: Inf T{inf} · Rng T{arc} · Cav T{cav} · Siege T{siege}   |   Arts: {spells}/4   |   Speed ×{spd} · Loot +{cap} · Venom +{poi}',
   throne_sum_cult:
-    'Cult Army: Inf T{inf} · Arc T{arc} · Cav T{cav} · Mag T{mag}   |   Spells: {spells}/4   |   Supply Cost ×{sup} · Spell Cost ×{spc} · Tower +{twr}',
+    'Celestial Army: Inf T{inf} · Rng T{arc} · Cav T{cav} · Sup T{mag}   |   Arts: {spells}/4   |   Build Cost ×{sup} · Art Cost ×{spc} · Sanctum +{twr}',
   throne_sum_westaria:
-    'Westaria Army: Inf T{inf} · Arc T{arc} · Cav T{cav} · Mag T{mag}   |   Spells: {spells}/4   |   Start +{gold}g · Stronghold HP ×{shp} · Charge ×{chg}',
+    'Human Army: Inf T{inf} · Rng T{arc} · Cav T{cav} · Sup T{mag}   |   Arts: {spells}/4   |   Start +{gold}g · Citadel HP ×{shp} · Charge ×{chg}',
 
   // Badges Room
-  badges_title: 'HALL OF BADGES — ACHIEVEMENTS',
+  badges_title: 'HALL OF MERITS — ACHIEVEMENTS',
   badges_unlocked_count: 'UNLOCKED: {unlocked} / {total}',
   badges_page_1: 'PAGE 1 (1-12)',
   badges_page_2: 'PAGE 2 (13-22)',
   badges_back: 'BACK',
   badges_footer:
-    'Showing Badges {range} of {total}  ·  Complete campaigns, medals, edicts & combat feats to unlock',
+    'Showing Merits {range} of {total}  ·  Complete campaigns, Gold seals, decrees & combat feats to unlock',
   badges_status_unlocked: '★ UNLOCKED',
   badges_status_locked: 'LOCKED',
 
   // Loading Overlay
-  load_mission_header: 'MISSION {num}: {name}',
+  load_mission_header: 'CHAPTER {num}: {name}',
   load_connecting: 'CONNECTING TO ASSET BUNDLE... 0%',
-  load_gameplay_bundle: 'LOADING GAMEPLAY BUNDLE...',
-  load_mission_data: 'LOADING MISSION DATA...',
-  load_battlefield_map: 'LOADING BATTLEFIELD MAP...',
-  load_retrying_bundle: 'GAMEPLAY BUNDLE RETRYING ({next}/{max})...',
-  load_retrying_mission: 'MISSION DATA RETRYING ({next}/{max})...',
-  load_retrying_map: 'BATTLEFIELD MAP RETRYING ({next}/{max})...',
+  load_gameplay_bundle: 'LOADING BATTLEFIELD ASSETS...',
+  load_mission_data: 'LOADING CHAPTER DATA...',
+  load_battlefield_map: 'LOADING PROVINCE TERRAIN...',
+  load_retrying_bundle: 'BATTLEFIELD ASSETS RETRYING ({next}/{max})...',
+  load_retrying_mission: 'CHAPTER DATA RETRYING ({next}/{max})...',
+  load_retrying_map: 'PROVINCE TERRAIN RETRYING ({next}/{max})...',
   load_ready: 'READY!',
-  load_failed_title: 'MISSION ASSET LOAD FAILED',
+  load_failed_title: 'CHAPTER ASSET LOAD FAILED',
   load_failed_detail: 'Network/CDN error: {detail}',
   load_btn_retry: 'RETRY',
   load_btn_back: 'BACK',
@@ -90,7 +92,7 @@ const EN_UI = {
   // Battle HUD
   hud_gold: 'GOLD: {gold} (+{rate}/s)',
   hud_supply: 'SUPPLY: {used}/{total}',
-  hud_mana: 'MANA: {mana}/500',
+  hud_mana: 'ESSENCE: {mana}/500',
   hud_time: 'TIME: {time}  (GOLD <05:30)',
   hud_speed_1x: '1X [F]',
   hud_speed_2x: '2X [F]',
@@ -99,70 +101,70 @@ const EN_UI = {
   hud_mute_on: 'MUTED [M]',
   hud_map_btn: 'MAP',
   hud_cancel_spell: 'CANCEL [ESC]',
-  hud_targeting: 'TARGETING: {spell} — Tap/Click map to cast',
-  hud_mission_obj: 'Mission {num}: {name} — Capture all hostile strongholds!',
+  hud_targeting: 'TARGETING: {spell} — Tap/Click battlefield to invoke',
+  hud_mission_obj: 'Ch.{num}: {name} — Seize all hostile strongholds!',
   hud_spell_locked: 'LOCKED',
   hud_spell_ready: 'READY!',
-  hud_spell_mana: '{cost}m',
+  hud_spell_mana: '{cost}e',
   hud_fort_header: '{name} (Lv.{lv}) · HP {hp}/{maxHp}',
   hud_unit_cost: '{cost}g · {upkeep}sup',
   hud_no_supply: 'NO SUPPLY',
   hud_upgrade_max: 'MAX\nLEVEL',
-  hud_upgrade_cost: 'UPGRADE\n{cost} Gold\n(+50% HP)',
-  hud_build_title: 'CONSTRUCT SUPPLY BUILDING ({cost} Gold)',
-  hud_build_farm: 'Farm\n+1 Supply',
-  hud_build_mine: 'Mine\n+2 Gold/s',
-  hud_build_obelisk: 'Obelisk\n+1 Mana/s',
-  hud_march_btn: 'MARCH TO ENEMY',
-  hud_squad_info: '{name}{tags} ({alive}/{total}, HP {hp}/{maxHp})\nClick map or enemy stronghold to march & attack',
-  hud_tag_heroic: 'HEROIC',
-  hud_tag_bloodlust: 'BLOODLUST',
-  hud_tag_frost: 'FROST ARMOR',
-  hud_tag_liberation: 'LIBERATED',
-  hud_tag_frozen: 'FROZEN',
-  hud_tag_poisoned: 'POISONED',
-  hud_tag_feared: 'FEARED',
+  hud_upgrade_cost: 'FORTIFY\n{cost} Gold\n(+50% HP)',
+  hud_build_title: 'CONSTRUCT RESOURCE SITE ({cost} Gold)',
+  hud_build_farm: 'Granary\n+1 Supply',
+  hud_build_mine: 'Mint Mine\n+2 Gold/s',
+  hud_build_obelisk: 'Essence Stele\n+1 Essence/s',
+  hud_march_btn: 'ATTACK ENEMY',
+  hud_squad_info: '{name}{tags} ({alive}/{total}, HP {hp}/{maxHp})\nTap map or hostile stronghold to march & engage',
+  hud_tag_heroic: 'INSPIRED',
+  hud_tag_bloodlust: 'FRENZIED',
+  hud_tag_frost: 'AEGIS',
+  hud_tag_liberation: 'PURIFIED',
+  hud_tag_frozen: 'SEALED',
+  hud_tag_poisoned: 'VENOMED',
+  hud_tag_feared: 'SHAKEN',
 
   // Pause Modal
-  pause_title: 'GAME PAUSED',
+  pause_title: 'BATTLE PAUSED',
   pause_bgm: 'BGM: {pct}%',
   pause_sfx: 'SFX: {pct}%',
   pause_lang_row: 'LANGUAGE: ENGLISH',
   pause_lang_btn: '中文',
   pause_resume: 'RESUME',
-  pause_restart: 'RESTART MISSION',
-  pause_map: 'CAMPAIGN MAP',
+  pause_restart: 'RESTART CHAPTER',
+  pause_map: 'WORLD MAP',
   pause_menu: 'MAIN MENU',
 
   // Result Overlay
-  result_victory: 'VICTORY! ({medal} MEDAL)',
+  result_victory: 'VICTORY! ({medal} SEAL)',
   result_defeat: 'DEFEAT',
-  result_btn_next: 'NEXT MISSION',
-  result_btn_throne: 'THRONE ROOM',
-  result_btn_map: 'CAMPAIGN MAP',
+  result_btn_next: 'NEXT CHAPTER',
+  result_btn_throne: 'DECREE HALL',
+  result_btn_map: 'WORLD MAP',
   result_btn_replay: 'REPLAY',
   result_reward_xp: '\nEarned XP: +{xp}  |  Rank: {rank}{pts}',
-  result_reward_pts: ' (+{pts} Edict Points!)',
-  result_badges_unlocked: '\nBadges Unlocked: {list}',
+  result_reward_pts: ' (+{pts} Decree Points!)',
+  result_badges_unlocked: '\nMerits Unlocked: {list}',
   result_details:
-    'Mission {num}: {name}\nTime: {time}   (Gold < 05:30, Silver <= 09:30)\nEnemy Squads Destroyed: {kills}   |   Squads Lost: {lost}',
+    'Chapter {num}: {name}\nTime: {time}   (Gold < 05:30, Silver <= 09:30)\nHostile Squads Defeated: {kills}   |   Allied Squads Lost: {lost}',
 
   // Battle Floating Text
-  vfx_veteran_up: 'VETERAN UP!',
-  vfx_lords_judgement: "LORD'S JUDGEMENT!",
-  vfx_stoneworms: 'STONEWORMS!',
-  vfx_immortals_risen: 'IMMORTALS RISEN!',
-  vfx_undead_raised: 'UNDEAD RAISED!',
-  vfx_frozen: 'FROZEN!',
-  vfx_frost_enchant: 'FROST ENCHANT!',
-  vfx_cataclysm: 'CATACLYSM!',
-  vfx_transformation: 'TRANSFORMATION +{gold}G/M!',
-  vfx_lords_avatar: "LORD'S AVATAR!",
+  vfx_veteran_up: 'VETERAN PROMOTED!',
+  vfx_lords_judgement: 'RAIN OF ARROWS!',
+  vfx_stoneworms: 'VENOM MIST!',
+  vfx_immortals_risen: 'SPIRITS SUMMONED!',
+  vfx_undead_raised: 'SOULS CORRODED!',
+  vfx_frozen: 'FROST SEALED!',
+  vfx_frost_enchant: 'HEAVENLY AEGIS!',
+  vfx_cataclysm: 'WILDERNESS STAMPEDE!',
+  vfx_transformation: 'HEAVENLY PUNISHMENT +{gold}G/E!',
+  vfx_lords_avatar: 'SOVEREIGN DECREE!',
   vfx_gold_gain: '+{gold} GOLD!',
 
   // Save Data Modal
   save_modal_title: 'SAVE DATA BACKUP & TRANSFER',
-  save_summary: 'Progress: {done}/24 Missions · {golds} Gold Medals · {badges}/22 Badges',
+  save_summary: 'Progress: {done}/24 Chapters · {golds} Gold Seals · {badges}/22 Merits',
   save_code_hint: 'Current Transfer Code (Base64 + Checksum):',
   save_btn_copy: 'COPY CODE',
   save_btn_download: 'EXPORT .TXT',
@@ -173,9 +175,9 @@ const EN_UI = {
   save_status_ready: 'Copy or export your save code to transfer progress across devices.',
   save_status_copied: 'Save code copied to clipboard!',
   save_status_copy_fallback: 'Clipboard blocked — use EXPORT .TXT or copy from import box.',
-  save_status_downloaded: 'Downloaded takeover-save.txt!',
+  save_status_downloaded: 'Downloaded shanhai-fenghuo-save.txt!',
   save_status_download_unavail: 'File download is unavailable in this runtime.',
-  save_status_imported: 'Imported! {done}/24 missions, {badges}/22 badges restored.',
+  save_status_imported: 'Imported! {done}/24 chapters, {badges}/22 merits restored.',
   save_status_reset_warn: 'Warning: Click CONFIRM RESET? again to wipe all progress!',
   save_status_reset_done: 'All campaign saves have been reset.',
   save_err_empty: 'Import canceled or empty code.',
@@ -192,155 +194,157 @@ export type UiTextKey = keyof typeof EN_UI;
 
 const ZH_UI: Record<UiTextKey, string> = {
   // Title
-  title_subtitle: '3 大战役 · 24 个关卡 · 27 项王国法令 · 22 枚荣誉徽章',
-  title_btn_campaign: '开始战役',
-  title_btn_quick: '快速遭遇战',
+  title_game_name: '山海烽火',
+  title_tagline: '山海封印已破，九州烽火再起',
+  title_subtitle: '3 大阵营 · 24 关战役 · 27 项诏令 · 22 枚山海功勋',
+  title_btn_campaign: '九州征战',
+  title_btn_quick: '第1关 烽火初起',
   title_sound_on: '声音: 开',
   title_sound_off: '声音: 关',
   title_btn_save: '存档管理',
-  title_attr: 'COCOS 4 + TypeScript 重制版 · 16:9',
+  title_attr: '山海烽火 · 东方神话原创即时战略 · 16:9',
   lang_toggle_btn: '中文 / EN',
 
   // Campaign Select
-  select_title: '选择战役 — 里瓦迪斯大陆',
-  select_badges_btn: '徽章 ({unlocked}/{total})',
+  select_title: '选择阵营 — 九州风云',
+  select_badges_btn: '功勋 ({unlocked}/{total})',
   select_back_menu: '返回主菜单',
-  select_play_btn: '进入战役',
-  select_card_stats: '关卡进度: {done} / 8  (金牌: {golds})\n统帅等级: {rank} · 可用点数: {pts}',
+  select_play_btn: '统兵出征',
+  select_card_stats: '章节进度: {done} / 8  (金印: {golds})\n统帅境界: {rank} · 可用诏令点: {pts}',
 
   // Campaign Map
-  map_rank_xp: '等级 {rank} · 经验 {xp} / {next}',
-  map_rank_max: '等级 {rank} (满级)',
-  map_edict_pts: '法令点: {pts}',
-  map_btn_throne: '王座厅',
-  map_btn_badges: '徽章殿堂',
-  map_btn_campaigns: '切换战役',
-  map_mission_title: '第 {num} 关: {name}',
-  map_mission_meta: '胜利奖励: +{xp} XP  |  敌军科技: T{tier}\n敌对势力:\n  {enemies}',
-  map_record_conquered: '战况: 已攻克 ({medal}勋章)\n最佳用时: {time}',
-  map_record_ready: '战况: 整装待发\n金牌 < 05:30 · 银牌 <= 09:30',
-  map_btn_start: '出征关卡',
-  map_freeplay_on: '自由模式: 全关卡已解锁 (开)',
-  map_freeplay_off: '自由模式: 解锁全部关卡',
+  map_rank_xp: '境界 {rank} · 战功 {xp} / {next}',
+  map_rank_max: '境界 {rank} (圆满)',
+  map_edict_pts: '诏令点: {pts}',
+  map_btn_throne: '议政大殿',
+  map_btn_badges: '山海功勋',
+  map_btn_campaigns: '切换阵营',
+  map_mission_title: '第 {num} 章: {name}',
+  map_mission_meta: '胜利奖励: +{xp} 战功  |  敌军阶位: T{tier}\n敌对势力:\n  {enemies}',
+  map_record_conquered: '战况: 已平定 ({medal}印)\n最佳用时: {time}',
+  map_record_ready: '战况: 整军待发\n金印 < 05:30 · 银印 <= 09:30',
+  map_btn_start: '起兵出征',
+  map_freeplay_on: '自由演武: 全章节已解锁 (开)',
+  map_freeplay_off: '自由演武: 解锁全部章节',
 
   // Throne Room
-  throne_title_westaria: '王座大厅 — 王国法令',
-  throne_title_khaganate: '战帐议事 — 汗国法令',
-  throne_title_cult: '奥术圣殿 — 教团密令',
-  throne_available_pts: '可用法令点: {pts}',
-  throne_btn_reset: '重置法令',
-  throne_btn_back: '返回战役地图',
-  throne_maxed: '已满级',
-  throne_upgrade: '升级至 Lv.{lv} (1 点)',
-  throne_need_pt: '需要法令点',
+  throne_title_westaria: '九州议政殿 — 人皇诏令',
+  throne_title_khaganate: '大荒战坛 — 妖盟祖训',
+  throne_title_cult: '昆仑玉虚殿 — 天道法旨',
+  throne_available_pts: '可用诏令点: {pts}',
+  throne_btn_reset: '重置诏令',
+  throne_btn_back: '返回九州沙盘',
+  throne_maxed: '已圆满',
+  throne_upgrade: '研习至 Lv.{lv} (1 点)',
+  throne_need_pt: '需要诏令点',
   throne_sum_khaganate:
-    '汗国军备: 步T{inf} · 弓T{arc} · 骑T{cav} · 攻城T{siege}   |   法术: {spells}/4   |   移速×{spd} · 占城+{cap}金 · 剧毒+{poi}',
+    '妖盟军势: 步T{inf} · 射T{arc} · 骑T{cav} · 巨兽T{siege}   |   妖术: {spells}/4   |   移速×{spd} · 破城+{cap}金铢 · 蚀毒+{poi}',
   throne_sum_cult:
-    '教团军备: 步T{inf} · 弓T{arc} · 骑T{cav} · 法T{mag}   |   法术: {spells}/4   |   补给花费×{sup} · 法术耗魔×{spc} · 法师塔+{twr}',
+    '神庭天军: 步T{inf} · 射T{arc} · 骑T{cav} · 辅T{mag}   |   神术: {spells}/4   |   建造耗费×{sup} · 术耗×{spc} · 聚灵塔+{twr}',
   throne_sum_westaria:
-    '维斯塔利亚: 步T{inf} · 弓T{arc} · 骑T{cav} · 法T{mag}   |   法术: {spells}/4   |   初始+{gold}金 · 据点血量×{shp} · 冲锋×{chg}',
+    '人皇军阵: 步T{inf} · 弩T{arc} · 骑T{cav} · 辅T{mag}   |   军策: {spells}/4   |   初始+{gold}金铢 · 城防×{shp} · 冲锋×{chg}',
 
   // Badges Room
-  badges_title: '荣誉殿堂 — 成就徽章',
-  badges_unlocked_count: '已解锁: {unlocked} / {total}',
-  badges_page_1: '第 1 页 (1-12)',
-  badges_page_2: '第 2 页 (13-22)',
+  badges_title: '山海功勋殿 — 征战铭录',
+  badges_unlocked_count: '已铭刻: {unlocked} / {total}',
+  badges_page_1: '第 1 卷 (1-12)',
+  badges_page_2: '第 2 卷 (13-22)',
   badges_back: '返回',
-  badges_footer: '当前显示第 {range} 枚徽章（共 {total} 枚） · 完成战役、金牌、法令与战斗壮举即可解锁',
+  badges_footer: '当前显示第 {range} 枚功勋（共 {total} 枚） · 完成战役、金印、诏令与战场壮举即可解锁',
   badges_status_unlocked: '★ 已解锁',
   badges_status_locked: '未解锁',
 
   // Loading Overlay
-  load_mission_header: '第 {num} 关: {name}',
-  load_connecting: '正在连接资源分包... 0%',
-  load_gameplay_bundle: '正在加载核心战斗资源...',
-  load_mission_data: '正在加载关卡数据...',
-  load_battlefield_map: '正在加载战场地图...',
-  load_retrying_bundle: '核心资源重试中 ({next}/{max})...',
-  load_retrying_mission: '关卡数据重试中 ({next}/{max})...',
-  load_retrying_map: '战场地图重试中 ({next}/{max})...',
-  load_ready: '准备就绪!',
-  load_failed_title: '关卡资源加载失败',
-  load_failed_detail: '网络/CDN 错误: {detail}',
+  load_mission_header: '第 {num} 章: {name}',
+  load_connecting: '正在接入山海资源分包... 0%',
+  load_gameplay_bundle: '正在载入战场军阵资源...',
+  load_mission_data: '正在载入章节推演数据...',
+  load_battlefield_map: '正在铺展九州战场舆图...',
+  load_retrying_bundle: '战场资源重试中 ({next}/{max})...',
+  load_retrying_mission: '章节数据重试中 ({next}/{max})...',
+  load_retrying_map: '战场舆图重试中 ({next}/{max})...',
+  load_ready: '战阵就绪!',
+  load_failed_title: '战场资源加载失败',
+  load_failed_detail: '网络或资源异常: {detail}',
   load_btn_retry: '重试',
   load_btn_back: '返回',
 
   // Battle HUD
-  hud_gold: '金币: {gold} (+{rate}/秒)',
-  hud_supply: '补给: {used}/{total}',
-  hud_mana: '法力: {mana}/500',
-  hud_time: '计时: {time}  (金牌<05:30)',
+  hud_gold: '金铢: {gold} (+{rate}/秒)',
+  hud_supply: '军粮: {used}/{total}',
+  hud_mana: '玄息: {mana}/500',
+  hud_time: '战时: {time}  (金印<05:30)',
   hud_speed_1x: '1倍 [F]',
   hud_speed_2x: '2倍 [F]',
   hud_pause_btn: '暂停 [SPC]',
   hud_mute_off: '音效开 [M]',
   hud_mute_on: '静音 [M]',
-  hud_map_btn: '地图',
+  hud_map_btn: '沙盘',
   hud_cancel_spell: '取消 [ESC]',
-  hud_targeting: '瞄准法术: {spell} — 点击地图施放',
-  hud_mission_obj: '第 {num} 关: {name} — 攻占所有敌方据点!',
+  hud_targeting: '施法瞄准: {spell} — 点击战场目标位置施放',
+  hud_mission_obj: '第 {num} 章: {name} — 夺取全部敌方据点!',
   hud_spell_locked: '未解锁',
-  hud_spell_ready: '已就绪!',
-  hud_spell_mana: '{cost}法力',
-  hud_fort_header: '{name} (Lv.{lv}) · 耐久 {hp}/{maxHp}',
-  hud_unit_cost: '{cost}金 · {upkeep}补给',
-  hud_no_supply: '补给不足',
-  hud_upgrade_max: '已达\n满级',
-  hud_upgrade_cost: '升级据点\n{cost} 金币\n(+50% 耐久)',
-  hud_build_title: '建造补给设施 ({cost} 金币)',
-  hud_build_farm: '农场\n+1 补给',
-  hud_build_mine: '金矿\n+2 金币/秒',
-  hud_build_obelisk: '方尖碑\n+1 法力/秒',
-  hud_march_btn: '进攻敌军',
-  hud_squad_info: '{name}{tags} ({alive}/{total}, 生命 {hp}/{maxHp})\n点击地图行军或点击敌方据点发起进攻',
-  hud_tag_heroic: '英勇',
-  hud_tag_bloodlust: '嗜血',
-  hud_tag_frost: '霜甲',
-  hud_tag_liberation: '解放',
-  hud_tag_frozen: '冰冻',
-  hud_tag_poisoned: '中毒',
-  hud_tag_feared: '恐惧',
+  hud_spell_ready: '已蓄满!',
+  hud_spell_mana: '{cost}玄息',
+  hud_fort_header: '{name} (Lv.{lv}) · 城防 {hp}/{maxHp}',
+  hud_unit_cost: '{cost}金铢 · {upkeep}粮',
+  hud_no_supply: '军粮不足',
+  hud_upgrade_max: '已达\n满阶',
+  hud_upgrade_cost: '加固城防\n{cost} 金铢\n(+50% 耐久)',
+  hud_build_title: '营建补给建筑 ({cost} 金铢)',
+  hud_build_farm: '粮仓\n+1 军粮',
+  hud_build_mine: '金铢矿场\n+2 金铢/秒',
+  hud_build_obelisk: '玄息碑\n+1 玄息/秒',
+  hud_march_btn: '进击敌阵',
+  hud_squad_info: '{name}{tags} ({alive}/{total}, 气血 {hp}/{maxHp})\n点击沙盘行军或点击敌方据点发起攻城',
+  hud_tag_heroic: '振奋',
+  hud_tag_bloodlust: '狂怒',
+  hud_tag_frost: '天罡护',
+  hud_tag_liberation: '清灵',
+  hud_tag_frozen: '封灵',
+  hud_tag_poisoned: '蚀毒',
+  hud_tag_feared: '惊惧',
 
   // Pause Modal
-  pause_title: '游戏已暂停',
-  pause_bgm: '音乐音量: {pct}%',
+  pause_title: '战局暂停',
+  pause_bgm: '配乐音量: {pct}%',
   pause_sfx: '音效音量: {pct}%',
   pause_lang_row: '当前语言: 简体中文',
   pause_lang_btn: 'English',
-  pause_resume: '继续游戏',
-  pause_restart: '重开本关',
-  pause_map: '返回战役地图',
+  pause_resume: '重返战场',
+  pause_restart: '重开本章',
+  pause_map: '九州沙盘',
   pause_menu: '返回主菜单',
 
   // Result Overlay
-  result_victory: '战役胜利! ({medal}勋章)',
-  result_defeat: '战败',
-  result_btn_next: '下一关',
-  result_btn_throne: '王座厅',
-  result_btn_map: '战役地图',
-  result_btn_replay: '重玩本关',
-  result_reward_xp: '\n获得经验: +{xp}  |  统帅等级: {rank}{pts}',
-  result_reward_pts: ' (+{pts} 法令点!)',
-  result_badges_unlocked: '\n解锁徽章: {list}',
+  result_victory: '大获全胜! ({medal}印)',
+  result_defeat: '兵败溃散',
+  result_btn_next: '下一章',
+  result_btn_throne: '议政大殿',
+  result_btn_map: '九州沙盘',
+  result_btn_replay: '再战本章',
+  result_reward_xp: '\n获得战功: +{xp}  |  统帅境界: {rank}{pts}',
+  result_reward_pts: ' (+{pts} 诏令点!)',
+  result_badges_unlocked: '\n铭刻山海功勋: {list}',
   result_details:
-    '第 {num} 关: {name}\n耗时: {time}   (金牌 < 05:30, 银牌 <= 09:30)\n歼灭敌军小队: {kills}   |   我方战损小队: {lost}',
+    '第 {num} 章: {name}\n耗时: {time}   (金印 < 05:30, 银印 <= 09:30)\n击溃敌部: {kills} 队   |   我军折损: {lost} 队',
 
   // Battle Floating Text
-  vfx_veteran_up: '老兵晋升!',
-  vfx_lords_judgement: '圣主裁决!',
-  vfx_stoneworms: '沙虫破土!',
-  vfx_immortals_risen: '不朽者复苏!',
-  vfx_undead_raised: '亡灵复生!',
-  vfx_frozen: '极寒冰封!',
-  vfx_frost_enchant: '寒冰附魔!',
-  vfx_cataclysm: '天降灾厄!',
-  vfx_transformation: '大转化 +{gold} 金/魔!',
-  vfx_lords_avatar: '圣主降临!',
-  vfx_gold_gain: '+{gold} 金币!',
+  vfx_veteran_up: '百战精锐!',
+  vfx_lords_judgement: '万弩齐发!',
+  vfx_stoneworms: '蚀骨毒雾!',
+  vfx_immortals_risen: '妖魂现世!',
+  vfx_undead_raised: '蚀魂降临!',
+  vfx_frozen: '寒天封灵!',
+  vfx_frost_enchant: '天罡庇护!',
+  vfx_cataclysm: '大荒兽潮!',
+  vfx_transformation: '天罚降世 +{gold} 金/息!',
+  vfx_lords_avatar: '人皇御令!',
+  vfx_gold_gain: '+{gold} 金铢!',
 
   // Save Data Modal
   save_modal_title: '存档备份与跨端转移',
-  save_summary: '当前进度: 已通关 {done}/24 关 · 金牌 {golds} 枚 · 徽章 {badges}/22 枚',
+  save_summary: '征战进度: 已通关 {done}/24 章 · 金印 {golds} 枚 · 功勋 {badges}/22 枚',
   save_code_hint: '当前存档转移码 (Base64 + 校验和):',
   save_btn_copy: '复制存档码',
   save_btn_download: '导出 .TXT',
@@ -348,12 +352,12 @@ const ZH_UI: Record<UiTextKey, string> = {
   save_btn_reset: '重置存档',
   save_btn_reset_confirm: '确认清空?',
   save_btn_close: '关闭',
-  save_status_ready: '复制或导出存档码，即可在其他设备/浏览器恢复全部战役进度。',
+  save_status_ready: '复制或导出存档码，即可在其他设备/浏览器恢复全部征战进度。',
   save_status_copied: '存档码已复制到剪贴板!',
   save_status_copy_fallback: '剪贴板权限受限 — 请使用“导出 .TXT”保存文件。',
-  save_status_downloaded: '已下载 takeover-save.txt 存档文件!',
+  save_status_downloaded: '已下载 shanhai-fenghuo-save.txt 存档文件!',
   save_status_download_unavail: '当前运行环境不支持文件下载。',
-  save_status_imported: '导入成功! 已恢复 {done}/24 关进度与 {badges}/22 枚徽章。',
+  save_status_imported: '导入成功! 已恢复 {done}/24 章进度与 {badges}/22 枚功勋。',
   save_status_reset_warn: '警告: 再次点击“确认清空?”将永久抹除全部本地存档!',
   save_status_reset_done: '所有战役存档已重置为初始状态。',
   save_err_empty: '已取消导入或存档码为空。',
@@ -378,37 +382,55 @@ export function t(key: UiTextKey, params?: Record<string, string | number>): str
 }
 
 const ZH_TUTORIAL1_HINTS = [
-  '引导 1/4: 点击下方绿色城堡，招募步兵“卫士”(100 金币)。',
-  '引导 2/4: 选中我方“卫士”小队，点击来袭的亡灵或紫方城镇发起进攻！',
-  '引导 3/4: 已解锁弓箭手！在空地(旗帜)建造农场/金矿，并夺取敌方城镇。',
-  '引导 4/4: 攻占右上角紫色城堡即可赢取第 1 关！（金牌 < 05:30）',
+  '军情指引 1/4: 点击下方“镇国城”，消耗 100 金铢招募【铁甲卫】！',
+  '军情指引 2/4: 选中【铁甲卫】，点击来犯混沌【蚀魂兵】或上方蚀魂聚落迎敌！',
+  '军情指引 3/4: 已解锁【弩兵】！在空地建造粮仓/矿场补给，稳步推进！',
+  '军情指引 4/4: 攻克右上角混沌【裂隙魔殿】即可平定第一章！（金印 < 05:30）',
+];
+
+const EN_TUTORIAL1_HINTS = [
+  'Guide 1/4: Select your ZhenGuo Citadel (bottom) and recruit Iron Guards (100 Gold).',
+  'Guide 2/4: Select your Iron Guard squad and click hostile Soul Corroders or the Rift Outpost!',
+  'Guide 3/4: Crossbowmen unlocked! Build a Granary or Mint Mine on an empty Build Site.',
+  'Guide 4/4: Seize the Chaos Rift Sanctum (top-right) to win Chapter 1! (Gold Seal < 05:30)',
 ];
 
 const ZH_TUTORIAL2_HINTS = [
-  '第 2 关: 从兵营招募部队，击败守卫宝箱 (+500 金币) 的食人魔！',
-  '提示: 施放“奉献战旗”(50 法力) 可在战斗中治疗并复活我方阵亡士兵！',
-  '目标: 夺取魔法塔为“降临之兆”充能，击溃红色汗国主力！',
-  '胜利在望: 充能满后召唤“圣主化身”，或直接攻破红方主堡！',
+  '第二章: 从军营整编出征，击退盘踞金宝箱 (+500 金铢) 的大荒饕餮！',
+  '军策提示: 施放【铁壁军阵】(50 玄息) 可在混战中护盾回血并重整溃兵！',
+  '战略目标: 夺取【镇灵台】积蓄“人皇御令”气运，击破九黎妖盟防线！',
+  '胜券在握: 气运蓄满可召“人皇法相”压阵，或直取敌方主城！',
 ];
 
-export function getTutorialHint(mode: 'tutorial1' | 'tutorial2', step: number, enHints: string[]): string {
-  if (activeLanguage === 'zh') {
-    const arr = mode === 'tutorial1' ? ZH_TUTORIAL1_HINTS : ZH_TUTORIAL2_HINTS;
-    return arr[Math.min(step, arr.length - 1)] ?? arr[0];
-  }
-  return enHints[Math.min(step, enHints.length - 1)] ?? enHints[0] ?? '';
+const EN_TUTORIAL2_HINTS = [
+  'Chapter 2: Recruit from your Barracks and defeat the Taotie Brute guarding the Relic Chest (+500g)!',
+  'Tactic: Cast Iron Wall Formation (50 Essence) to heal & rally wounded allied guards!',
+  'Objective: Seize the Spirit Sanctum to charge Sovereign Decree, then break the Beast Alliance!',
+  'Victory Near: Summon Sovereign Avatar when ready or capture the enemy stronghold!',
+];
+
+export function getTutorialHint(mode: 'tutorial1' | 'tutorial2', step: number, _legacyHints?: string[]): string {
+  const arr =
+    activeLanguage === 'zh'
+      ? mode === 'tutorial1'
+        ? ZH_TUTORIAL1_HINTS
+        : ZH_TUTORIAL2_HINTS
+      : mode === 'tutorial1'
+        ? EN_TUTORIAL1_HINTS
+        : EN_TUTORIAL2_HINTS;
+  return arr[Math.min(step, arr.length - 1)] ?? arr[0] ?? '';
 }
 
 const ZH_CAMPAIGN_TITLES: Record<PlayableCampaignId, string> = {
-  Westaria: '维斯塔利亚战役',
-  TheKhaganate: '赤红汗国战役',
-  TheCult: '冰谷教团战役',
+  Westaria: '九州人皇篇',
+  TheKhaganate: '九黎妖盟篇',
+  TheCult: '昆仑神庭篇',
 };
 
 const EN_CAMPAIGN_TITLES: Record<PlayableCampaignId, string> = {
-  Westaria: 'WESTARIA CAMPAIGN',
-  TheKhaganate: 'CRIMSON HORDE CAMPAIGN',
-  TheCult: 'ICEDALES CULT CAMPAIGN',
+  Westaria: 'NINE-PROVINCES DYNASTY',
+  TheKhaganate: 'JIULI BEAST ALLIANCE',
+  TheCult: 'KUNLUN CELESTIAL COURT',
 };
 
 export function getCampaignTitle(campaign: PlayableCampaignId): string {
@@ -417,37 +439,37 @@ export function getCampaignTitle(campaign: PlayableCampaignId): string {
 
 const ZH_CAMPAIGN_CARDS: Record<PlayableCampaignId, { title: string; subtitle: string; lore: string }> = {
   Westaria: {
-    title: '维斯塔利亚公国',
-    subtitle: '神圣十字军与骑士团',
-    lore: '守卫西部群岛并向东远征，清除盘踞在破碎帝国里瓦迪斯大陆上的亡灵瘟疫。',
+    title: '九州人皇',
+    subtitle: '以人之力，重定九州 · 军阵工程',
+    lore: '天裂劫后王朝分崩，聚人族铁甲军阵与神机弩械，护佑中州城郭，涤荡混沌裂隙。',
   },
   TheKhaganate: {
-    title: '赤红汗国',
-    subtitle: '草原铁骑与黑暗萨满',
-    lore: '在新任大汗的旗帜下统一东方部族，从古墓唤醒祖先战士，夺回属于汗国的疆土。',
+    title: '九黎妖盟',
+    subtitle: '山川归荒，万灵自由 · 奇袭狂潮',
+    lore: '汇聚大荒异兽与山林古老祭司，凭高机动狼骑与兽潮召唤夺回祖灵山川。',
   },
   TheCult: {
-    title: '冰谷教团',
-    subtitle: '北方秘法巫师与机械师',
-    lore: '驾驭极北群山的奥术寒冰与发条巨像机甲，打破帝国与蛮族的压迫，赢得自由。',
+    title: '昆仑神庭',
+    subtitle: '天道不可违，万物归于序 · 雷霆寒霜',
+    lore: '执掌昆仑白玉神宫与上古符文傀儡，以九霄雷霆与寒天封灵重整失序九州。',
   },
 };
 
 const EN_CAMPAIGN_CARDS: Record<PlayableCampaignId, { title: string; subtitle: string; lore: string }> = {
   Westaria: {
-    title: 'DUCHY OF WESTARIA',
-    subtitle: 'Holy Crusaders & Chivalry',
-    lore: 'Defend the western islands and march east to purge the undead plague from the shattered Empire of Rivadis.',
+    title: 'NINE-PROVINCES DYNASTY',
+    subtitle: 'Order, Shield Formations & Siegecraft',
+    lore: 'Rally disciplined human iron guards, crossbows, and siege engines to defend Zhongzhou and seal the rifts.',
   },
   TheKhaganate: {
-    title: 'THE CRIMSON HORDE',
-    subtitle: 'Steppe Riders & Dark Shamans',
-    lore: 'Unite the eastern clans under a new Great Khan, raise ancient warriors from the tombs, and claim Rivadis.',
+    title: 'JIULI BEAST ALLIANCE',
+    subtitle: 'Wilderness Beasts, Raids & Totems',
+    lore: 'Unite fierce mountain spirits, wolf riders, and shamanic summons to reclaim ancestral wildlands.',
   },
   TheCult: {
-    title: 'THE ICEDALES CULT',
-    subtitle: 'Northern Wizards & Mechanists',
-    lore: 'Channel arcane frost and clockwork Giantbots from the northern peaks to break free from every tyrant.',
+    title: 'KUNLUN CELESTIAL COURT',
+    subtitle: 'Divine Thunder, Frost & Rune Golems',
+    lore: 'Wield jade sanctum arts, arcane frost seals, and sacred rune constructs to restore cosmic order.',
   },
 };
 
@@ -456,19 +478,19 @@ export function getCampaignCardCopy(campaign: PlayableCampaignId): { title: stri
 }
 
 const ZH_FACTIONS: Record<string, string> = {
-  Westaria: '维斯塔利亚十字军 (绿)',
-  TheEmpire: '亡灵帝国 (紫)',
-  TheKhaganate: '赤红汗国 (红)',
-  TheCult: '冰谷教团 (蓝)',
-  Bandits: '荒野匪徒 (棕)',
+  Westaria: '九州人皇 (朱金)',
+  TheEmpire: '混沌势力 (幽紫)',
+  TheKhaganate: '九黎妖盟 (苍绿)',
+  TheCult: '昆仑神庭 (霜蓝)',
+  Bandits: '大荒异兽 (中立)',
 };
 
 const EN_FACTIONS: Record<string, string> = {
-  Westaria: 'Westaria Crusaders (Green)',
-  TheEmpire: 'The Empire (Purple)',
-  TheKhaganate: 'The Crimson Horde (Red)',
-  TheCult: 'The Icedales Cult (Blue)',
-  Bandits: 'Bandits',
+  Westaria: 'Nine-Provinces Dynasty',
+  TheEmpire: 'Chaos Rift',
+  TheKhaganate: 'Jiuli Beast Alliance',
+  TheCult: 'Kunlun Celestial Court',
+  Bandits: 'Wilderness Beasts',
 };
 
 export function getFactionLabel(factionId: string): string {
@@ -476,10 +498,31 @@ export function getFactionLabel(factionId: string): string {
   return map[factionId] ?? factionId;
 }
 
+const ZH_STRONGHOLDS: Record<FactionId, Record<StrongholdKind, string>> = {
+  Westaria: { Castle: '镇国城', Town: '郡城', Camp: '军营', MagicTower: '镇灵台' },
+  TheCult: { Castle: '昆仑神宫', Town: '灵台', Camp: '天兵殿', MagicTower: '聚灵塔' },
+  TheKhaganate: { Castle: '万妖寨', Town: '妖族聚落', Camp: '兽穴', MagicTower: '血灵祭坛' },
+  TheEmpire: { Castle: '裂隙魔殿', Town: '蚀魂聚落', Camp: '裂隙兵巢', MagicTower: '混沌巫坛' },
+  Bandits: { Castle: '大荒巨巢', Town: '荒野山寨', Camp: '妖兽窟', MagicTower: '古祭坛' },
+};
+
+const EN_STRONGHOLDS: Record<FactionId, Record<StrongholdKind, string>> = {
+  Westaria: { Castle: 'ZhenGuo Citadel', Town: 'Commandery Town', Camp: 'Barracks', MagicTower: 'Spirit Terrace' },
+  TheCult: { Castle: 'Kunlun Palace', Town: 'Jade Terrace', Camp: 'Celestial Hall', MagicTower: 'Spirit Pagoda' },
+  TheKhaganate: { Castle: 'WanYao Stockade', Town: 'Tribal Settlement', Camp: 'Beast Den', MagicTower: 'Blood Altar' },
+  TheEmpire: { Castle: 'Rift Sanctum', Town: 'Corrupted Hamlet', Camp: 'Rift Nest', MagicTower: 'Chaos Shrine' },
+  Bandits: { Castle: 'Wild Lair', Town: 'Beast Camp', Camp: 'Feral Den', MagicTower: 'Ancient Altar' },
+};
+
+export function getStrongholdDisplayName(kind: StrongholdKind, owner: FactionId, fallback?: string): string {
+  const table = activeLanguage === 'zh' ? ZH_STRONGHOLDS : EN_STRONGHOLDS;
+  return table[owner]?.[kind] ?? fallback ?? kind;
+}
+
 const ZH_MEDALS: Record<MedalRank, string> = {
-  Gold: '金牌',
-  Silver: '银牌',
-  Bronze: '铜牌',
+  Gold: '金',
+  Silver: '银',
+  Bronze: '铜',
 };
 
 export function getMedalLabel(medal: MedalRank): string {
@@ -487,81 +530,152 @@ export function getMedalLabel(medal: MedalRank): string {
 }
 
 const ZH_UNITS: Record<string, string> = {
-  w_guards: '卫士',
-  w_swordsmen: '剑士',
-  w_legionaries: '圣殿军团',
-  w_archers: '弓箭手',
-  w_crossbowmen: '弩手',
-  w_knights: '骑士',
-  w_champions: '圣殿骑兵',
-  w_monks: '苦修僧',
-  w_zealots: '狂热信徒',
-  w_avatar: '圣主化身',
+  w_guards: '铁甲卫',
+  w_swordsmen: '玄甲卫',
+  w_legionaries: '禁军玄甲将',
+  w_archers: '弩兵',
+  w_crossbowmen: '神机弩手',
+  w_knights: '羽林骑',
+  w_champions: '虎贲铁骑',
+  w_monks: '军阵师',
+  w_zealots: '天策军师',
+  w_avatar: '人皇法相',
   w_trebuchet: '投石车',
 
-  e_undying_warriors: '不死战士',
-  e_zombie_warriors: '行尸武士',
-  e_undying_archers: '不死弓手',
-  e_skeleton_archers: '骷髅射手',
-  e_undying_horsemen: '死亡骑手',
-  e_dark_knights: '黑暗骑士',
-  e_undying_assassins: '幽魂刺客',
-  e_shades: '暗影怨灵',
-  e_trebuchet: '帝国投石车',
-  e_poison_catapult: '剧毒投石车',
+  e_undying_warriors: '蚀魂兵',
+  e_zombie_warriors: '深渊腐卒',
+  e_undying_archers: '幽冥射手',
+  e_skeleton_archers: '裂隙骨弓手',
+  e_undying_horsemen: '冥骨兽骑',
+  e_dark_knights: '冥渊魔骑',
+  e_undying_assassins: '混沌巫使',
+  e_shades: '天裂鬼魅',
+  e_trebuchet: '深渊巨兽',
+  e_poison_catapult: '混沌灭城兽',
 
-  k_warriors: '部落勇士',
-  k_immortals: '古墓不朽者',
-  k_hunters: '草原猎手',
-  k_serpent_archers: '毒蛇射手',
-  k_nomads: '游牧轻骑',
-  k_raiders: '掠夺重骑',
-  k_ancient_raiders: '先祖幽灵骑',
-  k_assassins: '血刃刺客',
-  k_trebuchet: '汗国投石车',
-  k_poison_catapult: '剧毒投石车',
+  k_warriors: '山魈战士',
+  k_immortals: '虎魄战将',
+  k_hunters: '毒羽妖',
+  k_serpent_archers: '风翎妖卫',
+  k_nomads: '狼骑兵',
+  k_raiders: '赤焰兽骑',
+  k_ancient_raiders: '太古战兽骑',
+  k_assassins: '狐灵祭司',
+  k_trebuchet: '巨角兽',
+  k_poison_catapult: '山岳巨兽',
 
-  b_rebels: '起义长矛手',
-  b_myrmidons: '极地重甲兵',
-  b_gunsmiths: '火枪手',
-  b_gunbots: '发条火枪傀儡',
-  b_giantbots: '巨像机甲',
-  b_lancers: '长枪骑兵',
-  b_dragon_lancers: '驯龙骑兵',
-  b_acolytes: '寒冰学徒',
-  b_wizards: '冰霜大法师',
-  b_trebuchet: '教团投石车',
+  b_rebels: '天兵',
+  b_myrmidons: '玉甲天卫',
+  b_gunsmiths: '灵弓使',
+  b_gunbots: '星辰射手',
+  b_giantbots: '镇天神像',
+  b_lancers: '云骑',
+  b_dragon_lancers: '天马神骑',
+  b_acolytes: '御灵师',
+  b_wizards: '雷法天师',
+  b_trebuchet: '符文傀儡',
 
-  n_ogre: '荒野食人魔',
+  n_ogre: '饕餮凶兽',
+};
+
+const EN_UNITS: Record<string, string> = {
+  w_guards: 'Iron Guard',
+  w_swordsmen: 'Xuanjia Guard',
+  w_legionaries: 'Imperial Halberdier',
+  w_archers: 'Crossbowman',
+  w_crossbowmen: 'Divine Crossbow',
+  w_knights: 'Yulin Rider',
+  w_champions: 'Huben Cataphract',
+  w_monks: 'Strategist',
+  w_zealots: 'Tiance Advisor',
+  w_avatar: 'Sovereign Avatar',
+  w_trebuchet: 'War Trebuchet',
+
+  e_undying_warriors: 'Soul Corroder',
+  e_zombie_warriors: 'Abyss Thrall',
+  e_undying_archers: 'Nether Marksman',
+  e_skeleton_archers: 'Rift Bone Archer',
+  e_undying_horsemen: 'Bone Beast Rider',
+  e_dark_knights: 'Abyss Dread Rider',
+  e_undying_assassins: 'Chaos Warlock',
+  e_shades: 'Rift Wraith',
+  e_trebuchet: 'Abyss Behemoth',
+  e_poison_catapult: 'Chaos Juggernaut',
+
+  k_warriors: 'Mandrill Warrior',
+  k_immortals: 'Tiger Champion',
+  k_hunters: 'Venom Feather',
+  k_serpent_archers: 'Wind Plume Guard',
+  k_nomads: 'Wolf Rider',
+  k_raiders: 'Crimson Beast Rider',
+  k_ancient_raiders: 'Ancient Totem Rider',
+  k_assassins: 'Fox Shaman',
+  k_trebuchet: 'Great-Horn Beast',
+  k_poison_catapult: 'Mountain Colossus',
+
+  b_rebels: 'Heavenly Soldier',
+  b_myrmidons: 'Jade Warden',
+  b_gunsmiths: 'Spirit Archer',
+  b_gunbots: 'Star Marksman',
+  b_giantbots: 'Divine Statue',
+  b_lancers: 'Cloud Rider',
+  b_dragon_lancers: 'Tianma Knight',
+  b_acolytes: 'Spirit Tamer',
+  b_wizards: 'Thunder Master',
+  b_trebuchet: 'Rune Golem',
+
+  n_ogre: 'Taotie Brute',
 };
 
 export function getUnitName(defId: string, fallback: string): string {
   if (activeLanguage === 'zh') {
     return ZH_UNITS[defId] ?? fallback;
   }
-  return fallback;
+  return EN_UNITS[defId] ?? fallback;
 }
 
 const ZH_SPELLS: Record<SpellId, { name: string; shortName: string }> = {
-  lords_judgement: { name: '圣主裁决', shortName: '裁决' },
-  banner_consecration: { name: '奉献战旗', shortName: '奉献旗' },
-  banner_heroism: { name: '英勇战旗', shortName: '英勇旗' },
-  sign_of_advent: { name: '降临之兆', shortName: '化身' },
+  lords_judgement: { name: '万弩齐发', shortName: '万弩' },
+  banner_consecration: { name: '铁壁军阵', shortName: '铁壁' },
+  banner_heroism: { name: '战鼓振军', shortName: '战鼓' },
+  sign_of_advent: { name: '人皇御令', shortName: '御令' },
 
-  summon_stoneworms: { name: '诱捕沙虫', shortName: '沙虫' },
-  disentomb: { name: '掘墓招魂', shortName: '掘墓' },
-  banner_bloodlust: { name: '嗜血战旗', shortName: '嗜血旗' },
-  cataclysm: { name: '天降灾厄', shortName: '灾厄' },
+  summon_stoneworms: { name: '蚀骨毒雾', shortName: '毒雾' },
+  disentomb: { name: '妖魂召唤', shortName: '妖魂' },
+  banner_bloodlust: { name: '万兽狂怒', shortName: '狂怒' },
+  cataclysm: { name: '大荒兽潮', shortName: '兽潮' },
 
-  ice_blast: { name: '冰霜冲击', shortName: '冰爆' },
-  frost_enchantment: { name: '寒冰附魔', shortName: '霜甲术' },
-  banner_liberation: { name: '解放战旗', shortName: '解放旗' },
-  grand_transformation: { name: '大转化术', shortName: '大转化' },
+  ice_blast: { name: '寒天封灵', shortName: '封灵' },
+  frost_enchantment: { name: '天罡庇护', shortName: '天罡' },
+  banner_liberation: { name: '九霄落雷', shortName: '清雷' },
+  grand_transformation: { name: '天罚降世', shortName: '天罚' },
 
-  terror: { name: '恐惧降临', shortName: '恐惧' },
-  raise_the_dead: { name: '死者苏生', shortName: '招魂' },
-  banner_desecration: { name: '亵渎战旗', shortName: '亵渎旗' },
-  call_of_the_grave: { name: '坟墓呼唤', shortName: '墓呼' },
+  terror: { name: '裂隙惊惧', shortName: '惊惧' },
+  raise_the_dead: { name: '蚀魂招降', shortName: '蚀魂' },
+  banner_desecration: { name: '混沌污浊阵', shortName: '污浊' },
+  call_of_the_grave: { name: '深渊侵蚀', shortName: '侵蚀' },
+};
+
+const EN_SPELLS: Record<SpellId, { name: string; shortName: string }> = {
+  lords_judgement: { name: 'Rain of Arrows', shortName: 'Volley' },
+  banner_consecration: { name: 'Iron Wall Formation', shortName: 'Iron Wall' },
+  banner_heroism: { name: 'War Drums', shortName: 'Drums' },
+  sign_of_advent: { name: 'Sovereign Decree', shortName: 'Decree' },
+
+  summon_stoneworms: { name: 'Bone Venom Mist', shortName: 'Venom' },
+  disentomb: { name: 'Spirit Summon', shortName: 'Spirits' },
+  banner_bloodlust: { name: 'Feral Frenzy', shortName: 'Frenzy' },
+  cataclysm: { name: 'Wilderness Stampede', shortName: 'Stampede' },
+
+  ice_blast: { name: 'Frost Seal', shortName: 'Frost Seal' },
+  frost_enchantment: { name: 'Heavenly Aegis', shortName: 'Aegis' },
+  banner_liberation: { name: 'Nine-Heavens Aura', shortName: 'Aura' },
+  grand_transformation: { name: 'Heavenly Punishment', shortName: 'Judgment' },
+
+  terror: { name: 'Rift Dread', shortName: 'Dread' },
+  raise_the_dead: { name: 'Soul Corrosion', shortName: 'Corrode' },
+  banner_desecration: { name: 'Miasma Altar', shortName: 'Miasma' },
+  call_of_the_grave: { name: 'Abyssal Tide', shortName: 'Abyss' },
 };
 
 export function getSpellName(
@@ -570,123 +684,121 @@ export function getSpellName(
   fallbackName: string,
   fallbackShort: string,
 ): string {
-  if (activeLanguage === 'zh') {
-    const entry = ZH_SPELLS[spellId];
-    if (entry) return short ? entry.shortName : entry.name;
-  }
+  const entry = activeLanguage === 'zh' ? ZH_SPELLS[spellId] : EN_SPELLS[spellId];
+  if (entry) return short ? entry.shortName : entry.name;
   return short ? fallbackShort : fallbackName;
 }
 
 const ZH_EDICTS: Record<EdictId, { name: string; ranks: [string, string, string] }> = {
   lords_church: {
-    name: '圣主教廷',
-    ranks: ['解锁法术“奉献战旗”', '所有战旗持续时间 +25%', '所有战旗持续时间 +50%'],
+    name: '玄甲营制',
+    ranks: ['解锁军策【铁壁军阵】', '所有军阵持续时间 +25%', '所有军阵持续时间 +50%'],
   },
   ducal_sovereignty: {
-    name: '公爵主权',
-    ranks: ['解锁基础兵种招募', '开局初始金币 +75', '开局初始金币 +150'],
+    name: '九州诏命',
+    ranks: ['解锁人族基础兵种征募', '开局初始金铢 +75', '开局初始金铢 +150'],
   },
   call_crusade: {
-    name: '十字军号召',
-    ranks: ['解锁法术“圣主裁决”', '“圣主裁决”伤害 +15%', '“圣主裁决”伤害 +30%'],
+    name: '神机箭库',
+    ranks: ['解锁军策【万弩齐发】', '【万弩齐发】伤害 +15%', '【万弩齐发】伤害 +30%'],
   },
   town_guilds: {
-    name: '城镇行会',
-    ranks: ['卫士升级为“剑士”', '所有我方据点耐久 +15%', '所有我方据点耐久 +30%'],
+    name: '城防营建',
+    ranks: ['铁甲卫进阶为【玄甲卫】', '我方全部据点耐久 +15%', '我方全部据点耐久 +30%'],
   },
   zealots_order: {
-    name: '狂热教团',
-    ranks: ['苦修僧升级为“狂热信徒”', '终极技能充能消耗 -10%', '终极技能充能消耗 -20%'],
+    name: '天策枢府',
+    ranks: ['军阵师进阶为【天策军师】', '【人皇御令】充能需求 -10%', '【人皇御令】充能需求 -20%'],
   },
   mechanics_research: {
-    name: '机械研习',
-    ranks: ['弓箭手升级为“弩手”', '远程与攻城单位伤害 +10%', '远程与攻城单位伤害 +20%'],
+    name: '工部军械',
+    ranks: ['弩兵进阶为【神机弩手】', '远程与攻城器械伤害 +10%', '远程与攻城器械伤害 +20%'],
   },
   heroic_epos: {
-    name: '英雄史诗',
-    ranks: ['解锁法术“英勇战旗”', '部队基础士气 +7%', '部队基础士气 +15%'],
+    name: '太庙战鼓',
+    ranks: ['解锁军策【战鼓振军】', '全军基础士气 +7%', '全军基础士气 +15%'],
   },
   regular_tournaments: {
-    name: '常态比武会',
-    ranks: ['骑士升级为“圣殿骑兵”', '骑兵冲锋造成 2.5 倍伤害', '骑兵冲锋造成 3 倍伤害'],
+    name: '虎贲校场',
+    ranks: ['羽林骑进阶为【虎贲铁骑】', '骑兵冲锋造成 2.5 倍伤害', '骑兵冲锋造成 3 倍伤害'],
   },
   legion: {
-    name: '圣殿军团',
-    ranks: ['步兵升级为“圣殿军团”', '所有步兵生命值 +15%', '所有步兵生命值 +30%'],
+    name: '禁军玄甲营',
+    ranks: ['步兵进阶为【禁军玄甲将】', '所有步兵气血上限 +15%', '所有步兵气血上限 +30%'],
   },
 
   bloodlust: {
-    name: '嗜血狂潮',
-    ranks: ['解锁法术“嗜血战旗”', '对敌方据点伤害 +25%', '对敌方据点伤害 +50%'],
+    name: '万兽血契',
+    ranks: ['解锁妖术【万兽狂怒】', '对敌方据点破坏力 +25%', '对敌方据点破坏力 +50%'],
   },
   declaration_of_war: {
-    name: '宣战布告',
-    ranks: ['解锁基础兵种招募', '部队移动速度 +10%', '部队移动速度 +20%'],
+    name: '山林征召',
+    ranks: ['解锁妖盟基础部族参战', '部队行军速度 +10%', '部队行军速度 +20%'],
   },
   speaking_to_animals: {
-    name: '御兽秘语',
-    ranks: ['解锁法术“诱捕沙虫”', '额外增加 1 波沙虫攻击', '额外增加 2 波沙虫攻击'],
+    name: '巫蛊毒经',
+    ranks: ['解锁妖术【蚀骨毒雾】', '毒雾持续侵蚀波次 +1', '毒雾持续侵蚀波次 +2'],
   },
   three_days_plunder: {
-    name: '三日掠夺',
-    ranks: ['游牧轻骑升级为“掠夺重骑”', '每次攻占据点额外获 +75 金币', '每次攻占据点额外获 +150 金币'],
+    name: '大荒掠阵',
+    ranks: ['狼骑兵进阶为【赤焰兽骑】', '每次夺取据点额外获 +75 金铢', '每次夺取据点额外获 +150 金铢'],
   },
   raid_the_tombs: {
-    name: '古墓掘金',
-    ranks: ['部落勇士升级为“古墓不朽者”', '不朽者小队人数 +1', '不朽者小队人数 +2'],
+    name: '虎魄觉醒',
+    ranks: ['山魈战士进阶为【虎魄战将】', '战将小队编成 +1 员', '战将小队编成 +2 员'],
   },
   poisons_research: {
-    name: '淬毒技艺',
-    ranks: ['草原猎手升级为“毒蛇射手”', '剧毒持续伤害 +1', '剧毒持续伤害 +2'],
+    name: '百草淬毒',
+    ranks: ['毒羽妖进阶为【风翎妖卫】', '剧毒持续伤害 +1', '剧毒持续伤害 +2'],
   },
   dark_teaching: {
-    name: '黑暗教义',
-    ranks: ['解锁法术“掘墓招魂”', '每有小队阵亡终极充能 +3%', '每有小队阵亡终极充能 +6%'],
+    name: '祖灵密祭',
+    ranks: ['解锁妖术【妖魂召唤】', '每有小队阵亡终极蓄能 +3%', '每有小队阵亡终极蓄能 +6%'],
   },
   dreadful_machinery: {
-    name: '可怖器械',
-    ranks: ['投石车升级为“剧毒投石车”', '攻城器械移动速度 +50%', '攻城器械移动速度 +100%'],
+    name: '巨兽驭令',
+    ranks: ['巨角兽进阶为【山岳巨兽】', '攻城巨兽移动速度 +50%', '攻城巨兽移动速度 +100%'],
   },
   necropolis_excavations: {
-    name: '死灵墓穴发掘',
-    ranks: ['骑兵升级为“先祖幽灵骑”', '亡灵部队招募花费 -7%', '亡灵部队招募花费 -15%'],
+    name: '太古战魂',
+    ranks: ['骑兵进阶为【太古战兽骑】', '太古妖魂系部队招募耗费 -7%', '太古妖魂系部队招募耗费 -15%'],
   },
 
   arcane_frost: {
-    name: '奥术极寒',
-    ranks: ['解锁法术“冰霜冲击”', '冰冻持续时间 +1 秒', '冰冻持续时间 +2 秒'],
+    name: '寒天玄镜',
+    ranks: ['解锁神术【寒天封灵】', '封灵控制持续时间 +1 秒', '封灵控制持续时间 +2 秒'],
   },
   declaration_of_independence: {
-    name: '独立宣言',
-    ranks: ['解锁基础兵种招募', '农场/金矿/方尖碑建造成本 -15%', '农场/金矿/方尖碑建造成本 -30%'],
+    name: '玉虚仙律',
+    ranks: ['解锁神庭基础天军', '粮仓/矿场/玄息碑建造成本 -15%', '粮仓/矿场/玄息碑建造成本 -30%'],
   },
   artisans_guild: {
-    name: '工匠行会',
-    ranks: ['火枪手升级为“发条火枪傀儡”', '机械单位暴击率 +5%', '机械单位暴击率 +10%'],
+    name: '星辰司命',
+    ranks: ['灵弓使进阶为【星辰射手】', '符文机关暴击率 +5%', '符文机关暴击率 +10%'],
   },
   rebel_army: {
-    name: '起义大军',
-    ranks: ['起义长矛手升级为“极地重甲兵”', '步兵攻击附加 7% 冰冻概率', '步兵攻击附加 15% 冰冻概率'],
+    name: '玉甲天卫律',
+    ranks: ['天兵进阶为【玉甲天卫】', '步兵攻击附加 7% 寒霜封灵概率', '步兵攻击附加 15% 寒霜封灵概率'],
   },
   magic_library: {
-    name: '奥术图书馆',
-    ranks: ['解锁法术“寒冰附魔”', '所有法术法力消耗 -10%', '所有法术法力消耗 -20%'],
+    name: '昆仑藏经阁',
+    ranks: ['解锁神术【天罡庇护】', '所有神术玄息消耗 -10%', '所有神术玄息消耗 -20%'],
   },
   liberation_army: {
-    name: '解放军团',
-    ranks: ['解锁法术“解放战旗”', '部队获取老兵经验速度 +15%', '部队获取老兵经验速度 +30%'],
+    name: '九霄清灵诀',
+    ranks: ['解锁神术【九霄落雷】', '部队获取百战经验速度 +15%', '部队获取百战经验速度 +30%'],
   },
   magic_academy: {
-    name: '魔法学院',
-    ranks: ['寒冰学徒升级为“冰霜大法师”', '魔法塔每秒额外产出 +1 金/补给/魔', '魔法塔每秒额外产出 +2 金/补给/魔'],
+    name: '聚灵仙塔',
+    ranks: ['御灵师进阶为【雷法天师】', '聚灵塔每秒额外产出 +1 金/粮/息', '聚灵塔每秒额外产出 +2 金/粮/息'],
   },
   tame_the_reptiles: {
-    name: '驯服冰龙',
-    ranks: ['长枪骑兵升级为“驯龙骑兵”', '所有骑兵生命值 +10%', '所有骑兵生命值 +20%'],
+    name: '天马牧苑',
+    ranks: ['云骑进阶为【天马神骑】', '所有骑兵气血 +10%', '所有骑兵气血 +20%'],
   },
   giant_construction: {
-    name: '巨像工程',
-    ranks: ['远程单位升级为“巨像机甲”', '巨像机甲每秒恢复 2% 生命', '巨像机甲每秒恢复 4% 生命'],
+    name: '镇天神工',
+    ranks: ['神像阵列进阶为【镇天神像】', '镇天神像每秒自愈 2% 气血', '镇天神像每秒自愈 4% 气血'],
   },
 };
 
@@ -705,28 +817,28 @@ export function getEdictRankDesc(id: EdictId, rank: number, fallback: string): s
 }
 
 const ZH_BADGES: Record<BadgeId, { name: string; desc: string }> = {
-  BADGE_WESTARIA_CAMPAIGN_COMPLETE: { name: '西方荣耀', desc: '完成维斯塔利亚公国战役全部 8 关' },
-  BADGE_HORDE_CAMPAIGN_COMPLETE: { name: '南方狂潮', desc: '完成赤红汗国战役全部 8 关' },
-  BADGE_CULT_CAMPAIGN_COMPLETE: { name: '北境自由', desc: '完成冰谷教团战役全部 8 关' },
-  BADGE_WESTARIA_ALL_PERFECT: { name: '圣洁之王', desc: '以金牌通关维斯塔利亚战役全部关卡' },
-  BADGE_HORDE_ALL_PERFECT: { name: '无上大汗', desc: '以金牌通关赤红汗国战役全部关卡' },
-  BADGE_CULT_ALL_PERFECT: { name: '先知降世', desc: '以金牌通关冰谷教团战役全部关卡' },
-  BADGE_WESTARIA_ALL_BASE_EDICTS: { name: '圣主之义', desc: '颁布维斯塔利亚全部 9 项基础法令' },
-  BADGE_HORDE_ALL_BASE_EDICTS: { name: '草原法则', desc: '颁布赤红汗国全部 9 项基础法令' },
-  BADGE_CULT_ALL_BASE_EDICTS: { name: '教团庇佑', desc: '颁布冰谷教团全部 9 项基础密令' },
-  BADGE_ANY_MISSION_PERFECT: { name: '我来我见我征服', desc: '以金牌（< 05:30）通关任意一关' },
-  BADGE_VILLAGES_OWNED: { name: '安居乐业', desc: '单局内同时控制 7 座农场' },
-  BADGE_MINES_OWNED: { name: '工匠之国', desc: '单局内同时控制 7 座金矿' },
-  BADGE_OBELISKS_OWNED: { name: '附魔王国', desc: '单局内同时控制 7 座方尖碑' },
-  BADGE_SQUADS_PURCHASED: { name: '全国总动员', desc: '单局内招募 10 支以上小队' },
-  BADGE_BANNERS_SET: { name: '旗帜飘扬', desc: '单局内在战场上插下 5 面战旗' },
-  BADGE_ULTIMATES_USED: { name: '信仰考验', desc: '单局内施放 5 次终极法术' },
-  BADGE_CHESTS_OPENED: { name: '我的宝贝！', desc: '在战斗中开启野外宝箱' },
-  BADGE_ENEMY_SQUADS_DESTROYED: { name: '铁血猛攻', desc: '单局内歼灭 30 支敌方小队' },
-  BADGE_HEROIC_MODE_ENGAGED: { name: '史诗战役', desc: '单局内使部队进入“英勇”状态 20 次' },
-  BADGE_GOLD_COLLECTED: { name: '充盈国库', desc: '单局内累计收集 3,000 金币' },
-  BADGE_SQUADS_OWNED: { name: '雄师百万', desc: '同时在场上统领 20 支小队' },
-  BADGE_STRONGHOLDS_SIEZED: { name: '易手之城', desc: '单局内攻占据点 10 次以上' },
+  BADGE_WESTARIA_CAMPAIGN_COMPLETE: { name: '九州平定', desc: '完成《九州人皇篇》全部 8 章战役' },
+  BADGE_HORDE_CAMPAIGN_COMPLETE: { name: '万灵归山', desc: '完成《九黎妖盟篇》全部 8 章战役' },
+  BADGE_CULT_CAMPAIGN_COMPLETE: { name: '重定天纲', desc: '完成《昆仑神庭篇》全部 8 章战役' },
+  BADGE_WESTARIA_ALL_PERFECT: { name: '人皇天命', desc: '以金印评价通关九州人皇篇全部 8 章' },
+  BADGE_HORDE_ALL_PERFECT: { name: '大荒共主', desc: '以金印评价通关九黎妖盟篇全部 8 章' },
+  BADGE_CULT_ALL_PERFECT: { name: '玉虚至尊', desc: '以金印评价通关昆仑神庭篇全部 8 章' },
+  BADGE_WESTARIA_ALL_BASE_EDICTS: { name: '人道礼法', desc: '研习九州人皇全部 9 项诏令' },
+  BADGE_HORDE_ALL_BASE_EDICTS: { name: '部族祖训', desc: '研习九黎妖盟全部 9 项祖训' },
+  BADGE_CULT_ALL_BASE_EDICTS: { name: '昆仑天律', desc: '研习昆仑神庭全部 9 项法旨' },
+  BADGE_ANY_MISSION_PERFECT: { name: '神兵天降', desc: '以金印（< 05:30）平定任意一章' },
+  BADGE_VILLAGES_OWNED: { name: '五谷丰登', desc: '单局内同时拥有 7 座粮仓' },
+  BADGE_MINES_OWNED: { name: '铸币兴邦', desc: '单局内同时拥有 7 座金铢矿场' },
+  BADGE_OBELISKS_OWNED: { name: '灵脉贯通', desc: '单局内同时拥有 7 座玄息碑' },
+  BADGE_SQUADS_PURCHASED: { name: '九州动员', desc: '单局内整编 10 支以上部队' },
+  BADGE_BANNERS_SET: { name: '军阵森严', desc: '单局内施放 5 次阵法/战旗' },
+  BADGE_ULTIMATES_USED: { name: '天威赫赫', desc: '单局内施放 5 次终极阵营绝技' },
+  BADGE_CHESTS_OPENED: { name: '上古遗宝', desc: '在战场中开启大荒古鼎宝箱' },
+  BADGE_ENEMY_SQUADS_DESTROYED: { name: '破阵斩将', desc: '单局内击溃 30 支敌方部队' },
+  BADGE_HEROIC_MODE_ENGAGED: { name: '士气如虹', desc: '单局内使部队进入振奋状态 20 次' },
+  BADGE_GOLD_COLLECTED: { name: '府库充盈', desc: '单局内累计聚敛 3,000 金铢' },
+  BADGE_SQUADS_OWNED: { name: '旌旗蔽日', desc: '同时在战场上统领 20 支部队' },
+  BADGE_STRONGHOLDS_SIEZED: { name: '连克名城', desc: '单局内攻占据点 10 次以上' },
 };
 
 export function getBadgeName(id: BadgeId, fallback: string): string {
@@ -745,115 +857,162 @@ export function getBadgeDesc(id: BadgeId, fallback: string): string {
 
 const ZH_LEVELS: Record<number, { name: string; briefing: string }> = {
   1: {
-    name: '世界边缘',
-    briefing: '维斯塔利亚公国坐落于西部群岛，向来远离大陆战火的侵扰。但如今，亡灵的阴霾终于波及至此。',
+    name: '烽火初起',
+    briefing: '天裂劫降临，中州边陲镇国城外已有混沌蚀魂兵渗入。集结铁甲卫守住渡口，踏平来犯裂隙魔殿！',
   },
   2: {
-    name: '帝国终焉',
-    briefing: '赤红汗国虽曾在多年前被帝国征服，却从未真正屈服。里瓦迪斯陷入混乱，蛮族正企图趁势夺取我们的领土。',
+    name: '收复边关',
+    briefing: '混沌肆虐之际，九黎妖盟乘虚北进。我军需先击败盘踞古鼎财宝的大荒饕餮，夺取镇灵台并稳固边关防线！',
   },
   3: {
-    name: '是友是敌？',
-    briefing: '我们以圣主之名向污秽之物宣战。西港防备森严难以强攻，但我们可以先遣精锐夺取立足点，打开登陆通道。',
+    name: '河谷争夺',
+    briefing: '东进通道受阻于敌方郡城与河谷桥头。调遣精锐跨河抢占立足点，为主力铺平征途。',
   },
   4: {
-    name: '新瘟疫',
-    briefing: '必须切断西港与帝都的联系。斥候回报称北方的叛乱教团也在当地活动并施展禁术，我们必须将他们与死灵法师一并铲除！',
+    name: '赤岭攻坚',
+    briefing: '斥候回报昆仑神庭遣军现身赤岭，与混沌势力两面压迫中州防线。破敌合围之势，在此一战！',
   },
   5: {
-    name: '光明与魔法',
-    briefing: '大陆上的部队正面临两线作战，甚至还要应付汗国的袭击。唯一的出路就是攻克西港，打通后援补给线。',
+    name: '三族交锋',
+    briefing: '九州主力陷入多线激战，妖盟袭扰粮道，必须火速夺回要塞打通后勤补给。',
   },
   6: {
-    name: '救赎之药',
-    briefing: '汗国军队仍在西海岸威胁着我们的侧翼。让我们彻底将这群蛮族驱逐出圣主恩赐的土地！',
+    name: '幽都迷雾',
+    briefing: '幽都外围仍有妖盟部族逡巡，肃清侧翼威胁，方能稳步推进至大裂隙核心。',
   },
   7: {
-    name: '合围之势',
-    briefing: '在进攻帝都之前，必须彻底肃清左翼。死灵法师正与北方教团在雪原交战，正好将这两支异端一举歼灭！',
+    name: '九州决战',
+    briefing: '决战前夕，混沌军势正与昆仑神庭在雪原遗迹对峙。顺势逐个击破，清空九州外围障碍！',
   },
   8: {
-    name: '最终决战',
-    briefing: '里瓦迪斯帝国必须彻底清除死灵法师并迎来新生。向新帝国欢呼，向新皇帝致敬！为了圣主的荣耀！',
+    name: '人皇之路',
+    briefing: '九座镇世神鼎重光在望。集结全军直捣混沌总坛，重定九州天地秩序！',
   },
 
   11: {
-    name: '大汗崛起',
-    briefing: '汗国曾惨败而狼狈逃窜。但新任大汗将率领勇士走向新的胜利。我们必将雪耻，让敌人血债血偿——如果他们还有血的话……',
+    name: '大荒苏醒',
+    briefing: '天裂惊变震动大荒万灵，九黎妖盟再次立誓夺回祖先林泽与山川疆土！',
   },
   12: {
-    name: '劫掠西方',
-    briefing: '萨满预言了辉煌的胜利。维斯塔利亚的懦夫休想躲在高墙后苟安，我们要劫掠他们的城镇与神庙，夺取沿海要塞！',
+    name: '万兽集结',
+    briefing: '大荒古巫卜出吉兆，挥师突袭人族沿海重镇与粮仓，号令万兽踏平防线！',
   },
   13: {
-    name: '先祖故土',
-    briefing: '东方原野曾是我们先祖的故乡，绝不能再让腐朽帝国占据。我们更加强大了，夺回故土的时刻已到！',
+    name: '苍林复仇',
+    briefing: '苍南故土岂容混沌染指。率领狼骑兵与山魈战阵收复祖先圣地！',
   },
   14: {
-    name: '东方海角',
-    briefing: '死灵法师在东方海角建起了魔法实验室。我们必须在北方巫师赶到之前将它们全部收入囊中。',
+    name: '赤焰山脉',
+    briefing: '混沌巫使在赤焰山巅修筑祭坛。必须在昆仑天兵赶到前将其尽数摧毁！',
   },
   15: {
-    name: '高原交锋',
-    briefing: '北方巫师与帝国死灵法师挡在通往山隘的要道上。让铁骑与攻城器械以雷霆之怒同时粉碎两支敌军！',
+    name: '狂野军团',
+    briefing: '神庭天军与混沌残部扼守高山隘口，驱使巨角兽与狼骑狂潮一举碾碎！',
   },
   16: {
-    name: '北境财富',
-    briefing: '这片土地以地下矿藏闻名。我们要攻占冰谷教团的金矿，让高傲的巫师们沦为我们采掘黄金与宝石的苦力。',
+    name: '幽谷血战',
+    briefing: '玄北矿脉蕴含丰厚金铢与玄息。奇袭神庭矿区，为妖盟大军提供源源不绝的补给！',
   },
   17: {
-    name: '坟墓之秘',
-    briefing: '我们的萨满参透了死灵秘术，先祖之魂如今已站在我们身旁。帝国可以将秘密带进坟墓了——因为那些力量现在归我们所有！',
+    name: '万妖归心',
+    briefing: '大荒萨满唤醒沉睡太古战魂，山林万族齐聚图腾旗下，直指天裂深渊！',
   },
   18: {
-    name: '统御众生',
-    briefing: '帝国首都就在眼前，正是这座城市世代屠戮我们的族人。今日大汗将君临天下，统御世间一切生者与亡灵。',
+    name: '山海归荒',
+    briefing: '踏碎幽都核心魔殿，让上古山海与万灵重归大荒自由秩序！',
   },
 
   21: {
-    name: '教团觉醒',
-    briefing: '帝国奴役我们，教会迫害我们的巫师，草原蛮族洗劫我们的城镇。昔日我们因准备不足而起义失败，但如今教团已脱胎换骨。',
+    name: '昆仑惊变',
+    briefing: '凡间玄息紊乱引动天裂劫，昆仑神宫重整天兵与玉甲天卫，誓以神律靖平乱世！',
   },
   22: {
-    name: '帝国余孽',
-    briefing: '帝都密探传来骇人消息：大汗与萨满已被死灵术彻底腐蚀。在危机爆发前，必须先清剿滞留我方领地的帝国残部。',
+    name: '天门失守',
+    briefing: '玄北外围遭妖盟与混沌侵扰，神庭必须先行肃清盘踞天门附近的裂隙残部。',
   },
   23: {
-    name: '狂热圣殿军',
-    briefing: '维斯塔利亚本可成为盟友，但狂热的圣殿骑士团阻拦了使节。他们对我们的仇恨甚至超过了亡灵。那就为自由而战吧！',
+    name: '霜原之战',
+    briefing: '人族边军怀疑神庭封锁九州玄息，双方在寒霜原野爆发正面冲突。突围破阵吧！',
   },
   24: {
-    name: '亡灵边界',
-    briefing: '帝都传来噩耗：大批亡灵从城中涌出，被复活的汗国战士反噬了他们的主人。我们必须在边境线上拦截这场亡灵狂潮。',
+    name: '神鼎遗迹',
+    briefing: '大股混沌蚀魂军自地裂涌出，必须在神鼎遗迹前将其彻底封灵净化！',
   },
   25: {
-    name: '北境净化',
-    briefing: '妄图操弄黑暗力量终究自食恶果。瘟疫正从内部吞噬汗国与亡灵残余，由我们亲手为他们降下净化与终结。',
+    name: '九霄雷鸣',
+    briefing: '乱世三方各自失序，以九霄落雷与寒天封灵洗净污染山河的浊气！',
   },
   26: {
-    name: '强袭平原',
-    briefing: '我们终于与维斯塔利亚达成同盟。我军从东路突进，盟军自南路夹击。必须抓紧时间——帝都外围的前锋部队已近力竭。',
+    name: '天道之争',
+    briefing: '神庭与人族暂息干戈，分兵两路驰援中州前线，共抗混沌大军！',
   },
   27: {
-    name: '围困帝都',
-    briefing: '同盟掌控之外的土地仍遍布亡灵大军。与维斯塔利亚军团并肩作战，彻底完成对帝国首都的合围。',
+    name: '混沌降世',
+    briefing: '幽都外围黑雾遮天，携盟军重兵合围混沌总坛，封锁所有裂隙出口！',
   },
   28: {
-    name: '光与霜之歌',
-    briefing: '我们再次在战场上与维斯塔利亚并肩而立。让圣主之光与北方极寒魔法交融，将亡灵彻底从这个世界抹去！',
+    name: '重定天命',
+    briefing: '九霄神光与九州兵阵合流，降下最终天罚，彻底抚平天裂之劫！',
   },
 };
 
+const EN_LEVELS: Record<number, { name: string; briefing: string }> = {
+  1: {
+    name: 'Beacons Alight',
+    briefing: 'With the Seal broken, Chaos Soul Corroders cross into Zhongzhou. Muster Iron Guards at ZhenGuo Citadel and purge the Rift Sanctum!',
+  },
+  2: {
+    name: 'Reclaiming the Pass',
+    briefing: 'Jiuli raiders push north amid the chaos. Defeat the Taotie Brute guarding the Relic Chest, seize the Spirit Terrace, and hold the border!',
+  },
+  3: {
+    name: 'River Valley Clash',
+    briefing: 'Establish a forward foothold across the fortified river crossings to open the eastern campaign road.',
+  },
+  4: {
+    name: 'Crimson Ridge Assault',
+    briefing: 'Kunlun Celestial patrols and Chaos forces converge on the ridge. Cut their supply lines before they link up!',
+  },
+  5: {
+    name: 'Clash of Three',
+    briefing: 'Allied armies fight on two fronts while Beast raiders threaten our granaries. Secure the fortress harbor!',
+  },
+  6: {
+    name: 'Mists of Youdu',
+    briefing: 'Clear remaining Jiuli warbands from the western flank before marching deep into the misted ruins.',
+  },
+  7: {
+    name: 'Battle for Nine Provinces',
+    briefing: 'Chaos and Kunlun forces clash across the frozen plateau. Strike cleanly and shatter both rivals!',
+  },
+  8: {
+    name: 'Path of the Sovereign',
+    briefing: 'The Nine Tripods await restoration. Lead the full host against the Chaos heartland and forge a new era!',
+  },
+  11: { name: 'Awakening of the Wilds', briefing: 'The Rift awakens the ancient clans. Unite the Jiuli tribes to reclaim ancestral mountains!' },
+  12: { name: 'Gathering of Beasts', briefing: 'Raid coastal human granaries and seize fortified passes under the shaman totem banner!' },
+  13: { name: 'Vengeance of Cangnan', briefing: 'Drive corrupted Chaos forces off ancestral woodland plateaus!' },
+  14: { name: 'Crimson Flame Peaks', briefing: 'Seize the volcanic ritual sites before Kunlun Celestial legions arrive!' },
+  15: { name: 'Fierce Horde', briefing: 'Crush both Celestial and Chaos defenders blocking the high mountain pass!' },
+  16: { name: 'Bloody Valley', briefing: 'Storm rich jade mines in the northern valley to fuel the Beast Alliance war machine!' },
+  17: { name: 'Heart of Ten Thousand Spirits', briefing: 'Ancient spirit beasts rally behind your shamans on the final road toward Youdu!' },
+  18: { name: 'Wilds Reclaimed', briefing: 'Overthrow the Chaos Sanctum and return the Nine Provinces to untamed wilderness!' },
+  21: { name: 'Shock at Kunlun', briefing: 'Disorder spreads across the Nine Provinces. Dispatch Heavenly Soldiers to restore divine order!' },
+  22: { name: 'Fall of Heaven Gate', briefing: 'Purge entrenched Chaos remnants threatening the northern sanctum approaches.' },
+  23: { name: 'Battle of Frost Plains', briefing: 'Human generals block our envoys at the frozen pass. Break through with Frost Seal and Rune Golems!' },
+  24: { name: 'Tripod Ruins', briefing: 'Halt a massive Chaos surge erupting around the shattered ancient Tripod altar.' },
+  25: { name: 'Nine-Heavens Thunder', briefing: 'Unleash divine lightning upon warring Chaos and Beast remnants from above.' },
+  26: { name: 'Contest of Heaven', briefing: 'Join forces with human legions in a two-pronged relief assault across the plains!' },
+  27: { name: 'Descent of Chaos', briefing: 'Tighten the siege ring around the outer Chaos citadels alongside allied armies.' },
+  28: { name: 'Mandate Restored', briefing: 'Unite divine thunder and human iron to seal the Abyss forever!' },
+};
+
 export function getLevelName(levelId: number, fallback: string): string {
-  if (activeLanguage === 'zh') {
-    return ZH_LEVELS[levelId]?.name ?? fallback;
-  }
-  return fallback;
+  const table = activeLanguage === 'zh' ? ZH_LEVELS : EN_LEVELS;
+  return table[levelId]?.name ?? fallback;
 }
 
 export function getLevelBriefing(levelId: number, fallback: string): string {
-  if (activeLanguage === 'zh') {
-    return ZH_LEVELS[levelId]?.briefing ?? fallback;
-  }
-  return fallback;
+  const table = activeLanguage === 'zh' ? ZH_LEVELS : EN_LEVELS;
+  return table[levelId]?.briefing ?? fallback;
 }

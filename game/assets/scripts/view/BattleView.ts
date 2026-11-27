@@ -1,4 +1,4 @@
-import { Color, Graphics, Label, Node, NodePool, Sprite, UITransform } from 'cc';
+import { Color, Graphics, Label, Node, NodePool, Sprite, SpriteFrame, UITransform } from 'cc';
 import {
   COCOS_BLEED_HEIGHT,
   COCOS_BLEED_WIDTH,
@@ -16,7 +16,13 @@ import { AudioManager } from './AudioManager';
 import { BattleInputController } from './BattleInputController';
 import { BattleVfxController } from './BattleVfxController';
 import type { HudSelection } from './HudView';
-import { createUiNode, getStaticSpriteFrame, getStripFramesSync, releaseTextureByKey } from './SpriteLoader';
+import {
+  createUiNode,
+  getStaticSpriteFrame,
+  getStripFrames,
+  getStripFramesSync,
+  releaseTextureByKey,
+} from './SpriteLoader';
 
 interface StrongholdVisual {
   id: string;
@@ -49,6 +55,10 @@ interface SquadVisual {
   members: Array<{ node: Node; sprite: Sprite }>;
   hpBar: Graphics;
   countLbl: Label;
+  baseScale: number;
+  memberLastHp: number[];
+  memberWasAlive: boolean[];
+  memberHitTimer: number[];
   animElapsed: number;
   lastHp: number;
   lastMaxHp: number;
@@ -57,8 +67,17 @@ interface SquadVisual {
   lastCountStr: string;
 }
 
+interface DeathAnim {
+  node: Node;
+  sprite: Sprite;
+  frames: SpriteFrame[];
+  elapsed: number;
+  fps: number;
+}
+
 const SWF_MAP_EXPORT_ZOOM = 1.5;
 const SWF_TO_COCOS_SCALE = MAP_TO_COCOS_SCALE / SWF_MAP_EXPORT_ZOOM; // 1.2 / 1.5 = 0.8
+const HIT_FLASH_COLOR = new Color(255, 118, 108, 255);
 
 const FACTION_COLOR_NAME: Record<string, string> = {
   Westaria: 'green',
@@ -68,10 +87,10 @@ const FACTION_COLOR_NAME: Record<string, string> = {
 };
 
 const FACTION_HP_COLORS: Record<string, Color> = {
-  Westaria: new Color(75, 220, 95, 255),
-  TheEmpire: new Color(195, 90, 240, 255),
-  TheKhaganate: new Color(235, 75, 75, 255),
-  TheCult: new Color(80, 175, 245, 255),
+  Westaria: new Color(235, 112, 62, 255),
+  TheEmpire: new Color(195, 88, 245, 255),
+  TheKhaganate: new Color(108, 220, 126, 255),
+  TheCult: new Color(110, 215, 250, 255),
   Bandits: new Color(235, 175, 65, 255),
 };
 
@@ -94,6 +113,8 @@ export class BattleView {
 
   private squadRootPool = new NodePool();
   private squadMemberPool = new NodePool();
+  private deathPool = new NodePool();
+  private deathAnims: DeathAnim[] = [];
 
   private inputCtrl: BattleInputController;
   private vfxCtrl!: BattleVfxController;
@@ -120,11 +141,8 @@ export class BattleView {
   private buildLayers(): void {
     const sky = createUiNode('SkyBackdrop', this.root, COCOS_BLEED_WIDTH, COCOS_BLEED_HEIGHT);
     const sg = sky.addComponent(Graphics);
-    sg.fillColor = new Color(210, 232, 245, 255);
+    sg.fillColor = new Color(20, 23, 28, 255);
     sg.rect(-1280, -720, 2560, 1440);
-    sg.fill();
-    sg.fillColor = new Color(230, 244, 252, 210);
-    sg.rect(-1280, -120, 2560, 720 + 120);
     sg.fill();
 
     this.worldLayer = createUiNode('WorldLayer', this.root, COCOS_DESIGN_WIDTH, COCOS_DESIGN_HEIGHT);
@@ -229,6 +247,11 @@ export class BattleView {
       this.recycleSquadVisual(vis);
     }
     this.squadVisuals.clear();
+    for (const da of this.deathAnims) {
+      da.sprite.spriteFrame = null;
+      this.deathPool.put(da.node);
+    }
+    this.deathAnims.length = 0;
     this.vfxCtrl.recycleAll();
 
     this.strongholdLayer.removeAllChildren();
@@ -400,16 +423,43 @@ export class BattleView {
       const phase = sq.animPhase === 'attack' ? 'attack' : 'go';
       const animKey = `${def.spritePrefix}/${sq.facing}_${phase}`;
       const stripEntry = SPRITE_MANIFEST[animKey];
-      if (stripEntry) {
-        const fps = phase === 'attack' ? 10 : sq.state === 'Move' ? 12 : 3;
-        const frameIdx = sq.state === 'Stand' ? 0 : Math.floor(vis.animElapsed * fps) % stripEntry.frameCount;
-        const frames = getStripFramesSync(animKey);
-        for (let i = 0; i < sq.members.length && i < vis.members.length; i++) {
-          const m = sq.members[i];
-          const mv = vis.members[i];
-          mv.node.active = m.alive;
-          if (m.alive && frames) {
+      const fps = phase === 'attack' ? 10 : sq.state === 'Move' ? 12 : 3;
+      const frameIdx = stripEntry ? (sq.state === 'Stand' ? 0 : Math.floor(vis.animElapsed * fps) % stripEntry.frameCount) : 0;
+      const frames = stripEntry ? getStripFramesSync(animKey) : null;
+      const scaleFactor = stripEntry && stripEntry.frameHeight >= 56 ? 44 / stripEntry.frameHeight : 1;
+      const effScale = vis.baseScale * scaleFactor;
+      const flipSign = stripEntry?.flipX ? -1 : 1;
+
+      for (let i = 0; i < sq.members.length && i < vis.members.length; i++) {
+        const m = sq.members[i];
+        const mv = vis.members[i];
+        const prevAlive = vis.memberWasAlive[i];
+        const prevHp = vis.memberLastHp[i];
+
+        if (m.alive && prevAlive && m.hp < prevHp) {
+          vis.memberHitTimer[i] = 0.14;
+        } else if (prevAlive && !m.alive) {
+          this.spawnDeathAnim(
+            def.spritePrefix,
+            sq.facing,
+            pos.x + mv.node.position.x,
+            pos.y + mv.node.position.y,
+            vis.baseScale,
+          );
+        }
+
+        vis.memberWasAlive[i] = m.alive;
+        vis.memberLastHp[i] = m.hp;
+        if (vis.memberHitTimer[i] > 0) {
+          vis.memberHitTimer[i] = Math.max(0, vis.memberHitTimer[i] - dt);
+        }
+
+        mv.node.active = m.alive;
+        if (m.alive) {
+          mv.sprite.color = vis.memberHitTimer[i] > 0 ? HIT_FLASH_COLOR : Color.WHITE;
+          if (stripEntry && frames) {
             mv.node.getComponent(UITransform)!.setAnchorPoint(stripEntry.anchorX, stripEntry.anchorY);
+            mv.node.setScale(effScale * flipSign, effScale, 1);
             mv.sprite.spriteFrame = frames[(frameIdx + i) % frames.length];
           }
         }
@@ -477,16 +527,64 @@ export class BattleView {
       }
     }
 
-    // 5. Selection, Spell Target Preview & Tap Ripples
+    // 5. Death strip animations on unitLayer
+    for (let i = this.deathAnims.length - 1; i >= 0; i--) {
+      const da = this.deathAnims[i];
+      da.elapsed += dt * this.sim.speedMultiplier;
+      const fIdx = Math.floor(da.elapsed * da.fps);
+      if (fIdx >= da.frames.length) {
+        da.sprite.spriteFrame = null;
+        this.deathPool.put(da.node);
+        this.deathAnims.splice(i, 1);
+      } else {
+        da.sprite.spriteFrame = da.frames[fIdx];
+      }
+    }
+
+    // 6. Selection, Spell Target Preview & Tap Ripples
     this.inputCtrl.drawOverlay(this.selectG, dt);
 
-    // 6. Strip VFX & Floating Text
+    // 7. Strip VFX & Floating Text
     this.vfxCtrl.updateEffects(dt);
+  }
+
+  private spawnDeathAnim(spritePrefix: string, facing: string, wx: number, wy: number, baseScale: number): void {
+    const dieKey = `${spritePrefix}/die`;
+    const entry = SPRITE_MANIFEST[dieKey];
+    if (!entry) return;
+    const frames = getStripFramesSync(dieKey);
+    if (!frames || frames.length === 0) {
+      void getStripFrames(dieKey).catch(() => {});
+      return;
+    }
+
+    let node = this.deathPool.get();
+    let sp: Sprite;
+    if (node) {
+      sp = node.getComponent(Sprite)!;
+    } else {
+      node = createUiNode('UnitDie', undefined, entry.frameWidth, entry.frameHeight, entry.anchorX, entry.anchorY);
+      sp = node.addComponent(Sprite);
+      sp.sizeMode = Sprite.SizeMode.RAW;
+    }
+    const tr = node.getComponent(UITransform)!;
+    tr.setContentSize(entry.frameWidth, entry.frameHeight);
+    tr.setAnchorPoint(entry.anchorX, entry.anchorY);
+    const scaleFactor = entry.frameHeight >= 56 ? 44 / entry.frameHeight : 1;
+    const effScale = baseScale * scaleFactor;
+    const flipSign = facing === 'right' ? -1 : 1;
+    node.setPosition(wx, wy);
+    node.setScale(effScale * flipSign, effScale, 1);
+    sp.color = Color.WHITE;
+    sp.spriteFrame = frames[0];
+    this.unitLayer.addChild(node);
+    this.deathAnims.push({ node, sprite: sp, frames, elapsed: 0, fps: 10 });
   }
 
   private recycleSquadVisual(vis: SquadVisual): void {
     for (const mv of vis.members) {
       mv.sprite.spriteFrame = null;
+      mv.sprite.color = Color.WHITE;
       this.squadMemberPool.put(mv.node);
     }
     vis.members.length = 0;
@@ -534,11 +632,16 @@ export class BattleView {
       mn.name = `M_${i}`;
       mn.active = true;
       sp.spriteFrame = null;
+      sp.color = Color.WHITE;
       mn.setPosition(m.offsetX * MAP_TO_COCOS_SCALE, -m.offsetY * MAP_TO_COCOS_SCALE);
       mn.setScale(scale, scale, 1);
       root.addChild(mn);
       members.push({ node: mn, sprite: sp });
     }
+
+    // Warm up death strip for this unit in background
+    const prefix = UNIT_DEFS[sq.defId]?.spritePrefix;
+    if (prefix) void getStripFrames(`${prefix}/die`).catch(() => {});
 
     return {
       id: sq.id,
@@ -546,6 +649,10 @@ export class BattleView {
       members,
       hpBar,
       countLbl,
+      baseScale: scale,
+      memberLastHp: sq.members.map((m) => m.hp),
+      memberWasAlive: sq.members.map((m) => m.alive),
+      memberHitTimer: sq.members.map(() => 0),
       animElapsed: 0,
       lastHp: -1,
       lastMaxHp: -1,
@@ -560,5 +667,6 @@ export class BattleView {
     this.vfxCtrl.destroy();
     this.squadRootPool.clear();
     this.squadMemberPool.clear();
+    this.deathPool.clear();
   }
 }

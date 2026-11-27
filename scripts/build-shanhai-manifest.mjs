@@ -31,6 +31,27 @@ function walkAssetFiles(dir, out = []) {
   return out;
 }
 
+function loadManifestIntegratedPaths() {
+  const manifestPath = path.join(GAME_ASSETS, 'scripts', 'data', 'AssetManifest.ts');
+  const map = new Map();
+  if (!fs.existsSync(manifestPath)) return map;
+  const ts = fs.readFileSync(manifestPath, 'utf8');
+  const m = ts.match(/export const SPRITE_MANIFEST[^=]*=\s*(\{[\s\S]*?\n\});/);
+  if (!m) return map;
+  const parsed = JSON.parse(m[1]);
+  for (const [key, entry] of Object.entries(parsed)) {
+    if (entry.path?.startsWith('art/')) {
+      const bundle = entry.bundle ?? 'resources';
+      const rel =
+        bundle === 'resources'
+          ? `game/assets/resources/${entry.path}.png`
+          : `game/assets/bundles/${bundle}/${entry.path}.png`;
+      map.set(key, rel);
+    }
+  }
+  return map;
+}
+
 const FACTION_MAP = {
   Westaria: {
     legacy_id: 'Westaria',
@@ -356,6 +377,90 @@ const PHASE_A_CONCEPTS = [
     prompt: 'Eastern Dark Realism bronze, black-iron, and carved white jade blank game UI kit on #16181d dark charcoal board: wide top resource bar frame, three beveled resource icons (square-holed gold coin, glowing cyan-jade crystal, hemp grain sack), bottom-left 4-slot spell dock, two blank beveled buttons, strictly ZERO text/characters/digits.',
     human_edits: ['人工设定构图与Art Bible约束', '外部工具生成并标准化命名', '生成后人工目视检查去字/视角/纯色底质检'],
   },
+  {
+    asset_id: 'concept_ranged_human_crossbow',
+    name_zh: '九州人皇·弩兵概念图',
+    category: 'concept_art',
+    faction: 'human',
+    status: 'generated',
+    file: 'docs/shanhai/concepts/concept_ranged_human_crossbow.png',
+    tool: 'ChatGPT 图像生成',
+    model: 'ChatGPT Image Generation (external)',
+    prompt: 'Eastern Dark Realism 3/4 full-body game character concept art of Crossbowman (九州人皇·弩兵) in iron brigandine over vermilion sleeves aiming bronze repeating crossbow on #26282e backdrop, zero text/watermarks.',
+    human_edits: ['人工设定构图与Art Bible约束', '外部工具生成并标准化命名', '生成后人工目视检查去字/视角/纯色底质检'],
+  },
+  {
+    asset_id: 'concept_infantry_chaos_soul',
+    name_zh: '混沌·蚀魂兵概念图',
+    category: 'concept_art',
+    faction: 'chaos',
+    status: 'generated',
+    file: 'docs/shanhai/concepts/concept_infantry_chaos_soul.png',
+    tool: 'ChatGPT 图像生成',
+    model: 'ChatGPT Image Generation (external)',
+    prompt: 'Eastern Dark Realism 3/4 full-body game character concept art of Soul Corroder (混沌·蚀魂兵) in cracked obsidian-bronze armor with dark-violet mist and jagged halberd on #26282e backdrop, zero text/watermarks.',
+    human_edits: ['人工设定构图与Art Bible约束', '外部工具生成并标准化命名', '生成后人工目视检查去字/视角/纯色底质检'],
+  },
+  {
+    asset_id: 'concept_ranged_chaos_nether',
+    name_zh: '混沌·幽冥射手概念图',
+    category: 'concept_art',
+    faction: 'chaos',
+    status: 'generated',
+    file: 'docs/shanhai/concepts/concept_ranged_chaos_nether.png',
+    tool: 'ChatGPT 图像生成',
+    model: 'ChatGPT Image Generation (external)',
+    prompt: 'Eastern Dark Realism 3/4 full-body game character concept art of Nether Marksman (混沌·幽冥射手) in tattered cloak with blackened horn bow and violet rift bolt on #26282e backdrop, zero text/watermarks.',
+    human_edits: ['人工设定构图与Art Bible约束', '外部工具生成并标准化命名', '生成后人工目视检查去字/视角/纯色底质检'],
+  },
+  {
+    asset_id: 'concept_buildings_human_secondary',
+    name_zh: '九州人皇·郡城/粮仓/矿场概念拼板',
+    category: 'concept_art',
+    faction: 'human',
+    status: 'generated',
+    file: 'docs/shanhai/concepts/concept_buildings_human_secondary.png',
+    tool: 'ChatGPT 图像生成',
+    model: 'ChatGPT Image Generation (external)',
+    prompt: 'Eastern Dark Realism isometric 45-degree 3/4 top-down RTS sprite sheet: Commandery Town Hall (郡城), Royal Granary (粮仓), and Imperial Mint Mine (金铢矿场) on #1c1d22, zero text/watermarks.',
+    human_edits: ['人工设定构图与Art Bible约束', '外部工具生成并标准化命名', '生成后人工目视检查去字/视角/纯色底质检'],
+  },
+  {
+    asset_id: 'concept_town_chaos',
+    name_zh: '混沌·蚀魂聚落概念图',
+    category: 'concept_art',
+    faction: 'chaos',
+    status: 'generated',
+    file: 'docs/shanhai/concepts/concept_town_chaos.png',
+    tool: 'ChatGPT 图像生成',
+    model: 'ChatGPT Image Generation (external)',
+    prompt: 'Eastern Dark Realism isometric 45-degree 3/4 top-down RTS outpost of Chaos Rift Hamlet (混沌·蚀魂聚落) with obsidian spires and glowing dark-violet fissure on #1c1d22, zero text/watermarks.',
+    human_edits: ['人工设定构图与Art Bible约束', '外部工具生成并标准化命名', '生成后人工目视检查去字/视角/纯色底质检'],
+  },
+  {
+    asset_id: 'concept_skills_human_set',
+    name_zh: '九州人皇·4项技能图标拼板',
+    category: 'concept_art',
+    faction: 'human',
+    status: 'generated',
+    file: 'docs/shanhai/concepts/concept_skills_human_set.png',
+    tool: 'ChatGPT 图像生成',
+    model: 'ChatGPT Image Generation (external)',
+    prompt: 'Eastern Dark Realism 2x2 bronze-and-jade octagonal game skill icons on #16181d: Rain of Arrows, Iron Wall Formation, War Drums, Sovereign Decree, strictly zero text/watermarks.',
+    human_edits: ['人工设定构图与Art Bible约束', '外部工具生成并标准化命名', '生成后人工目视检查去字/视角/纯色底质检'],
+  },
+  {
+    asset_id: 'concept_worldmap_jiuzhou',
+    name_zh: '九州战局舆图概念图',
+    category: 'concept_art',
+    faction: 'shared',
+    status: 'generated',
+    file: 'docs/shanhai/concepts/concept_worldmap_jiuzhou.png',
+    tool: 'ChatGPT 图像生成',
+    model: 'ChatGPT Image Generation (external)',
+    prompt: 'Eastern Dark Realism 4:3 antique painted strategic world map of the Nine Provinces (九州战局舆图) with Zhongzhou plains, Kunlun snow peaks, Cangnan forests, desert canyons, Crimson Ridge volcano, and Youdu abyss rift, strictly zero text/watermarks.',
+    human_edits: ['人工设定构图与Art Bible约束', '外部工具生成并标准化命名', '生成后人工目视检查去字/视角/纯色底质检'],
+  },
 ];
 
 function classifyAsset(relPath, audioLookup) {
@@ -602,14 +707,31 @@ function main() {
     }
   }
 
-  const rawFiles = [
+  const integratedMap = loadManifestIntegratedPaths();
+  const isLegacyRel = (rel) =>
+    rel.startsWith('resources/audio/') ||
+    rel.startsWith('resources/textures/') ||
+    /^bundles\/[^/]+\/(textures|maps)\//.test(rel);
+
+  const allRaw = [
     ...walkAssetFiles(path.join(GAME_ASSETS, 'bundles')),
     ...walkAssetFiles(path.join(GAME_ASSETS, 'resources')),
   ]
     .map((abs) => toPosix(path.relative(GAME_ASSETS, abs)))
     .sort();
 
-  const mappedAssets = rawFiles.map((rel) => classifyAsset(rel, audioLookup));
+  const rawFiles = allRaw.filter((rel) => isLegacyRel(rel));
+  const artFiles = allRaw.filter((rel) => !isLegacyRel(rel) && (rel.includes('/art/') || rel.startsWith('resources/art/')));
+
+  const mappedAssets = rawFiles.map((rel) => {
+    const item = classifyAsset(rel, audioLookup);
+    const activeArt = integratedMap.get(item.legacy_key);
+    if (activeArt) {
+      item.status = 'integrated';
+      item.new_target_path = activeArt;
+    }
+    return item;
+  });
   const countsByCategory = {};
   const countsByStatus = {};
   let pngCount = 0;
@@ -678,6 +800,71 @@ function main() {
       license_checked: true,
       human_edits: ['脚本确定性DSP生成', '峰值归一化与防爆音包络裁剪', '替换旧MP3并保留原.meta UUID'],
       final_file: item.legacy_path,
+      created_at: CREATED_AT,
+      review_status: 'pending',
+    });
+  }
+
+  for (const rel of artFiles) {
+    const finalFile = `game/assets/${rel}`;
+    const fname = path.basename(rel, '.png');
+    const faction = rel.includes('human') || rel.includes('zhongzhou') || rel.includes('jiuzhou')
+      ? 'human'
+      : rel.includes('celestial')
+        ? 'celestial'
+        : rel.includes('beast')
+          ? 'beast'
+          : rel.includes('chaos')
+            ? 'chaos'
+            : 'shared';
+    const category = rel.includes('/units/')
+      ? 'unit_animation'
+      : rel.includes('/buildings/')
+        ? 'building'
+        : fname === 'map_jiuzhou_world_base'
+          ? 'world_map'
+          : rel.includes('/terrain/')
+            ? 'battlefield_map'
+            : fname.startsWith('icon_skill_')
+              ? 'icon_skill'
+              : fname.startsWith('icon_unit_')
+                ? 'icon_unit'
+                : 'ui_chrome';
+    const refConcept =
+      fname === 'map_jiuzhou_world_base'
+        ? ['docs/shanhai/concepts/concept_worldmap_jiuzhou.png']
+        : fname === 'terrain_build_site_seal'
+          ? []
+          : category === 'battlefield_map' || fname === 'ui_title_bg_shanhai'
+            ? ['docs/shanhai/concepts/concept_battlefield_zhongzhou.png']
+            : fname.startsWith('icon_skill_human_')
+              ? ['docs/shanhai/concepts/concept_skills_human_set.png']
+              : category === 'building' && (fname.includes('_town_') || fname.includes('_granary_') || fname.includes('_mine_'))
+                ? [fname.includes('chaos_town') ? 'docs/shanhai/concepts/concept_town_chaos.png' : 'docs/shanhai/concepts/concept_buildings_human_secondary.png']
+                : category === 'building' || fname.startsWith('icon_faction_')
+                  ? [`docs/shanhai/concepts/concept_castle_${faction}.png`]
+                  : rel.includes('ranged_human_crossbowman') || fname === 'icon_unit_human_crossbow'
+                    ? ['docs/shanhai/concepts/concept_ranged_human_crossbow.png']
+                    : rel.includes('infantry_chaos_soul') || fname === 'icon_unit_chaos_infantry'
+                      ? ['docs/shanhai/concepts/concept_infantry_chaos_soul.png']
+                      : rel.includes('ranged_chaos_nether') || fname === 'icon_unit_chaos_ranged'
+                        ? ['docs/shanhai/concepts/concept_ranged_chaos_nether.png']
+                        : rel.includes('/units/') || fname.startsWith('icon_unit_')
+                          ? [`docs/shanhai/concepts/concept_infantry_${faction}.png`]
+                          : ['docs/shanhai/concepts/concept_ui_hud_style.png'];
+    provenanceAssets.push({
+      asset_id: rel.includes('/units/')
+        ? `unit_${path.basename(path.dirname(rel))}_${fname}`
+        : fname,
+      category,
+      faction,
+      tool: 'ChatGPT 图像生成 + scripts/process-phase-b-art.mjs (sharp)',
+      model: 'ChatGPT Image Generation + procedural-phase-b-v1',
+      prompt: `Derived from verified Phase-A concept (${refConcept[0]}) via border flood-fill matting, despill, and Phase-B sprite slicing/animation pipeline.`,
+      references: refConcept,
+      license_checked: false,
+      human_edits: ['泛洪抠图与边缘去黑边', '锚点对齐与尺寸规范化', '序列帧合成/战损烟尘绘制', 'preview 图集人工复核'],
+      final_file: finalFile,
       created_at: CREATED_AT,
       review_status: 'pending',
     });
